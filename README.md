@@ -16,7 +16,7 @@ Firebase: the shared HosPRO project `brandonhall-7bdef`. The Barn's data sits in
 Access codes (change in `hosfix.html` → `LG_CODES` / `PINS`, and `hosdesk.html` → `BOARD_PIN` / `checkCode`):
 - HosFix shared codes: **0000** management · **1111** reporters · **3333** maintenance (same scheme as Brandon)
 - HosDesk board PIN (`hosdesk.html?board` on a shared PC): **2580**
-- HosDesk Maintenance card code gate: **1357**
+- HosDesk Maintenance card: no code (gate removed for The Barn)
 
 ## Set-up steps (one-off)
 
@@ -28,7 +28,7 @@ Access codes (change in `hosfix.html` → `LG_CODES` / `PINS`, and `hosdesk.html
 
 ## Hotel data (as supplied by the hotel, 6 Nov 2026)
 
-- **70 bedrooms in 4 buildings** — Shirley's Farm Building (1, 2, 3, 7 ground; 4, 5, 6 first), Middle Building (10–27 ground; 28–44 first), Back Building (45–52 ground; 53–60 first), Deanes Lodge (301–310 ground; 311–316 first). Held in `barn-config.js` → `BARN_ROOMS` (HosDesk) and `hosfix.html` → `PROPERTY` (HosFix), one area per building.
+- **71 bedrooms in 4 buildings** — Shirley's Farm Building (1, 2, 3, 7 ground; 4, 5, 6 first), Middle Building (10–27 ground; 28–44 first), Back Building (45–52 ground; 53–60 first), Deanes Lodge (301–310 ground; 311–316 and 319 first). Held in `barn-config.js` → `BARN_ROOMS` (HosDesk) and `hosfix.html` → `PROPERTY` (HosFix), one area per building.
 - **Other areas** — Guest & Public (Reception, Dining Room, Windsor Room / Meeting Room, Games Room …), Back of House (Kitchen, Laundry Room, Staff Linen Room, Bin Area, Boiler Rooms 1–4 …), External / Grounds (Driveway, Fences, Car Park, Gardens …).
 - **Work types** — Plumbing, Electrical / Heating, Fences / Driveway, Painting & Decorating, Locks, Flooring, Fire Safety, Other.
 - **Team** — Catherine Virdee (Manager, code 0000), Josh (Maintenance, code 3333), Security / Reception and Mani (Housekeeping) as reporters (code 1111).
@@ -62,4 +62,6 @@ Data collections: `barn_fix_jobs` (deletes blocked — jobs are archived, never 
 
 Rooms are also read from Firestore `barn_config/current.rooms` if that document exists, so the list can be changed without a code upload.
 
-Clean-start date for jobs: **6 Nov 2026** (`HF_CLEAN_FROM` in `hosfix.html`).
+Clean-start date for jobs: **30 Oct 2026** (`HF_CLEAN_FROM` in `hosfix.html`) so the pre-loaded jobs show.
+
+**Pre-loaded jobs** (`BARN_SEED_JOBS` in `hosfix.html`): created once in the cloud the first time anyone opens HosFix after the rules are published — Room 319 shower leak into 309/308 (high, materials ordered), Room 29 door frame, Room 28 shower, Room 45 painting (in progress), Hotel Entrance fence, Hotel Entrance pot holes. All assigned to Josh. Room 319 was added to Deanes Lodge first floor as it was not in the original room list.
