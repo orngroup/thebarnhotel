@@ -26,15 +26,21 @@ Access codes (change in `hosfix.html` → `LG_CODES` / `PINS`, and `hosdesk.html
 4. **Push notifications** — nothing to deploy: the existing `register`/`notify` Cloud Function and VAPID key are reused. Catherine and Josh install HosFix from their launcher links and tap *Allow* on alerts. User ids `catherine` and `josh` are unique to The Barn in the shared `fcm_tokens` collection.
 5. **Logo** — drop the hotel logo at `assets/barn-logo.png` (white/transparent PNG, ~300 px wide). Until then the header shows the name only.
 
-## Placeholders to fill in once the hotel confirms
+## Hotel data (as supplied by the hotel, 6 Nov 2026)
 
-- **Rooms** — `barn-config.js` → `BARN_ROOMS` (HosDesk) and `hosfix.html` → `PROPERTY.bedrooms.rooms` (HosFix). Currently rooms 1–60. Rooms can also be saved in Firestore `barn_config/current.rooms`.
-- **Areas** — `MAINT_PROP` in `hosdesk.html` and `PROPERTY` in `hosfix.html` (Hawtrey's Restaurant & Bar, Meeting & Events, Public Areas, External/Grounds, Plant & Back of House).
-- **Quick links** — `hosdesk.html` → `QUICK_LINKS` (Hotel Information, Website, Local Information, Local Events). Google Maps is already set to West End Road, Ruislip HA4 6JB. A button with no URL shows "Link not set up yet".
-- **Fire & Emergency** — the pop-up in `hosdesk.html` is a draft with the Barn address; replace the `[bracketed]` items (assembly point, alarm contractor) with the hotel's own Fire Action Procedure before go-live.
-- **Weather** — header widget is set to Ruislip (`forecast7.com/en/51d57n0d42/ruislip/`). If you'd rather generate your own embed at weatherwidget.io for HA4 6JB, swap the `<a class="weatherwidget-io">` line.
-- **Suppliers** — `SUPPLIERS` list in `hosdesk.html` (deliveries tab).
-- **More people** — add to `USERS` in `hosfix.html`; put manager ids in `MGR_OPS`, operatives in `STD_OPS`; copy a launcher page + manifest per person.
+- **70 bedrooms in 4 buildings** — Shirley's Farm Building (1, 2, 3, 7 ground; 4, 5, 6 first), Middle Building (10–27 ground; 28–44 first), Back Building (45–52 ground; 53–60 first), Deanes Lodge (301–310 ground; 311–316 first). Held in `barn-config.js` → `BARN_ROOMS` (HosDesk) and `hosfix.html` → `PROPERTY` (HosFix), one area per building.
+- **Other areas** — Guest & Public (Reception, Dining Room, Windsor Room / Meeting Room, Games Room …), Back of House (Kitchen, Laundry Room, Staff Linen Room, Bin Area, Boiler Rooms 1–4 …), External / Grounds (Driveway, Fences, Car Park, Gardens …).
+- **Work types** — Plumbing, Electrical / Heating, Fences / Driveway, Painting & Decorating, Locks, Flooring, Fire Safety, Other.
+- **Team** — Catherine Virdee (Manager, code 0000), Josh (Maintenance, code 3333), Security / Reception and Mani (Housekeeping) as reporters (code 1111).
+- **Fire alarm contractor** — Terry Owens, Syndicate Fire Protection Service Ltd, 01843 265389 / 07743 231527, info@syndicatefireprotection.co.uk (in the Fire & Emergency pop-up).
+
+## Still to fill in
+
+- **Assembly point** in the Fire & Emergency pop-up (`hosdesk.html`) — currently "[To be confirmed by the hotel]".
+- **Quick links** — `hosdesk.html` → `QUICK_LINKS` (Hotel Information, Website, Local Information, Local Events). Google Maps is already set. A button with no URL shows "Link not set up yet".
+- **Logo** at `assets/barn-logo.png`.
+- **Suppliers** list for the deliveries tab (`SUPPLIERS` in `hosdesk.html`).
+- To add people later: `USERS` in `hosfix.html` (managers in `MGR_OPS`, operatives in `STD_OPS`, reporters in `REPORTER_TIER`), plus a launcher page + manifest per installed user.
 
 ## Files
 
@@ -53,5 +59,7 @@ assets/                    hero photo, HosDesk/HosFix icons (mgr blue, ops green
 ```
 
 Data collections: `barn_fix_jobs` (deletes blocked — jobs are archived, never deleted), `barn_requests`, `barn_deliveries`, `barn_visitors`, `barn_config`.
+
+Rooms are also read from Firestore `barn_config/current.rooms` if that document exists, so the list can be changed without a code upload.
 
 Clean-start date for jobs: **6 Nov 2026** (`HF_CLEAN_FROM` in `hosfix.html`).
