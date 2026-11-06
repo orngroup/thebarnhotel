@@ -100,7 +100,8 @@ body.console .wrap{max-width:1200px}
 .hd-hello .h1{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:700;letter-spacing:.3px}
 .hd-hello .h2{font-size:14px;opacity:.9;margin-top:3px;font-weight:600}
 /* kiosk cards: icon on top, label under, tap to open full-page */
-.bigcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.bigcards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+#hd-home .dash{grid-template-columns:repeat(2,1fr);max-width:520px;margin-left:auto;margin-right:auto}
 .bigcard{position:relative;border-radius:20px;padding:28px 20px;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;min-height:180px;justify-content:center;box-shadow:0 8px 20px rgba(26,43,58,.16);border:3px solid transparent;transition:transform .09s,box-shadow .09s}
 .bigcard:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(26,43,58,.22)}
 .bigcard:active{transform:scale(.98)}
@@ -284,16 +285,11 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
       </div>
 
       <div class="bigcards">
-        <div class="bigcard bc-req" id="card-requests" onclick="showSection('requests')"><div class="bc-n" id="bc-req-n">0</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="bc-t">Guest Requests</div><div class="bc-s">Housekeeping</div></div>
         <div class="bigcard bc-del" id="card-deliveries" onclick="showSection('deliveries')"><div class="bc-n" id="bc-del-n">0</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></div><div class="bc-t">Deliveries</div><div class="bc-s">Parcels in</div></div>
         <div class="bigcard bc-mnt" id="card-maintenance" onclick="showSection('maintenance')"><div class="bc-n" id="bc-mnt-n">0</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="bc-t">Maintenance 🔒</div><div class="bc-s">Repairs &amp; faults · code needed</div></div>
       </div>
 
       <div class="dash" style="margin-top:18px">
-        <div class="tile" style="cursor:pointer" onclick="bTile('open')"><div class="v" id="t-pend" style="color:#5b6b7b">0</div><div class="k">Pending</div></div>
-        <div class="tile" style="cursor:pointer" onclick="bTile('urgent')"><div class="v" id="t-urg" style="color:var(--red)">0</div><div class="k">Urgent</div></div>
-        <div class="tile" style="cursor:pointer" onclick="bTile('in_progress')"><div class="v" id="t-ip" style="color:var(--amber)">0</div><div class="k">In progress</div></div>
-        <div class="tile" style="cursor:pointer" onclick="bTile('done')"><div class="v" id="t-done" style="color:var(--green)">0</div><div class="k">Done</div></div>
         <div class="tile" style="cursor:pointer" onclick="showSection('maintenance')"><div class="v" id="t-mnt" style="color:#c45c00">0</div><div class="k">Maintenance open</div></div>
         <div class="tile" style="cursor:pointer" onclick="showSection('deliveries')"><div class="v" id="t-del" style="color:var(--amber)">0</div><div class="k">Deliveries</div></div>
       </div>
@@ -679,7 +675,7 @@ function bRender(){
   const inR=B_ROWS.filter(r=>dInRange(r.createdAt));
   const pend=inR.filter(r=>r.status==='pending'), urg=inR.filter(r=>r.status!=='done'&&r.priority==='urgent');
   const ip=inR.filter(r=>r.status==='in_progress'), doneT=inR.filter(r=>r.status==='done');
-  $('t-pend').textContent=pend.length; $('t-urg').textContent=urg.length; $('t-ip').textContent=ip.length; $('t-done').textContent=doneT.length;
+  [['t-pend',pend],['t-urg',urg],['t-ip',ip],['t-done',doneT]].forEach(([id,a])=>{ const el=$(id); if(el) el.textContent=a.length; });
   try{ const el=$('bc-req-n'); if(el) el.textContent=pend.length+ip.length; }catch(e){}
   let rows=inR.slice();
   if(B_FILTER==='open') rows=rows.filter(r=>r.status==='pending'||r.status==='in_progress');

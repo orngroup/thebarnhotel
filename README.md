@@ -7,7 +7,7 @@ Firebase: the shared HosPRO project `brandonhall-7bdef`. The Barn's data sits in
 
 | Who | Link | Opens |
 |---|---|---|
-| Reception | `https://thebarnhotel.hospro.co.uk/hosdesk.html?board` | HosDesk console (guest requests · deliveries · maintenance) |
+| Reception | `https://thebarnhotel.hospro.co.uk/hosdesk.html?board` | HosDesk console (deliveries · maintenance) |
 | Catherine Virdee (Manager) | `https://thebarnhotel.hospro.co.uk/hosfix-catherine.html` | Install page → HosFix as Catherine (sees & allocates all jobs) |
 | Josh (Operative) | `https://thebarnhotel.hospro.co.uk/hosfix-josh.html` | Install page → HosFix as Josh (own allocated jobs) |
 | Anyone reporting a fault | `https://thebarnhotel.hospro.co.uk/hosfix.html?tier=reporter` | Report-a-fault screen |
