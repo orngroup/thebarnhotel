@@ -21,7 +21,10 @@ html,body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--ink);mi
 .top-brand{flex:0 1 auto;text-align:center}
 .top-weather,.top-clock{flex:0 0 auto;z-index:1;display:flex;align-items:center}
 .top-weather{width:230px;max-width:34vw}
-.top-weather .weatherwidget-io{display:block;width:100%}
+.wx{display:flex;align-items:center;gap:10px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.wx-i{font-size:34px;line-height:1}
+.wx-t{font:700 24px Lato;line-height:1}
+.wx-d{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-top:3px}
 .top-clock{justify-content:center}
 .jsclock{text-align:center;min-width:115px}
 .jc-t{font:700 24px Lato;letter-spacing:1px;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.4)}
@@ -176,7 +179,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 </head>
 <body>
 <div class="top">
-  <div class="top-weather"><a class="weatherwidget-io" href="https://forecast7.com/en/51d57n0d42/ruislip/" data-label_1="RUISLIP LOCAL" data-label_2="WEATHER" data-icons="Climacons" data-mode="Current" data-theme="original">RUISLIP LOCAL WEATHER</a></div>
+  <div class="top-weather"><div class="wx" id="wx"><div class="wx-i" id="wx-i">☁️</div><div><div class="wx-t" id="wx-t">--°C</div><div class="wx-d" id="wx-d">Ruislip · loading…</div></div></div></div>
   <div class="top-brand">
     <img class="logo" src="assets/barn-logo.png" alt="The Barn Hotel" onerror="this.style.display='none'">
     <div class="nm">The Barn Hotel</div>
@@ -185,7 +188,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
   <div class="top-clock"><div class="jsclock"><div class="jc-t" id="jc-time">--:--</div><div class="jc-d" id="jc-date"></div></div></div>
   <div class="tt hide" id="top-tt"></div>
 </div>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');</script>
+
 
 <div class="wrap">
 
@@ -455,7 +458,45 @@ const QUICK_LINKS = {
   local:   "",   // Local Information
   events:  ""    // Local Events & Tourist Board
 };
+/* ---- Pre-loaded jobs (same fixed ids as HosFix's BARN_SEED_JOBS — create-if-absent, so never duplicated) ---- */
+const BARN_SEED_JOBS=[
+  {id:'barn-2611-001', area:'deanes',   areaLabel:'Deanes Lodge',       location:'Room 319',       workType:'plumbing',   priority:'high',   status:'not-started', reported:'2026-11-04', title:'Shower leaking down into Rooms 309 and 308', description:'Shower in Room 319 leaking through to Rooms 309 and 308 below. Materials ordered.', note:'Materials ordered'},
+  {id:'barn-2611-002', area:'middle',   areaLabel:'Middle Building',    location:'Room 29',        workType:'general',    priority:'medium', status:'not-started', reported:'2026-11-05', title:'Door frame damaged',  description:'Door frame damaged in Room 29.'},
+  {id:'barn-2611-003', area:'middle',   areaLabel:'Middle Building',    location:'Room 28',        workType:'plumbing',   priority:'medium', status:'not-started', reported:'2026-11-04', title:'Shower broken',       description:'Shower not working in Room 28.'},
+  {id:'barn-2611-004', area:'back',     areaLabel:'Back Building',      location:'Room 45',        workType:'decorating', priority:'medium', status:'in-progress', reported:'2026-11-02', title:'Paint bedroom walls', description:'Repaint bedroom walls in Room 45. Work has started.', note:'Work started'},
+  {id:'barn-2611-005', area:'external', areaLabel:'External / Grounds', location:'Hotel Entrance', workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Fence broken',        description:'Fence broken at the hotel entrance.'},
+  {id:'barn-2611-006', area:'external', areaLabel:'External / Grounds', location:'Hotel Entrance', workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Pot holes in driveway', description:'Pot holes at the hotel entrance / driveway.'}
+];
+function barnSeedJobs(db){
+  if(localStorage.getItem('barn_seed_v1')==='1') return;
+  const col=db.collection('barn_fix_jobs');
+  Promise.all(BARN_SEED_JOBS.map(sj=>col.doc(sj.id).get().then(d=>{
+    if(d.exists) return;
+    const t=sj.reported+'T09:00:00.000Z';
+    return col.doc(sj.id).set({ id:sj.id, title:sj.title, area:sj.area, areaLabel:sj.areaLabel, location:sj.location, workType:sj.workType, description:sj.description,
+      status:sj.status, priority:sj.priority, assignees:['josh'], cost:0, module:'maintenance', photos:[], materials:[],
+      notes: sj.note?[{text:sj.note, by:'Catherine Virdee', at:sj.reported}]:[], createdAt:t, updatedAt:t, createdBy:'catherine', reportedBy:'Catherine Virdee',
+      source:'preloaded', reportedDate:sj.reported, approvedBy:null, approvedAt:null, completedAt:null, startedAt: sj.status==='in-progress'?t:null });
+  }))).then(()=>{ try{ localStorage.setItem('barn_seed_v1','1'); }catch(e){} }).catch(e=>console.warn('seed',e));
+}
 function quickLink(k){ const u=QUICK_LINKS[k]; if(u){ window.open(u,'_blank','noopener'); } else { toast('Link not set up yet'); } }
+
+/* ---- Live weather — Open-Meteo (no key) for The Barn Hotel, Ruislip HA4 6JB ---- */
+(function(){
+  const ICON={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',56:'🌧️',57:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',66:'🌧️',67:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',77:'🌨️',80:'🌦️',81:'🌧️',82:'⛈️',85:'🌨️',86:'❄️',95:'⛈️',96:'⛈️',99:'⛈️'};
+  const TXT={0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Fog',51:'Drizzle',53:'Drizzle',55:'Drizzle',56:'Freezing drizzle',57:'Freezing drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',66:'Freezing rain',67:'Freezing rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Showers',81:'Showers',82:'Heavy showers',85:'Snow showers',86:'Snow showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+  async function load(){
+    try{
+      const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.573&longitude=-0.423&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe%2FLondon',{cache:'no-store'});
+      const j=await r.json(); const c=j.current||{}; const code=c.weather_code;
+      const t=document.getElementById('wx-t'), d=document.getElementById('wx-d'), i=document.getElementById('wx-i');
+      if(t) t.textContent=Math.round(c.temperature_2m)+'°C';
+      if(i) i.textContent=ICON[code]||'🌡️';
+      if(d) d.textContent='Ruislip · '+(TXT[code]||'');
+    }catch(e){ const d=document.getElementById('wx-d'); if(d) d.textContent='Ruislip · weather unavailable'; }
+  }
+  load(); setInterval(load, 15*60*1000);
+})();
 
 /* ---- Live clock (London time) ---- */
 (function(){ function tick(){ try{ const d=new Date(); const t=document.getElementById('jc-time'), dt=document.getElementById('jc-date'); if(t) t.textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'}); if(dt) dt.textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/London'}); }catch(e){} } tick(); setInterval(tick,15000); })();
@@ -606,7 +647,8 @@ async function startBoard(){
     D_UNSUB=db.collection('barn_deliveries').onSnapshot(snap=>{ D_ROWS=snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); renderDeliveries(); }, e=>{ $('d-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load deliveries.</div>'; });
     // Section 3 — maintenance (live, shared with the HosFIX app via barn_fix_jobs)
     if(M_UNSUB) M_UNSUB();
-    M_UNSUB=db.collection('barn_fix_jobs').onSnapshot(snap=>{ M_ROWS=snap.docs.map(d=>d.data()).filter(j=>j && !j.demoHidden).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); mRender(); mDupCheck(); }, e=>{ $('m-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load maintenance.</div>'; });
+    M_UNSUB=db.collection('barn_fix_jobs').onSnapshot(snap=>{ M_ROWS=snap.docs.map(d=>d.data()).filter(j=>j && !j.demoHidden).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); mRender(); mDupCheck(); }, e=>{ console.warn('barn_fix_jobs',e); $('m-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load maintenance — '+(e&&e.code==='permission-denied'?'the Firestore rules for <b>barn_fix_jobs</b> have not been published yet.':(e&&e.message||'check connection'))+'</div>'; });
+    try{ barnSeedJobs(db); }catch(e){ console.warn('seed',e); }
   } else {
     B_ROWS=JSON.parse(localStorage.getItem('barn_requests')||'[]'); bRender();
     D_ROWS=JSON.parse(localStorage.getItem('barn_deliveries')||'[]'); renderDeliveries();
@@ -879,7 +921,7 @@ function mRender(){
 function mShowAll(){ M_FILTER_ALL=true; mRender(); }
 function mToggleAll(){ M_FILTER_ALL=!M_FILTER_ALL; const b=$('m-toggle'); if(b) b.textContent=M_FILTER_ALL?'Hide completed':'Show completed'; mRender(); }
 
-/* Header clock + weather are embedded widgets (timeanddate.com + weatherwidget.io) */
+/* Header clock + weather are native (JS clock + Open-Meteo) */
 
 /* entry: reception link opens the console straight away */
 if(STAFF) startBoard();
