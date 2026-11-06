@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#EA7A1E">
+<meta property="og:title" content="HosFIX — The Barn Hotel">
+<meta property="og:description" content="Maintenance management for The Barn Hotel, Ruislip.">
+<meta property="og:image" content="https://thebarnhotel.hospro.co.uk/assets/hosfix-512.png">
+<meta property="og:url" content="https://thebarnhotel.hospro.co.uk/hosfix.html">
+<link rel="manifest" href="hosfix-manifest.json">
+<link rel="apple-touch-icon" href="assets/hosfix-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/hosfix-192.png">
+<meta name="apple-mobile-web-app-title" content="HosFIX">
+<title>HosFIX — The Barn Hotel</title>
+<script>
+/* Per-group Home-Screen identity: management=blue "HosFix - Mgr", reporter=red "- Rep",
+   operative=green "- Ops". Runs before install so Add-to-Home-Screen picks up the right
+   icon, name, theme and manifest. Plain hosfix.html (no tier) keeps the default HosFIX. */
+(function(){
+  try{
+    var q=new URLSearchParams(location.search);
+    var t=(q.get('tier')||'').toLowerCase();
+    if(!t){['management','manager','admin','reporter','reporters','operative','operatives','maintenance','fixer'].forEach(function(k){if(q.has(k))t=k;});}
+    var map={management:'mgr',manager:'mgr',admin:'mgr',reporter:'rep',reporters:'rep',operative:'ops',operatives:'ops',maintenance:'ops',fixer:'ops'};
+    var g=map[t]; if(!g) return;
+    var cfg={mgr:{name:'HosFix - Mgr',theme:'#1f5fbf'},rep:{name:'HosFix - Rep',theme:'#b3261e'},ops:{name:'HosFix - Ops',theme:'#2a6a4a'}}[g];
+    var man=document.querySelector('link[rel="manifest"]'); if(man) man.href='hosfix-manifest-'+g+'.json';
+    var at=document.querySelector('link[rel="apple-touch-icon"]'); if(at) at.href='assets/hosfix-'+g+'-192.png';
+    var ic=document.querySelector('link[rel="icon"]'); if(ic) ic.href='assets/hosfix-'+g+'-192.png';
+    var ti=document.querySelector('meta[name="apple-mobile-web-app-title"]'); if(ti) ti.setAttribute('content',cfg.name);
+    var tc=document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute('content',cfg.theme);
+    document.title=cfg.name+' — The Barn Hotel';
+  }catch(e){}
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#1a2b3a;--gold:#c9a978;--amber:#c78a3b;--green:#2a6a4a;--red:#b3261e;
+  --orange:#c45c00;--ink:#1a2b3a;--line:#e8edf3;--bg:#f5f7f9;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;font-family:'Lato',sans-serif;background:var(--bg);color:var(--ink)}
+
+/* ── SCREENS ─────────────────────────────────────────────────────── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(13,27,42,.78) 0%,rgba(13,27,42,.72) 55%,rgba(13,27,42,.55) 100%),url('assets/hosfix-bg.jpg') center bottom/cover no-repeat,#0d1b2a;padding:28px;text-align:center;overflow-y:auto}
+.screen.active{display:flex}
+
+/* Install screen */
+.ib-logo{margin-bottom:16px}
+.ib-hosfix{font-family:'Cormorant Garamond',serif;font-size:34px;color:#fff;letter-spacing:2px;margin-bottom:4px}
+.ib-hosfix span{color:var(--gold)}
+.ib-hotel{font-size:14px;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:3px}
+.ib-sub{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:28px}
+.ib-steps{background:rgba(255,255,255,.07);border-radius:14px;padding:18px;width:100%;max-width:340px;margin-bottom:22px;text-align:left}
+.ib-step{display:flex;align-items:flex-start;gap:12px;padding:7px 0;font-size:13px;color:rgba(255,255,255,.85)}
+.ib-num{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px}
+.ib-btn{width:100%;max-width:340px;padding:16px;border-radius:14px;border:none;font:700 16px 'Lato';cursor:pointer;margin-bottom:10px;touch-action:manipulation}
+.ib-primary{background:var(--gold);color:var(--navy)}
+.ib-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+
+/* Login */
+.lg-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px}
+.lg-name{font-family:'Cormorant Garamond',serif;font-size:34px;color:#fff;margin-bottom:5px}
+.lg-name span{color:var(--gold)}
+.lg-hotel{font-size:14px;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:3px}
+.lg-tagline{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:700;margin-bottom:32px}
+.lg-select{width:100%;padding:15px;border-radius:14px;border:none;background:rgba(255,255,255,.1);
+  color:#fff;font:700 15px 'Lato';margin-bottom:12px;-webkit-appearance:none;appearance:none}
+.lg-select option{color:var(--navy);background:#fff}
+.lg-btn{width:100%;padding:16px;border-radius:14px;border:none;background:var(--gold);
+  color:var(--navy);font:700 16px 'Lato';cursor:pointer;opacity:.4;touch-action:manipulation}
+.lg-btn:not([disabled]){opacity:1}
+
+/* Module home */
+.mh-greeting{font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(255,255,255,.85);margin-bottom:26px}
+.mh-tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:360px}
+.mh-tile{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:18px;
+  padding:24px 14px;text-align:center;cursor:pointer;touch-action:manipulation}
+.mh-tile.maint{border-color:rgba(196,92,0,.5)}
+.mh-tile.comp{border-color:rgba(42,106,74,.5)}
+.mh-tile .t-ico{font-size:36px;margin-bottom:10px}
+.mh-tile .t-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff;margin-bottom:3px}
+.mh-tile .t-sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px}
+.mh-tile .t-badge{display:inline-block;padding:3px 11px;border-radius:8px;font-size:11px;font-weight:700}
+.mh-tile.maint .t-badge{background:rgba(196,92,0,.2);color:#f97316}
+.mh-tile.comp .t-badge{background:rgba(42,106,74,.2);color:#4ade80}
+.mh-signout{margin-top:20px;background:none;border:none;color:rgba(255,255,255,.35);font:600 13px 'Lato';cursor:pointer;padding:10px;touch-action:manipulation}
+
+/* ── MAIN APP ─────────────────────────────────────────────────────── */
+#app{display:none;flex-direction:column;height:100%;overflow:hidden}
+
+/* Topbar */
+.topbar{background:var(--navy);padding:calc(10px + var(--safe-top)) 14px 10px;
+  display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tb-brand{flex:1;cursor:pointer}
+.tb-brand .bn{font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff;letter-spacing:1px}
+.tb-brand .bn span{color:var(--gold)}
+.tb-brand .bs{font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.4);font-weight:700}
+.tb-chip{padding:5px 11px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font:600 11px 'Lato'}
+.tb-out{padding:5px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font:600 11px 'Lato';background:none;cursor:pointer;touch-action:manipulation}
+
+/* Content */
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg)}
+
+/* Bottom nav */
+.bnav-bar{display:flex;background:#fff;border-top:1px solid var(--line);
+  padding-bottom:var(--safe-bot);flex-shrink:0}
+.bnav{flex:1;padding:8px 2px;border:none;background:none;display:flex;flex-direction:column;
+  align-items:center;gap:2px;font-size:9px;font-weight:700;color:#9ca3af;cursor:pointer;touch-action:manipulation;position:relative}
+.bnav.on{color:var(--orange)}
+.bnav .ico{font-size:20px;line-height:1}
+.bnav.comp.on{color:var(--green)}
+.bnav .bb{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:#fff;
+  font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+
+/* ── MODAL ─────────────────────────────────────────────────────────── */
+#modal-bg{position:fixed;inset:0;background:rgba(16,29,51,.65);z-index:100;display:none;align-items:flex-end}
+#modal-bg.open{display:flex}
+.modal-sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;max-height:93vh;position:relative;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:16px 16px calc(20px + var(--safe-bot))}
+.modal-handle{width:40px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 16px}
+.modal-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border-radius:50%;border:none;
+  background:#f1f5f9;color:#475569;font-size:17px;font-weight:700;line-height:1;cursor:pointer;z-index:5;
+  display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.modal-close:active{background:#e2e8f0}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:14px}
+
+/* ── CARDS & UI ─────────────────────────────────────────────────────── */
+.jcard{background:#fff;border-radius:14px;padding:14px;margin:0 14px 10px;
+  box-shadow:0 2px 6px rgba(26,43,58,.06);border-left:5px solid var(--line);cursor:pointer;touch-action:manipulation}
+.jcard.s-complete{border-color:var(--green);opacity:.75}
+.jcard.s-not-started{border-color:#9ca3af}
+.jcard.s-in-progress{border-color:var(--amber)}
+.jcard.s-urgent{border-color:var(--red)}
+.jcard.s-pending{border-color:var(--orange)}
+.j-title{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px}
+.j-title.done{text-decoration:line-through;color:#9ca3af}
+.j-meta{font-size:12px;color:#7a8494;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.j-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block}
+.j-badge.urgent{background:#fde8e6;color:#b3261e}
+.j-badge.high{background:#fff3e8;color:#c45c00}
+.j-badge.in-prog{background:#fffbe6;color:#997300}
+.j-badge.complete{background:#e8f3ee;color:#2a6a4a}
+.j-avs{display:flex;gap:4px;margin-top:6px}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* Buttons */
+button{font-family:'Lato',sans-serif;touch-action:manipulation}
+.btn{width:100%;padding:15px;border-radius:12px;border:none;font:700 15px 'Lato';
+  cursor:pointer;margin-bottom:8px;touch-action:manipulation}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-ghost{background:#f5f7f9;color:var(--navy)}
+.btn-red{background:#b3261e;color:#fff}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.btn-full{grid-column:1/-1}
+
+/* Form fields */
+.f-field{margin-bottom:14px}
+.f-field label{display:block;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.f-field input,.f-field select,.f-field textarea{
+  width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;
+  font:14px 'Lato';color:var(--ink);background:#fff;-webkit-appearance:none;appearance:none}
+.f-field textarea{min-height:70px;resize:vertical}
+.f-field select:focus,.f-field input:focus,.f-field textarea:focus{outline:none;border-color:var(--amber)}
+/* reporter form — real-app card layout */
+#scr-report{text-align:left}
+#report-body .rcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 15px 3px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#report-body .rcard-t{font:800 12px 'Lato';color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+#report-body .rcard .f-field:last-child{margin-bottom:12px}
+
+/* Status/priority toggles */
+.toggle-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:4px}
+.toggle-opt{padding:11px;border-radius:10px;border:2px solid var(--line);background:#fff;
+  font:600 13px 'Lato';cursor:pointer;text-align:center;touch-action:manipulation}
+.toggle-opt.on-ns{border-color:#b3261e;background:#fde8e6;color:#b3261e}
+.toggle-opt.on-ip{border-color:var(--amber);background:#fffbe6;color:#c78a3b}
+.toggle-opt.on-co{border-color:var(--green);background:#e8f3ee;color:#2a6a4a}
+.toggle-opt.on-ur{border-color:var(--orange);background:#fff3e8;color:#c45c00}
+.prio-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+.prio-opt{padding:10px 4px;border-radius:10px;border:2px solid var(--line);background:#fff;
+  font:600 12px 'Lato';cursor:pointer;text-align:center;touch-action:manipulation}
+.prio-opt.on{border-color:var(--amber);background:#fffbe6;color:#c78a3b}
+.occ-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.occ-opt{padding:11px 4px;border-radius:10px;border:2px solid var(--line);background:#fff;font:600 12px 'Lato';cursor:pointer;text-align:center;touch-action:manipulation}
+.occ-opt.on{border-color:var(--navy);background:#eef2f7;color:var(--navy)}
+
+/* Assignee picker */
+.arow{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;
+  margin-bottom:6px;cursor:pointer;border:2px solid var(--line);background:#fff;touch-action:manipulation}
+.arow.selected{border-color:var(--amber);background:#fffbe6}
+.ar-name{font-weight:700;font-size:13px}
+.ar-role{font-size:11px;color:#7a8494}
+.ar-ck{margin-left:auto;width:22px;height:22px;border-radius:50%;background:var(--green);
+  color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;opacity:0}
+.arow.selected .ar-ck{opacity:1}
+
+/* Photo */
+.photo-zone{border:2px dashed var(--line);border-radius:12px;padding:20px;text-align:center;
+  color:#9ca3af;font-size:13px;cursor:pointer;touch-action:manipulation}
+.photo-zone.captured{border-color:var(--green);background:#e8f3ee;color:var(--green)}
+.photo-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.photo-thumb{width:64px;height:64px;border-radius:8px;object-fit:cover}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}
+.stat-card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(26,43,58,.06);
+  cursor:pointer;touch-action:manipulation;border-top:4px solid var(--line)}
+.stat-card.red{border-color:var(--red)}.stat-card.amber{border-color:var(--amber)}
+.stat-card.green{border-color:var(--green)}.stat-card.orange{border-color:var(--orange)}
+.stat-v{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;margin-bottom:4px}
+.stat-k{font-size:11px;font-weight:700;color:#7a8494;text-transform:uppercase;letter-spacing:.4px}
+.stat-card.red .stat-v{color:var(--red)}.stat-card.amber .stat-v{color:var(--amber)}
+.stat-card.green .stat-v{color:var(--green)}.stat-card.orange .stat-v{color:var(--orange)}
+
+/* Filter chips */
+.chips{display:flex;gap:7px;overflow-x:auto;padding:12px 14px;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:7px 14px;border-radius:20px;background:#fff;border:1.5px solid var(--line);
+  font:700 12px 'Lato';cursor:pointer;white-space:nowrap;color:#7a8494;flex-shrink:0;touch-action:manipulation}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* Notes */
+.note-item{background:#f5f7f9;border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.note-by{font-size:11px;color:#7a8494;margin-bottom:3px}
+.note-text{font-size:13px;color:var(--ink)}
+
+/* Stock picker */
+.stock-item{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);gap:10px;cursor:pointer;touch-action:manipulation}
+.stock-item:last-child{border-bottom:none}
+.s-name{font-weight:700;font-size:13px;flex:1}
+.s-meta{font-size:11px;color:#7a8494}
+.s-qty{display:flex;align-items:center;gap:8px}
+.qty-btn{width:28px;height:28px;border-radius:8px;border:none;background:var(--amber);
+  color:#fff;font:700 16px 'Lato';cursor:pointer;display:grid;place-items:center;touch-action:manipulation;flex-shrink:0}
+.qty-val{font-weight:700;font-size:14px;min-width:24px;text-align:center}
+
+/* Timer bar */
+#timer-bar{background:var(--green);color:#fff;text-align:center;padding:8px;font:700 13px 'Lato';flex-shrink:0}
+
+/* Compliance cards */
+.ctask{background:#fff;border-radius:12px;padding:13px 14px;margin:0 14px 8px;
+  border-left:5px solid var(--line);cursor:pointer;touch-action:manipulation;box-shadow:0 2px 6px rgba(26,43,58,.05)}
+.ctask.overdue{border-color:var(--red)}
+.ctask.due-soon{border-color:var(--amber)}
+.ctask.on-track{border-color:var(--green)}
+.ctask.complete{border-color:#9ca3af;opacity:.7}
+.ctask-name{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px}
+.ctask-meta{font-size:12px;color:#7a8494;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.due-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+.due-badge.overdue{background:#fde8e6;color:#b3261e}
+.due-badge.due-soon{background:#fffbe6;color:#997300}
+.due-badge.on-track{background:#e8f3ee;color:#2a6a4a}
+
+/* Toast */
+#toast{position:fixed;bottom:calc(80px + var(--safe-bot));left:50%;transform:translateX(-50%);
+  background:rgba(26,43,58,.92);color:#fff;padding:10px 20px;border-radius:20px;
+  font:700 14px 'Lato';z-index:999;display:none;white-space:nowrap}
+.hf-bell{position:relative;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);
+  font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;flex-shrink:0;touch-action:manipulation}
+.hf-bell-n{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:#d93025;color:#fff;
+  font:800 11px Lato,sans-serif;align-items:center;justify-content:center;border:2px solid #182A3E}
+.hf-hero{background:linear-gradient(135deg,#1a2b3a 0%,#243b52 100%);color:#fff;padding:18px 16px 16px}
+.hf-hero-greet{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;margin-bottom:2px}
+.hf-hero-date{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:12px}
+.hf-hero-line{display:flex;gap:8px;flex-wrap:wrap}
+.hf-hero-stat{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;color:rgba(255,255,255,.85)}
+.hf-hero-stat b{color:#fff;font-size:14px}
+.hf-hero-stat.urg{background:rgba(196,92,0,.3);color:#ffd9b3}
+.hf-hero-stat.urg b{color:#fff}
+</style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<!-- v202610011935 -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- ── INSTALL SCREEN ──────────────────────────────────────────────── -->
+<!-- ── ONBOARDING: STEP 1 — ADD TO HOME SCREEN ──────────────────────── -->
+<div id="scr-install" class="screen">
+  <div class="ib-hosfix">Hos<span>FIX</span></div>
+  <div class="ib-hotel">The Barn Hotel · Ruislip</div>
+  <div class="ib-sub">MAINTENANCE MANAGEMENT</div>
+
+  <!-- Step indicator -->
+  <div style="display:flex;gap:8px;margin:20px 0 28px">
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--gold)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+  </div>
+
+  <div style="font-size:56px;margin-bottom:16px">📲</div>
+  <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:10px">Add to your home screen</div>
+  <div style="font-size:13px;color:rgba(255,255,255,.65);max-width:300px;text-align:center;line-height:1.6;margin-bottom:28px">
+    Install HosFIX as an app so you can open it instantly and receive job notifications.
+  </div>
+
+  <div class="ib-steps" style="max-width:320px;margin-bottom:28px">
+    <div class="ib-step"><div class="ib-num">1</div><span>Tap the <strong style="color:var(--gold)">Share</strong> button at the bottom of your browser</span></div>
+    <div class="ib-step"><div class="ib-num">2</div><span>Tap <strong style="color:var(--gold)">"Add to Home Screen"</strong></span></div>
+    <div class="ib-step"><div class="ib-num">3</div><span>Tap <strong style="color:var(--gold)">"Add"</strong> — HosFIX appears on your home screen</span></div>
+  </div>
+
+  <button class="ib-btn ib-primary" id="btn-install" onclick="onbInstallClick()">📲 Install HosFIX</button>
+  <button class="ib-btn ib-secondary" id="btn-skip-install" onclick="onbGoStep2()">Already installed — continue →</button>
+</div>
+
+<!-- ── ONBOARDING: STEP 2 — NOTIFICATIONS ───────────────────────────────── -->
+<div id="scr-onb-notif" class="screen" style="display:none">
+  <div class="ib-hosfix">Hos<span>FIX</span></div>
+  <div class="ib-hotel">The Barn Hotel · Ruislip</div>
+
+  <!-- Step indicator -->
+  <div style="display:flex;gap:8px;margin:20px 0 28px">
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--gold)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+  </div>
+
+  <div style="font-size:56px;margin-bottom:16px">🔔</div>
+  <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:10px">Turn on alerts, camera &amp; mic</div>
+  <div style="font-size:13px;color:rgba(255,255,255,.65);max-width:300px;text-align:center;line-height:1.6;margin-bottom:28px">
+    Get a real buzz on your phone when a job is assigned or completed — even when the app is closed — plus camera &amp; mic so reporting a fault with a photo or voice note is instant.
+  </div>
+
+  <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:16px 20px;max-width:300px;width:100%;margin-bottom:28px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">This turns on:</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.8);line-height:2">
+      🔔 Job alerts — even when HosFIX is closed<br>
+      📷 Camera — add photos to a report<br>
+      🎙️ Microphone — record a voice note
+    </div>
+  </div>
+
+  <button class="ib-btn ib-primary" onclick="onbRequestNotif()">🔔 Allow alerts, camera &amp; mic</button>
+  <button class="ib-btn ib-secondary" onclick="onbGoStep3()">Skip for now</button>
+  <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:12px;max-width:260px;text-align:center">
+    You can turn these on later in your phone settings
+  </div>
+</div>
+
+<!-- ── ONBOARDING: STEP 3 — SELFIE / PROFILE PIC ───────────────────────── -->
+<div id="scr-onb-selfie" class="screen" style="display:none">
+  <div class="ib-hosfix">Hos<span>FIX</span></div>
+  <div class="ib-hotel">The Barn Hotel · Ruislip</div>
+
+  <!-- Step indicator -->
+  <div style="display:flex;gap:8px;margin:20px 0 28px">
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,.2)"></div>
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--gold)"></div>
+  </div>
+
+  <div id="onb-selfie-preview" style="width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:16px;overflow:hidden">
+    <span id="onb-selfie-placeholder">🤳</span>
+    <img id="onb-selfie-img" style="display:none;width:100%;height:100%;object-fit:cover">
+  </div>
+
+  <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:10px">Add your photo</div>
+  <div style="font-size:13px;color:rgba(255,255,255,.65);max-width:300px;text-align:center;line-height:1.6;margin-bottom:28px">
+    Take a quick selfie — it appears on your profile and in job assignments so the team knows who's who.
+  </div>
+
+  <input type="file" id="onb-selfie-input" accept="image/*" capture="user" style="display:none" onchange="onbSelfieChosen(this)">
+
+  <button class="ib-btn ib-primary" onclick="document.getElementById('onb-selfie-input').click()">📷 Take selfie</button>
+  <button class="ib-btn ib-secondary" id="onb-selfie-save" style="display:none" onclick="onbSaveSelfie()">✓ Save photo &amp; sign in</button>
+  <button class="ib-btn ib-secondary" onclick="onbGoSignIn()">Skip — sign in without photo</button>
+</div>
+
+<!-- ── LOGIN SCREEN ──────────────────────────────────────────────────── -->
+<div id="scr-dob" class="screen" style="display:none">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--navy);margin-bottom:4px">The Barn Hotel</div>
+    <div style="font-size:11px;color:#7a8494;letter-spacing:2px;text-transform:uppercase;margin-bottom:32px">Ruislip — Maintenance</div>
+    <div id="dob-avatar" style="width:72px;height:72px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;margin-bottom:14px"></div>
+    <div id="dob-name" style="font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px"></div>
+    <div id="dob-role" style="font-size:12px;color:#7a8494;margin-bottom:36px"></div>
+    <div style="background:#f5f7f9;border-radius:14px;padding:20px;max-width:320px;width:100%;margin-bottom:24px">
+      <label style="display:flex;align-items:flex-start;gap:14px;cursor:pointer;text-align:left">
+        <input type="checkbox" id="age-chk" style="width:22px;height:22px;flex-shrink:0;margin-top:1px;accent-color:var(--navy)"
+          onclick="var b=document.getElementById('age-btn');b.style.opacity=this.checked?1:0.4;b.disabled=!this.checked">
+        <span style="font-size:14px;color:var(--ink);line-height:1.5">I confirm I am over 18 years of age and am an authorised member of The Barn Hotel staff</span>
+      </label>
+    </div>
+    <button type="button" id="age-btn" onclick="verifyDOB()" disabled
+      style="width:100%;max-width:320px;padding:16px;background:var(--navy);color:#fff;border:none;border-radius:12px;font:700 16px Lato;cursor:pointer;touch-action:manipulation;opacity:0.4">
+      Sign in →
+    </button>
+    <div style="margin-top:24px;font-size:11px;color:#9ca3af">Having trouble? Contact your manager</div>
+  </div>
+</div>
+
+<div id="scr-login" class="screen">
+  <div class="lg-wrap">
+    <div class="lg-name">Hos<span>FIX</span></div>
+    <div class="lg-hotel">The Barn Hotel · Ruislip</div>
+    <div class="lg-tagline">MAINTENANCE MANAGEMENT</div>
+    <!-- Step 1 — access code -->
+    <div id="lg-step-code">
+      <div style="color:rgba(255,255,255,.75);font-size:13px;margin:4px 0 10px">Enter your access code</div>
+      <input id="lg-code" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••"
+        style="width:100%;max-width:320px;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font:700 22px 'Lato';text-align:center;letter-spacing:12px;box-sizing:border-box">
+      <div id="lg-err" style="color:#ff9d9d;font-size:12px;min-height:15px;margin:7px 0 2px"></div>
+      <button class="lg-btn" id="lg-code-btn" disabled>Continue →</button>
+      <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;max-width:300px;line-height:1.5">Management, Reporters and Maintenance each have their own code — ask your manager.</div>
+    </div>
+    <!-- Step 2 — pick your name -->
+    <div id="lg-step-name" style="display:none">
+      <div id="lg-tier-label" style="color:#fff;font-weight:800;font-size:15px;margin:2px 0 12px"></div>
+      <div id="lg-names" style="display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:340px"></div>
+      <div id="lg-addname" style="display:none;margin-top:14px;width:100%;max-width:320px">
+        <input id="lg-newname" placeholder="Or type your name" autocomplete="off"
+          style="width:100%;padding:13px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font:600 15px 'Lato';text-align:center;box-sizing:border-box">
+        <button class="lg-btn" onclick="lgAddName()" style="margin-top:9px">＋ Add &amp; sign in</button>
+      </div>
+      <button type="button" onclick="lgBackToCode()" style="margin-top:14px;background:none;border:none;color:rgba(255,255,255,.6);font-size:13px;cursor:pointer;text-decoration:underline">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── REPORTER MODE (no login — pick your name on the form) ───────────── -->
+<div id="scr-report" class="screen" style="display:none;background:#f5f7f9;min-height:100vh;overflow-y:auto">
+  <div style="background:var(--navy);color:#fff;padding:calc(16px + env(safe-area-inset-top,0px)) 18px 15px;display:flex;align-items:center;gap:12px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700">Hos<span style="color:var(--gold)">Fix</span></div>
+    <div style="flex:1"><div style="font-size:14px;font-weight:700">Report a fault</div><div style="font-size:11px;opacity:.72">The Barn Hotel</div></div>
+  </div>
+  <div id="report-body" style="padding:16px 16px 48px;max-width:560px;margin:0 auto"></div>
+</div>
+
+<!-- ── NOTIFICATION BANNER ─────────────────────────────────────────── -->
+<div id="notif-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;
+  background:var(--navy);border-radius:14px;padding:14px 16px;z-index:50;
+  display:none;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.3)">
+  <span style="font-size:22px">🔔</span>
+  <div style="flex:1;font-size:13px;color:#fff">
+    <strong style="display:block;margin-bottom:2px">Turn on alerts, camera &amp; mic</strong>
+    Job alerts even when closed, plus photo &amp; voice
+  </div>
+  <button id="btn-notif-allow" style="padding:8px 12px;border-radius:9px;border:none;
+    background:var(--gold);color:var(--navy);font:700 12px 'Lato';cursor:pointer;touch-action:manipulation">Allow</button>
+  <button id="btn-notif-close" style="background:none;border:none;color:rgba(255,255,255,.5);
+    font-size:20px;cursor:pointer;touch-action:manipulation;padding:4px">✕</button>
+</div>
+
+<!-- ── MAIN APP ────────────────────────────────────────────────────── -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-brand" id="tb-home-btn">
+      <div class="bn">Hos<span>FIX</span></div>
+      <div class="bs">THE BARN HOTEL</div>
+    </div>
+    <div class="tb-chip" id="tb-user"></div>
+    <button type="button" class="hf-bell" id="tb-bell" onclick="showNotificationsPanel()" aria-label="Notifications" style="">🔔<span class="hf-bell-n" style="display:none"></span></button>
+    <button class="tb-out" id="btn-signout-app">Sign out</button>
+  </div>
+  <div id="timer-bar" style="display:none"></div>
+  <div id="content"></div>
+  <div class="bnav-bar" id="bnav"></div>
+</div>
+
+<!-- ── MODAL ────────────────────────────────────────────────────────── -->
+<div id="modal-bg">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+'use strict';
+
+// ── DATA ────────────────────────────────────────────────────────────────────
+const USERS = [
+  // ── MANAGER-OPERATIVE: sees all jobs, allocates, full access, can also do jobs ──
+  {"id":"catherine", "name":"Catherine Virdee", "role":"Manager",     "level":3, "color":"#1f5fbf", "admin":true,  "seeCosts":true,  "tier":"admin"},
+  // ── OPERATIVE: sees own allocated jobs only ─────────────────────────────────
+  {"id":"josh",      "name":"Josh",             "role":"Maintenance", "level":1, "color":"#2a6a4a", "admin":false, "seeCosts":false, "tier":"person"},
+  // ── REPORTERS: can log a fault and see their own reports (shared code) ───────
+  {"id":"reception", "name":"Reception",        "role":"Front Desk",  "level":1, "color":"#64748b", "admin":false, "seeCosts":false, "tier":"reporter"},
+];
+
+// Admin IDs — can see all jobs, assign, full admin
+const ADMIN_IDS = ["catherine"];
+// Notification recipients when job completed
+const NOTIFY_ON_COMPLETE = ["catherine"];
+
+const SUPERVISORS = ['catherine'];
+const APPROVAL_USERS = ['catherine'];
+const APPROVAL_THRESHOLD = 50;
+const NOTIFY_COMPLETE = ['catherine'];
+const NOTIFY_ASSIGN = ['josh','catherine'];
+
+// ── LOGIN PINs & ROLES (name + 4-digit PIN) ──────────────────────────────────
+// Manager (see everything): Catherine.  Operative (see only jobs assigned to them): Josh.
+// Everyone else is a reporter (log a fault + see own reports). Default PIN 9999.
+const PINS = { catherine:"0000", josh:"3333" };
+const pinFor = id => (PINS[id] || "9999");
+// ── ROLES ──────────────────────────────────────────────────────────────────
+// Two roles. Operatives come in two levels:
+//   • Manager-operative — sees ALL jobs, allocates/re-allocates, full overview, and does jobs.
+//   • Operative         — sees only jobs allocated to them, does + completes them.
+// Reporters don't log in: they open the Reporter link and pick their name on the form.
+const MGR_OPS       = ["catherine"];      // manager-operatives (admin powers + do jobs)
+const STD_OPS       = ["josh"];           // operatives (own jobs only)
+const ADMIN_TIER    = MGR_OPS;                      // ?me=catherine  (also ?tier=management)
+const FIXER_TIER    = STD_OPS;                      // ?me=josh       (also ?tier=operative)
+const REPORTER_TIER = ["reception"];                      // name list for the legacy ?tier=reporter login only
+// The CURRENT session's role comes from the link/code used to sign in, so one person
+// (Catherine) can be Manager on one link and Reporter on another. Falls back to id-based.
+let SESSION_TIER = null;
+function tierOf(id){ id=id||ME; if(id===ME && SESSION_TIER) return SESSION_TIER; return ADMIN_TIER.includes(id)?"admin":(FIXER_TIER.includes(id)?"fixer":"reporter"); }
+function isAdmin(id){ return tierOf(id)==="admin"; }
+function isFixer(id){ return tierOf(id)==="fixer"; }
+function isReporter(id){ return tierOf(id)==="reporter"; }
+// Jobs this signed-in user may see
+function myJobs(){ const V=JOBS.filter(j=>!j.demoHidden); if(isAdmin()) return V.slice(); if(isFixer()) return V.filter(j=>(j.assignees||[]).includes(ME)); return V.filter(j=>j.createdBy===ME); }
+
+const PROPERTY = {"bedrooms": {"label": "Bedrooms", "icon": "🛏️", "rooms": ["Room 1", "Room 2", "Room 3", "Room 4", "Room 5", "Room 6", "Room 7", "Room 8", "Room 9", "Room 10", "Room 11", "Room 12", "Room 13", "Room 14", "Room 15", "Room 16", "Room 17", "Room 18", "Room 19", "Room 20", "Room 21", "Room 22", "Room 23", "Room 24", "Room 25", "Room 26", "Room 27", "Room 28", "Room 29", "Room 30", "Room 31", "Room 32", "Room 33", "Room 34", "Room 35", "Room 36", "Room 37", "Room 38", "Room 39", "Room 40", "Room 41", "Room 42", "Room 43", "Room 44", "Room 45", "Room 46", "Room 47", "Room 48", "Room 49", "Room 50", "Room 51", "Room 52", "Room 53", "Room 54", "Room 55", "Room 56", "Room 57", "Room 58", "Room 59", "Room 60"]}, "restaurant": {"label": "Hawtrey's Restaurant & Bar", "icon": "🍽️", "rooms": ["Restaurant", "Bar", "Lounge", "Private Dining", "Kitchen", "Terrace"]}, "meeting_events": {"label": "Meeting & Events", "icon": "🎪", "rooms": ["Function Room 1", "Function Room 2", "Boardroom", "Garden / Marquee Area"]}, "public_areas": {"label": "Public Areas", "icon": "🏛️", "rooms": ["Reception", "Lobby", "Corridors (Ground)", "Corridors (First)", "Stairs", "Lift", "Guest Toilets", "Main Entrance", "Staff Areas"]}, "external": {"label": "External / Grounds", "icon": "🌳", "rooms": ["Car Park", "Gardens", "Paths", "External Walls", "Roof", "Outbuildings", "Signage / Lighting"]}, "maintenance": {"label": "Plant & Back of House", "icon": "🔧", "rooms": ["Boiler Room", "Plant Room", "Electrical Cupboard", "Linen Store", "Laundry", "Bin Store", "Stores"]}};  // PLACEHOLDER rooms 1–60 and area names — edit to match the hotel
+
+const WORK_TYPES = [{"id": "plumbing", "label": "Plumbing", "icon": "\ud83d\udd27"}, {"id": "electrical", "label": "Electrical", "icon": "\u26a1"}, {"id": "decorating", "label": "Decorating / Painting", "icon": "\ud83c\udfa8"}, {"id": "carpentry", "label": "Carpentry / Joinery", "icon": "\ud83e\udeb5"}, {"id": "hvac", "label": "HVAC / Air Con", "icon": "\u2744\ufe0f"}, {"id": "cleaning", "label": "Cleaning / Housekeeping", "icon": "\ud83e\uddf9"}, {"id": "groundswork", "label": "Grounds / Landscaping", "icon": "\ud83c\udf3f"}, {"id": "glazing", "label": "Glazing / Windows", "icon": "\ud83e\ude9f"}, {"id": "flooring", "label": "Flooring / Carpets", "icon": "\ud83c\udfe0"}, {"id": "roofing", "label": "Roofing", "icon": "\ud83c\udfd7\ufe0f"}, {"id": "pest", "label": "Pest Control", "icon": "\ud83d\udc1b"}, {"id": "fire", "label": "Fire Safety", "icon": "\ud83d\udd25"}, {"id": "general", "label": "General Maintenance", "icon": "\ud83d\udd28"}];
+
+// ── SESSION ─────────────────────────────────────────────────────────────────
+let ME = null;
+let MY_USER = null;
+let IS_SUPER = false;
+let IS_APPROVER = false;
+let IS_FIXER = false;
+let IS_REPORTER = false;
+let VIEW = 'dashboard';
+let FILTER = 'all';
+let ACTIVE_MODULE = 'maintenance';
+
+// ── JOBS ─────────────────────────────────────────────────────────────────────
+
+// ── Clean start: jobs logged before 2026-10-10 10:00 UTC (11:00 UK, 10 Oct 2026) are cleared on every device ──
+const HF_CLEAN_FROM='2026-11-06T00:00:00.000Z';   // clean start — only jobs from 6 Nov 2026 onwards
+function hfOldJob(j){ return !j || !(String(j.createdAt||'')>=HF_CLEAN_FROM); }
+let JOBS = JSON.parse(localStorage.getItem('barn_fix_jobs')||'null');
+if(!Array.isArray(JOBS)) JOBS=[];
+{ const before=JOBS.length; JOBS=JOBS.filter(j=>!hfOldJob(j)); if(before!==JOBS.length || localStorage.getItem('barn_fix_jobs')===null) localStorage.setItem('barn_fix_jobs',JSON.stringify(JOBS)); }
+const saveJobs=()=>{
+  try{ if(typeof jobSyncPush==='function') jobSyncPush(); }catch(e){}
+  try{
+    localStorage.setItem('barn_fix_jobs',JSON.stringify(JOBS));
+  }catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22){
+      // Strip photos from completed jobs to free space
+      const stripped=JOBS.map(j=>{
+        if(j.status==='complete'&&(j.startPhoto||j.completionPhoto)){
+          return {...j, startPhoto:null, completionPhoto:null};
+        }
+        return j;
+      });
+      try{
+        localStorage.setItem('barn_fix_jobs',JSON.stringify(stripped));
+        JOBS.forEach((j,i)=>{ j.startPhoto=stripped[i].startPhoto; j.completionPhoto=stripped[i].completionPhoto; });
+        toast('Storage full — photos stripped from completed jobs');
+      }catch(e2){
+        toast('⚠️ Storage full — please sync and clear data');
+        console.error('saveJobs failed:', e2);
+      }
+    }
+  }
+};
+
+// ── INVENTORY ────────────────────────────────────────────────────────────────
+let INVENTORY = JSON.parse(localStorage.getItem('barn_fix_inventory')||'null');
+if(INVENTORY===null){ INVENTORY=[{"id": "inv001", "category": "Plumbing", "name": "Bath plug (universal)", "unit": "each", "tradePrice": 2.5, "stock": 10, "minStock": 5, "supplier": "Screwfix"}, {"id": "inv002", "category": "Plumbing", "name": "Shower hose (1.5m)", "unit": "each", "tradePrice": 8.99, "stock": 6, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv003", "category": "Plumbing", "name": "Shower head (standard)", "unit": "each", "tradePrice": 12.99, "stock": 3, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv004", "category": "Plumbing", "name": "Tap washer set (mixed)", "unit": "pack", "tradePrice": 3.49, "stock": 8, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv005", "category": "Plumbing", "name": "Toilet inlet valve", "unit": "each", "tradePrice": 9.99, "stock": 4, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv006", "category": "Plumbing", "name": "Toilet flush valve / syphon", "unit": "each", "tradePrice": 7.5, "stock": 3, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv007", "category": "Plumbing", "name": "Toilet seat (standard white)", "unit": "each", "tradePrice": 18.0, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv008", "category": "Plumbing", "name": "Shower thermostat cartridge", "unit": "each", "tradePrice": 24.99, "stock": 3, "minStock": 2, "supplier": "Plumbase Coventry"}, {"id": "inv009", "category": "Plumbing", "name": "PTFE tape", "unit": "roll", "tradePrice": 0.79, "stock": 15, "minStock": 5, "supplier": "Screwfix"}, {"id": "inv010", "category": "Plumbing", "name": "Sink waste trap (P-trap)", "unit": "each", "tradePrice": 5.49, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv011", "category": "Plumbing", "name": "Push-fit pipe connector 15mm", "unit": "each", "tradePrice": 1.89, "stock": 20, "minStock": 10, "supplier": "Screwfix"}, {"id": "inv012", "category": "Plumbing", "name": "Silicone sealant (white)", "unit": "tube", "tradePrice": 4.99, "stock": 8, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv013", "category": "Plumbing", "name": "Shower door seal strip", "unit": "each", "tradePrice": 11.99, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv014", "category": "Plumbing", "name": "Bath/shower grout (white)", "unit": "kg", "tradePrice": 6.5, "stock": 5, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv015", "category": "Plumbing", "name": "Pipe lagging / insulation", "unit": "metre", "tradePrice": 1.2, "stock": 20, "minStock": 10, "supplier": "Screwfix"}, {"id": "inv016", "category": "Electrical", "name": "TV remote (universal hotel)", "unit": "each", "tradePrice": 6.99, "stock": 8, "minStock": 6, "supplier": "Amazon"}, {"id": "inv017", "category": "Electrical", "name": "LED bulb GU10 (warm white)", "unit": "each", "tradePrice": 2.49, "stock": 30, "minStock": 15, "supplier": "Screwfix"}, {"id": "inv018", "category": "Electrical", "name": "LED bulb E27 (warm white)", "unit": "each", "tradePrice": 2.99, "stock": 20, "minStock": 10, "supplier": "Screwfix"}, {"id": "inv019", "category": "Electrical", "name": "LED bulb B22 bayonet (warm white)", "unit": "each", "tradePrice": 2.49, "stock": 20, "minStock": 10, "supplier": "Screwfix"}, {"id": "inv020", "category": "Electrical", "name": "Extractor fan (100mm bathroom)", "unit": "each", "tradePrice": 18.99, "stock": 3, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv021", "category": "Electrical", "name": "Fused spur (13A)", "unit": "each", "tradePrice": 7.99, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv022", "category": "Electrical", "name": "Socket outlet (single 13A)", "unit": "each", "tradePrice": 4.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv023", "category": "Electrical", "name": "Light switch (single 1-gang)", "unit": "each", "tradePrice": 3.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv024", "category": "Electrical", "name": "Extension lead (4-gang surge protected)", "unit": "each", "tradePrice": 12.99, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv025", "category": "Electrical", "name": "Cable ties (mixed pack)", "unit": "pack", "tradePrice": 3.99, "stock": 10, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv026", "category": "Electrical", "name": "Electrical tape (black)", "unit": "roll", "tradePrice": 1.49, "stock": 10, "minStock": 5, "supplier": "Screwfix"}, {"id": "inv027", "category": "Electrical", "name": "Heat lamp bulb (infra-red E27)", "unit": "each", "tradePrice": 8.99, "stock": 12, "minStock": 6, "supplier": "Amazon"}, {"id": "inv028", "category": "Electrical", "name": "Aerial cable (coax, 1m fly lead)", "unit": "each", "tradePrice": 3.49, "stock": 10, "minStock": 6, "supplier": "Amazon"}, {"id": "inv029", "category": "Electrical", "name": "HDMI cable (1.5m)", "unit": "each", "tradePrice": 4.99, "stock": 8, "minStock": 4, "supplier": "Amazon"}, {"id": "inv030", "category": "Decorating", "name": "Dulux Magnolia emulsion (5L)", "unit": "tin", "tradePrice": 22.0, "stock": 6, "minStock": 3, "supplier": "Brewers Decorator Centres"}, {"id": "inv031", "category": "Decorating", "name": "Dulux white gloss (2.5L)", "unit": "tin", "tradePrice": 18.0, "stock": 4, "minStock": 2, "supplier": "Brewers Decorator Centres"}, {"id": "inv032", "category": "Decorating", "name": "Fine surface filler (tub)", "unit": "tub", "tradePrice": 6.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv033", "category": "Decorating", "name": "Sandpaper sheets (mixed grit pack)", "unit": "pack", "tradePrice": 4.99, "stock": 8, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv034", "category": "Decorating", "name": "Paint roller (9 inch) + tray", "unit": "set", "tradePrice": 5.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv035", "category": "Decorating", "name": "Masking tape (38mm)", "unit": "roll", "tradePrice": 2.49, "stock": 12, "minStock": 6, "supplier": "Screwfix"}, {"id": "inv036", "category": "Decorating", "name": "Paintbrush set (mixed)", "unit": "set", "tradePrice": 7.99, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv037", "category": "Decorating", "name": "Caulk / decorators caulk (white)", "unit": "tube", "tradePrice": 3.49, "stock": 10, "minStock": 5, "supplier": "Screwfix"}, {"id": "inv038", "category": "Decorating", "name": "Plaster (bonding coat, 25kg)", "unit": "bag", "tradePrice": 14.0, "stock": 4, "minStock": 2, "supplier": "Travis Perkins"}, {"id": "inv039", "category": "Decorating", "name": "Plasterboard (900x1200mm)", "unit": "sheet", "tradePrice": 9.5, "stock": 6, "minStock": 2, "supplier": "Travis Perkins"}, {"id": "inv040", "category": "Fixings & Hardware", "name": "Wood screws (mixed box)", "unit": "box", "tradePrice": 8.99, "stock": 5, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv041", "category": "Fixings & Hardware", "name": "Wall plugs + screws (mixed)", "unit": "box", "tradePrice": 5.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv042", "category": "Fixings & Hardware", "name": "Door hinge (stainless, pair)", "unit": "pair", "tradePrice": 4.99, "stock": 8, "minStock": 4, "supplier": "Screwfix"}, {"id": "inv043", "category": "Fixings & Hardware", "name": "Door handle set (lever, chrome)", "unit": "set", "tradePrice": 14.99, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv044", "category": "Fixings & Hardware", "name": "Window handle (standard)", "unit": "each", "tradePrice": 6.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv045", "category": "Fixings & Hardware", "name": "Tile adhesive (ready mixed)", "unit": "tub", "tradePrice": 12.99, "stock": 4, "minStock": 2, "supplier": "Travis Perkins"}, {"id": "inv046", "category": "Fixings & Hardware", "name": "Tile grout (white, ready mixed)", "unit": "tub", "tradePrice": 8.99, "stock": 4, "minStock": 2, "supplier": "Travis Perkins"}, {"id": "inv047", "category": "Fixings & Hardware", "name": "WD-40 (400ml)", "unit": "can", "tradePrice": 5.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv048", "category": "Fixings & Hardware", "name": "Expanding foam (500ml)", "unit": "can", "tradePrice": 7.49, "stock": 4, "minStock": 2, "supplier": "Screwfix"}, {"id": "inv049", "category": "Fixings & Hardware", "name": "Grab adhesive (no nails)", "unit": "tube", "tradePrice": 4.99, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv050", "category": "Fixings & Hardware", "name": "Castors (furniture, set of 4)", "unit": "set", "tradePrice": 8.99, "stock": 10, "minStock": 5, "supplier": "Amazon"}, {"id": "inv051", "category": "Cleaning", "name": "Multi-purpose cleaner (5L)", "unit": "bottle", "tradePrice": 6.99, "stock": 8, "minStock": 4, "supplier": "Bunzl"}, {"id": "inv052", "category": "Cleaning", "name": "Limescale remover (5L)", "unit": "bottle", "tradePrice": 8.99, "stock": 6, "minStock": 3, "supplier": "Bunzl"}, {"id": "inv053", "category": "Cleaning", "name": "Drain unblocker (1L)", "unit": "bottle", "tradePrice": 5.49, "stock": 6, "minStock": 3, "supplier": "Screwfix"}, {"id": "inv054", "category": "Cleaning", "name": "Mould and mildew spray", "unit": "bottle", "tradePrice": 4.99, "stock": 8, "minStock": 4, "supplier": "Bunzl"}, {"id": "inv055", "category": "Cleaning", "name": "Heavy duty refuse sacks (200 pack)", "unit": "pack", "tradePrice": 12.99, "stock": 4, "minStock": 2, "supplier": "Bunzl"}, {"id": "inv056", "category": "Grounds", "name": "Cable marker / conduit (outdoor)", "unit": "metre", "tradePrice": 2.99, "stock": 20, "minStock": 10, "supplier": "Screwfix"}, {"id": "inv057", "category": "Grounds", "name": "Exterior wood preservative (2.5L)", "unit": "tin", "tradePrice": 16.99, "stock": 3, "minStock": 2, "supplier": "Brewers"}, {"id": "inv058", "category": "Grounds", "name": "Outdoor gravel (25kg bag)", "unit": "bag", "tradePrice": 5.99, "stock": 10, "minStock": 4, "supplier": "Travis Perkins"}, {"id": "inv059", "category": "Grounds", "name": "Post repair compound (fast set)", "unit": "bag", "tradePrice": 8.99, "stock": 4, "minStock": 2, "supplier": "Travis Perkins"}, {"id": "inv060", "category": "Grounds", "name": "Exterior sealant (clear)", "unit": "tube", "tradePrice": 6.49, "stock": 6, "minStock": 3, "supplier": "Screwfix"}]; localStorage.setItem('barn_fix_inventory',JSON.stringify(INVENTORY)); }
+const saveInventory=()=>localStorage.setItem('barn_fix_inventory',JSON.stringify(INVENTORY));
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+let ACTIVE_TIMER = JSON.parse(localStorage.getItem('barn_fix_timer')||'null');
+let TIME_LOGS = JSON.parse(localStorage.getItem('barn_fix_timelogs')||'[]');
+const saveTimer=()=>localStorage.setItem('barn_fix_timer',JSON.stringify(ACTIVE_TIMER));
+const saveTimeLogs=()=>localStorage.setItem('barn_fix_timelogs',JSON.stringify(TIME_LOGS));
+
+// ── CURRENT JOB STATE (form) ─────────────────────────────────────────────────
+let FS = {};
+let _jid = null; // current job id for photo/timer operations
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+// ── PERSONAL URL CONFIG (overridden per-person file) ──
+// Set by each personal file before this script runs
+const PRESET_USER = window.PRESET_USER || null;
+
+const $=id=>document.getElementById(id);
+
+// Compress photo before storing - prevents quota exceeded
+function compressPhoto(dataUrl, maxWidth, quality, callback){
+  const img=new Image();
+  img.onload=function(){
+    const canvas=document.createElement('canvas');
+    let w=img.width, h=img.height;
+    if(w>maxWidth){ h=Math.round(h*maxWidth/w); w=maxWidth; }
+    canvas.width=w; canvas.height=h;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,w,h);
+    callback(canvas.toDataURL('image/jpeg', quality||0.6));
+  };
+  img.src=dataUrl;
+}
+const makeId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const todayStr=()=>new Date().toISOString().slice(0,10);
+const fmtDate=d=>{if(!d)return'—';try{return new Date(d.slice(0,10)+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}catch{return d}};
+const fmtShort=d=>{if(!d)return'—';try{return new Date(d.slice(0,10)+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}catch{return d}};
+const money=n=>n?'£'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}):'£0.00';
+const initials=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+function toast(msg,ms=2500){
+  const t=$('toast'); t.textContent=msg; t.style.display='block';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',ms);
+}
+
+// ── MODAL (simple, no hacks) ─────────────────────────────────────────────────
+function openModal(html){
+  $('modal-content').innerHTML=html;
+  $('modal-bg').classList.add('open');
+}
+function closeModal(){
+  $('modal-bg').classList.remove('open');
+  $('modal-content').innerHTML='';
+}
+// Backdrop click closes modal
+document.addEventListener('DOMContentLoaded',()=>{
+  $('modal-bg').addEventListener('click',e=>{ if(e.target===$('modal-bg')) closeModal(); });
+});
+
+// ── SCREENS ──────────────────────────────────────────────────────────────────
+function showScreen(id){
+  // Clear inline display styles too — several screens ship with style="display:none",
+  // which otherwise beats the .active class and leaves a blank screen.
+  document.querySelectorAll('.screen').forEach(s=>{ s.classList.remove('active'); s.style.display=''; });
+  const s=$(id); if(s) s.classList.add('active');
+}
+
+// ── INSTALL PROMPT ───────────────────────────────────────────────────────────
+const isInstalled = window.matchMedia('(display-mode:standalone)').matches || navigator.standalone===true;
+const seenInstall = localStorage.getItem('hf_install_seen');
+
+function initInstall(){
+  $('btn-install').onclick = ()=>{
+    onbInstallClick();
+  };
+  $('btn-skip-install').onclick = ()=>{
+    localStorage.setItem('hf_install_seen','1');
+    onbGoStep2();
+  };
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); window._deferredPrompt=e;
+  });
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+// New login: three shared access codes → pick your name → remembered on the device.
+const LG_CODES={ '0000':'admin', '1111':'reporter', '3333':'fixer' };
+let LG_TIER=null;
+function initLogin(){
+  const code=$('lg-code'), cbtn=$('lg-code-btn'), err=$('lg-err');
+  if(code){
+    code.value='';
+    code.addEventListener('input',()=>{ code.value=code.value.replace(/\D/g,'').slice(0,4); if(err) err.textContent=''; if(cbtn) cbtn.disabled=code.value.length!==4; });
+    code.addEventListener('keydown',e=>{ if(e.key==='Enter'&&code.value.length===4) lgCheckCode(); });
+  }
+  if(cbtn) cbtn.onclick=lgCheckCode;
+  // Dedicated per-group links skip the code and open straight on the name list:
+  //   ?tier=management  ·  ?tier=reporter  ·  ?tier=operative   (bare ?management etc. also works)
+  try{
+    const q=new URLSearchParams(location.search);
+    let t=(q.get('tier')||'').toLowerCase();
+    if(!t){ ['management','manager','admin','reporter','reporters','operative','operatives','maintenance','fixer'].forEach(k=>{ if(q.has(k)) t=k; }); }
+    const map={management:'admin',manager:'admin',admin:'admin',reporter:'reporter',reporters:'reporter',operative:'fixer',operatives:'fixer',maintenance:'fixer',fixer:'fixer'};
+    if(map[t]) lgShowNames(map[t]);
+  }catch(e){}
+}
+function lgCheckCode(){
+  const el=$('lg-code'); const entered=(el?el.value:'')||''; const tier=LG_CODES[entered]; const err=$('lg-err');
+  if(!tier){ if(err) err.textContent='Incorrect code — ask your manager'; if(el) el.value=''; const b=$('lg-code-btn'); if(b) b.disabled=true; return; }
+  LG_TIER=tier; if(err) err.textContent=''; lgShowNames(tier);
+}
+function lgTierUsers(tier){
+  if(tier==='admin') return ADMIN_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  if(tier==='fixer') return FIXER_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  // reporter: the named reporters for this build + any names added on this device
+  const base=REPORTER_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  const added=USERS.filter(u=>String(u.id).indexOf('rep_')===0);
+  return base.concat(added);
+}
+function lgShowNames(tier){
+  LG_TIER=tier;
+  const sc=$('lg-step-code'), sn=$('lg-step-name'); if(sc) sc.style.display='none'; if(sn) sn.style.display='block';
+  const LB={admin:'👔 Management — tap your name', reporter:'📣 Report an issue — tap your name', fixer:'🔧 Maintenance team — tap your name'};
+  const lab=$('lg-tier-label'); if(lab) lab.textContent=LB[tier]||'Tap your name';
+  const list=lgTierUsers(tier); const box=$('lg-names');
+  if(box) box.innerHTML=list.map(u=>`<button type="button" onclick="lgPick('${u.id}')" style="padding:11px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:700 14px 'Lato';cursor:pointer;touch-action:manipulation">${u.name.split(' ')[0]}</button>`).join('');
+  const an=$('lg-addname'); if(an) an.style.display = tier==='reporter' ? 'block' : 'none';
+}
+function lgPick(uid){ if(!USERS.find(u=>u.id===uid)) return; try{localStorage.setItem('hf_me',uid);}catch(e){} loginAs(uid, LG_TIER); setTimeout(maybeAskNotifications,2500); }
+function lgAddName(){
+  const el=$('lg-newname'); const v=(el?el.value:'').trim(); if(!v){ if(el) el.focus(); return; }
+  const existing=USERS.find(u=>u.name.toLowerCase()===v.toLowerCase());
+  if(existing){ lgPick(existing.id); return; }
+  const id='rep_'+v.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,18)+'_'+Date.now().toString(36).slice(-3);
+  USERS.push({id,name:v,role:'Reporter',level:1,color:'#64748b',admin:false,seeCosts:false,tier:'reporter'}); saveAddedUsers();
+  lgPick(id);
+}
+function lgBackToCode(){ const sc=$('lg-step-code'), sn=$('lg-step-name'); if(sn) sn.style.display='none'; if(sc) sc.style.display='block'; const c=$('lg-code'); if(c) c.value=''; const b=$('lg-code-btn'); if(b) b.disabled=true; }
+// reporter-added names persist on this device
+function saveAddedUsers(){ try{ const added=USERS.filter(u=>String(u.id).indexOf('rep_')===0).map(u=>({id:u.id,name:u.name,role:u.role||'Reporter',color:u.color||'#64748b',tier:'reporter',level:1,admin:false,seeCosts:false})); localStorage.setItem('hf_added_users',JSON.stringify(added)); }catch(e){} }
+function loadAddedUsers(){ try{ const added=JSON.parse(localStorage.getItem('hf_added_users')||'[]'); added.forEach(a=>{ if(a&&a.id&&!USERS.find(u=>u.id===a.id)) USERS.push(a); }); }catch(e){} }
+
+// ── MODULE HOME ──────────────────────────────────────────────────────────────
+// ── ON DUTY TODAY (home screen) — managers/directors toggle Working / Off ─────
+const DEFAULT_DUTY=["catherine","josh"];
+const dutyKey=()=>'hf_duty_'+todayStr();
+function getDuty(){ try{ const v=JSON.parse(localStorage.getItem(dutyKey())); if(v&&Array.isArray(v.roster)&&Array.isArray(v.working)) return v; }catch(e){} return {roster:DEFAULT_DUTY.slice(), working:DEFAULT_DUTY.slice()}; }
+function setDuty(d){ try{ localStorage.setItem(dutyKey(),JSON.stringify(d)); }catch(e){} }
+function getActiveToday(){ return getDuty().working; }   // kept for compatibility
+function dutyName(id){ const u=USERS.find(x=>x.id===id); return u?u.name:id; }
+function toggleWorking(id){ if(!isAdmin())return; const d=getDuty(); d.working=d.working.includes(id)?d.working.filter(x=>x!==id):d.working.concat([id]); setDuty(d); renderActiveToday(); }
+function addDuty(id){ if(!isAdmin()||!id)return; const d=getDuty(); if(!d.roster.includes(id)){ d.roster.push(id); d.working.push(id); } setDuty(d); renderActiveToday(); }
+function removeDuty(id){ if(!isAdmin())return; const d=getDuty(); d.roster=d.roster.filter(x=>x!==id); d.working=d.working.filter(x=>x!==id); setDuty(d); renderActiveToday(); }
+function renderActiveToday(){
+  const box=$('hf-duty'); if(!box) return;
+  const d=getDuty(); const admin=isAdmin();
+  const rows=d.roster.map(id=>{ const on=d.working.includes(id);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--line)">
+      <span style="flex:1;text-align:left;color:var(--navy);font-weight:700;font-size:14px">${dutyName(id)}</span>
+      <button type="button" ${admin?`onclick="toggleWorking('${id}')"`:'disabled'}
+        style="display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;border:1px solid ${on?'rgba(42,106,74,.5)':'var(--line)'};background:${on?'#e8f3ee':'#fff'};color:${on?'var(--green)':'#7a8494'};font:700 12px 'Lato';${admin?'cursor:pointer':''};touch-action:manipulation">
+        <span style="width:8px;height:8px;border-radius:50%;background:${on?'#2a6a4a':'#c4ccd4'}"></span>${on?'Working':'Off'}</button>
+      ${admin?`<button type="button" onclick="removeDuty('${id}')" title="Remove" style="background:none;border:none;color:#c4ccd4;font-size:19px;line-height:1;cursor:pointer;padding:0 2px">×</button>`:''}
+    </div>`;
+  }).join('');
+  let add='';
+  if(admin){
+    const opts=USERS.filter(u=>!d.roster.includes(u.id)).map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+    add=`<div style="margin-top:12px;display:flex;gap:8px">
+      <select id="duty-add" style="flex:1;background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px">
+        <option value="">+ Add a name…</option>${opts}</select>
+      <button type="button" onclick="addDuty(document.getElementById('duty-add').value)" style="padding:10px 15px;border:none;border-radius:10px;background:var(--navy);color:#fff;font:700 13px 'Lato';cursor:pointer">Add</button>
+    </div>`;
+  }
+  box.innerHTML=`<div style="font-size:11px;font-weight:700;letter-spacing:.6px;color:#7a8494;margin-bottom:8px;text-transform:uppercase;text-align:left">👷 On duty today</div>
+    ${rows||'<div style="color:#9ca3af;font-size:13px;padding:10px 0;text-align:left">No one set for today</div>'}${add}`;
+}
+
+// ── ENTER APP (login lands straight on the dashboard — no module chooser) ──
+function enterApp(){
+  ACTIVE_MODULE='maintenance';
+  document.querySelectorAll('.screen').forEach(s=>{ s.classList.remove('active'); s.style.display=''; });
+  $('app').style.display='flex';
+  VIEW = isReporter() ? 'jobs' : 'dashboard'; FILTER='all';
+  buildMaintenanceNav();
+  render();
+}
+
+function goHome(){
+  $('modal-bg').classList.remove('open');
+  VIEW = isReporter() ? 'jobs' : 'dashboard'; FILTER='all';
+  const bn=$('bnav'); if(bn){ bn.querySelectorAll('.bnav').forEach(x=>x.classList.remove('on')); const d=bn.querySelector('[data-v="'+VIEW+'"]'); if(d) d.classList.add('on'); }
+  render();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const tb=$('tb-home-btn'); if(tb) tb.addEventListener('click',goHome);
+  const s1=$('btn-signout-home'); if(s1) s1.addEventListener('click',signOut);
+  const s2=$('btn-signout-app'); if(s2) s2.addEventListener('click',signOut);
+});
+
+function signOut(){
+  sessionStorage.removeItem('hf_user');
+  SESSION_TIER=null;
+  try{ localStorage.removeItem('hf_me'); localStorage.removeItem('hf_tier'); }catch(e){}   // clear remembered login
+  ACTIVE_TIMER=null; saveTimer();
+  $('app').style.display='none';
+  try{ var sc=$('lg-step-code'), sn=$('lg-step-name'), c=$('lg-code'); if(sn) sn.style.display='none'; if(sc) sc.style.display='block'; if(c) c.value=''; }catch(e){}
+  showScreen('scr-login');
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
+let swReg=null;
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('hosfix-sw.js?v=20261106a')
+    .then(r=>{swReg=r;}).catch(()=>{});
+}
+
+function maybeAskNotifications(){
+  try{
+  const notifPending = (typeof Notification!=='undefined') && ('Notification' in window) && Notification.permission==='default';
+  let mediaPending=true; try{ mediaPending = !localStorage.getItem('hf_media_primed'); }catch(e){}
+  if(!notifPending && !mediaPending) return;   // already set up
+  const nb=$('notif-banner'); if(!nb) return;
+  nb.style.display='flex';
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const ab=$('btn-notif-allow');
+  if(ab) ab.addEventListener('click',()=>{
+    $('notif-banner').style.display='none';
+    if(typeof hfRequestPermissions==='function') hfRequestPermissions();
+  });
+  const cb=$('btn-notif-close');
+  if(cb) cb.addEventListener('click',()=>{ $('notif-banner').style.display='none'; });
+});
+
+function sendNotif(title,body,tag){
+  try{
+    if(typeof Notification==='undefined') return;
+    if(Notification.permission!=='granted') return;
+    const opts={body,icon:'assets/icon-192.png',badge:'assets/icon-192.png',tag,vibrate:[200,100,200]};
+    if(swReg) swReg.showNotification(title,opts);
+    else new Notification(title,opts);
+  }catch(e){}
+}
+
+// ── One-tap permissions: push notifications (work even when the app is closed)
+//    + camera + microphone, so photos and voice notes never prompt mid-report.
+//    Must be called straight from a tap (user gesture) or the prompts won't show.
+async function hfRequestPermissions(){
+  // 1) Notifications → register this phone for push via FCM
+  try{
+    if(typeof Notification!=='undefined'){
+      if(Notification.permission==='default'){
+        const p=await Notification.requestPermission();
+        if(p==='granted'){ try{localStorage.setItem('hf_notif_granted','1');}catch(e){} if(typeof fcmEnsureRegistered==='function') fcmEnsureRegistered(true); }
+        else { try{localStorage.setItem('hf_notif_granted','0');}catch(e){} }
+      } else if(Notification.permission==='granted'){
+        if(typeof fcmEnsureRegistered==='function') fcmEnsureRegistered(true);
+      }
+    }
+  }catch(e){}
+  // 2) Camera + microphone — prime so the reporter's photo/voice capture is instant
+  try{
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+      let stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true}).catch(()=>null);
+      if(!stream) stream=await navigator.mediaDevices.getUserMedia({audio:true}).catch(()=>null);
+      if(stream){ try{stream.getTracks().forEach(t=>t.stop());}catch(e){} try{localStorage.setItem('hf_media_primed','1');}catch(e){} }
+    } else { try{localStorage.setItem('hf_media_primed','1');}catch(e){} }
+  }catch(e){}
+  try{ toast('✓ All set — alerts, camera & mic ready'); }catch(e){}
+}
+
+// ── MAINTENANCE NAV ──────────────────────────────────────────────────────────
+function buildMaintenanceNav(){
+  let btns;
+  if(isReporter()){
+    btns=`
+    <button class="bnav on" data-v="jobs"><span class="ico">📋</span>My Reports</button>
+    <button class="bnav" data-v="new"><span class="ico">➕</span>Report a Fault</button>`;
+  } else if(isFixer()){
+    // Maintenance team — action jobs only, no reporting
+    btns=`
+    <button class="bnav on" data-v="dashboard"><span class="ico">📊</span>Dashboard</button>
+    <button class="bnav" data-v="jobs"><span class="ico">🔧</span>My Jobs<span class="bb" id="bn-u" style="display:none"></span></button>`;
+  } else {
+    btns=`
+    <button class="bnav on" data-v="dashboard"><span class="ico">📊</span>Dashboard</button>
+    <button class="bnav" data-v="jobs"><span class="ico">🔧</span>Jobs<span class="bb" id="bn-u" style="display:none"></span></button>
+    <button class="bnav" data-v="new"><span class="ico">➕</span>New Job</button>
+    <button class="bnav" data-v="stock"><span class="ico">📦</span>Stock</button>
+    <button class="bnav" data-v="report"><span class="ico">📈</span>Report</button>`;
+  }
+  $('bnav').innerHTML=btns;
+  $('bnav').querySelectorAll('.bnav').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.v==='new'){ openNewJob(); return; }
+    VIEW=b.dataset.v; FILTER='all';
+    $('bnav').querySelectorAll('.bnav').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    render();
+  }));
+}
+
+function updateBadge(){
+  const u=myJobs().filter(j=>j.priority==='urgent'&&j.status!=='complete').length;
+  const bn=$('bn-u'); if(!bn) return;
+  bn.textContent=u; bn.style.display=u?'':'none';
+}
+
+function render(){
+  try{
+    updateBadge();
+    const el=$('content'); if(!el) return;
+    let html='';
+    if(VIEW==='dashboard') html=renderDashboard();
+    else if(VIEW==='jobs') html=renderJobs();
+    else if(VIEW==='stock') html=renderStock();
+    else if(VIEW==='report') html=renderReport();
+    el.innerHTML=html;
+    // wire stat card filters
+    el.querySelectorAll('.stat-card[data-filter]').forEach(c=>{
+      c.addEventListener('click',()=>{
+        FILTER=c.dataset.filter; VIEW='jobs';
+        $('bnav').querySelectorAll('.bnav').forEach(b=>b.classList.remove('on'));
+        $('bnav').querySelector('[data-v="jobs"]')?.classList.add('on');
+        render();
+      });
+    });
+    // wire job cards
+    el.querySelectorAll('.jcard[onclick]').forEach(c=>{
+      // inline onclick on jcard is fine
+    });
+    // wire filter chips in jobs view
+    el.querySelectorAll('.chip[data-filter]').forEach(c=>{
+      c.addEventListener('click',()=>{ FILTER=c.dataset.filter; render(); });
+    });
+    if(VIEW==='dashboard'){ try{ renderActiveToday(); }catch(_e){} }
+  }catch(e){ console.error('render error:',e); }
+}
+
+
+// ── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const _J=myJobs();
+  const open=_J.filter(j=>j.status!=='complete');
+  const urgent=open.filter(j=>j.priority==='urgent');
+  const inprog=open.filter(j=>j.status==='in-progress');
+  const notstart=open.filter(j=>j.status==='not-started');
+  const complete=_J.filter(j=>j.status==='complete');
+  const hr=new Date().getHours();
+  const greet=hr<12?'Good morning':hr<18?'Good afternoon':'Good evening';
+  const first=MY_USER?.name.split(' ')[0]||'';
+  const dateStr=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+
+  let html=`<div class="hf-hero">
+    <div class="hf-hero-greet">${greet}, ${first}</div>
+    <div class="hf-hero-date">${dateStr}</div>
+    <div class="hf-hero-line">
+      <span class="hf-hero-stat"><b>${open.length}</b> open</span>
+      ${urgent.length?`<span class="hf-hero-stat urg"><b>${urgent.length}</b> urgent</span>`:''}
+      <span class="hf-hero-stat"><b>${complete.length}</b> done</span>
+    </div>
+  </div>`;
+
+  if(ACTIVE_TIMER){
+    const j=JOBS.find(x=>x.id===ACTIVE_TIMER.jobId);
+    if(j){
+      html+=`<div style="margin:12px 14px 0;background:#e8f3ee;border-radius:14px;padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:12px" onclick="openJobDetail('${j.id}')">
+        <span style="font-size:22px">⏱</span>
+        <div style="flex:1"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:2px">ACTIVE JOB — tap to continue</div>
+        <div style="font-weight:700;font-size:14px;color:var(--navy)">${j.title}</div></div>
+      </div>`;
+    }
+  }
+
+  html+=`<div class="stat-grid">
+    <div class="stat-card orange" data-filter="urgent"><div class="stat-v">${urgent.length}</div><div class="stat-k">🟠 Urgent</div></div>
+    <div class="stat-card red" data-filter="not-started"><div class="stat-v">${notstart.length}</div><div class="stat-k">🔴 Not started</div></div>
+    <div class="stat-card amber" data-filter="in-progress"><div class="stat-v">${inprog.length}</div><div class="stat-k">🟡 In progress</div></div>
+    <div class="stat-card green" data-filter="complete"><div class="stat-v">${complete.length}</div><div class="stat-k">🟢 Complete</div></div>
+  </div>`;
+
+  if(IS_SUPER){
+    html+=`<div style="padding:0 14px 2px"><button type="button" class="btn btn-orange" onclick="openNewJob()">➕ Log a new job</button></div>`;
+  }
+
+  if(isAdmin()){
+    html+=`<div style="padding:4px 14px 2px"><button type="button" onclick="hfClearAllJobs()" style="width:100%;padding:11px;border:1px dashed #c3ccd6;border-radius:11px;background:#fff;color:#7a8494;font:700 13px Lato;cursor:pointer">🗑 Clear all jobs</button></div>`;
+  }
+
+  if(isAdmin()){
+    html+=`<div style="margin:6px 14px 2px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 6px rgba(26,43,58,.06)"><div id="hf-duty"></div></div>`;
+  }
+
+  const recent=open.slice().sort((a,b)=>{ const au=a.priority==='urgent'?0:1, bu=b.priority==='urgent'?0:1; if(au!==bu) return au-bu; return new Date(b.createdAt||0)-new Date(a.createdAt||0); }).slice(0,6);
+  html+=`<div style="padding:16px 16px 6px"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy)">Open jobs</div></div>
+    <div style="padding:0 0 90px">`;
+  if(recent.length){ recent.forEach(j=>{ html+=jobCard(j); }); }
+  else { html+=`<div style="text-align:center;padding:24px 20px;color:#7a8494"><div style="font-size:40px;margin-bottom:8px">✅</div><div style="font-weight:700;color:var(--navy)">All clear — no open jobs</div></div>`; }
+  html+=`</div>`;
+  return html;
+}
+
+
+// ── JOBS LIST ─────────────────────────────────────────────────────────────────
+function renderJobs(){
+  let jobs=myJobs();
+  // Sort: urgent first, then by date desc
+  jobs.sort((a,b)=>{
+    const order={urgent:0,'not-started':1,'in-progress':2,complete:3};
+    const as=a.priority==='urgent'?0:order[a.status]??1;
+    const bs=b.priority==='urgent'?0:order[b.status]??1;
+    if(as!==bs) return as-bs;
+    return new Date(b.createdAt||0)-new Date(a.createdAt||0);
+  });
+
+  // Filter
+  if(FILTER==='new') jobs=jobs.filter(j=>j.status!=='complete' && !(j.assignees||[]).some(a=>FIXER_TIER.includes(a)));
+  else if(FILTER==='urgent') jobs=jobs.filter(j=>j.priority==='urgent'&&j.status!=='complete');
+  else if(FILTER==='not-started') jobs=jobs.filter(j=>j.status==='not-started');
+  else if(FILTER==='in-progress') jobs=jobs.filter(j=>j.status==='in-progress');
+  else if(FILTER==='complete') jobs=jobs.filter(j=>j.status==='complete');
+
+  let html=`${isReporter()?`<div class="hf-hero"><div class="hf-hero-greet">Hi ${MY_USER?.name.split(' ')[0]||''}</div><div class="hf-hero-date">Spotted something that needs fixing?</div></div><div style="padding:14px 14px 0"><button type="button" class="btn btn-orange" onclick="openNewJob()">➕ Report a fault</button></div>`:''}<div class="chips">
+    ${(isReporter()?['all','urgent','not-started','in-progress','complete']:['all','new','urgent','not-started','in-progress','complete']).map(f=>`
+      <span class="chip ${FILTER===f?'on':''}" data-filter="${f}">${
+        f==='all'?'All ('+myJobs().filter(j=>j.status!=='complete').length+')':
+        f==='new'?'🆕 To allocate ('+myJobs().filter(j=>j.status!=='complete'&&!(j.assignees||[]).some(a=>FIXER_TIER.includes(a))).length+')':
+        f==='urgent'?'🟠 Urgent':f==='not-started'?'🔴 Not started':
+        f==='in-progress'?'🟡 In progress':'🟢 Complete'
+      }</span>`).join('')}
+  </div><div style="padding:0 0 80px">`;
+  if(jobs.length===0){
+    html+=`<div style="text-align:center;padding:40px 20px">
+      <div style="font-size:48px;margin-bottom:14px">📋</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy);margin-bottom:8px">No jobs yet</div>
+      <div style="font-size:13px;color:#7a8494;margin-bottom:20px">Ask your manager to share a sync link, or tap below if you have one</div>
+      <button type="button" class="btn btn-navy" style="max-width:280px;margin:0 auto" onclick="promptSyncLink()">📲 Import jobs from sync link</button>
+    </div>`;
+  } else {
+    jobs.forEach(j=>{ html+=jobCard(j); });
+  }
+  html+='</div>';
+  return html;
+}
+
+function promptSyncLink(){
+  const link=prompt('Paste the sync link your manager shared:');
+  if(!link) return;
+  // Extract hash
+  const hash=link.includes('#sync=')?link.split('#sync=')[1]:link;
+  if(!hash){ toast('Invalid link'); return; }
+  location.hash='sync='+hash;
+  checkSyncHash();
+}
+
+function jobCard(j){
+  const cls=j.priority==='urgent'&&j.status!=='complete'?'s-urgent':
+    j.status==='complete'?'s-complete':j.status==='in-progress'?'s-in-progress':
+    j.status==='pending_approval'?'s-pending':'s-not-started';
+  const assignees=(j.assignees||[]).map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  const unassigned=!(j.assignees||[]).length && j.status!=='complete';
+  const occ=j.occupancy==='occupied'?`<span class="j-badge" style="background:#fde8e6;color:#b3261e">🚪 Occupied</span>`
+    :j.occupancy==='vacant'?`<span class="j-badge" style="background:#e8f3ee;color:#2a6a4a">✅ Vacant</span>`:'';
+  return `<div class="jcard ${cls}" onclick="openJobDetail('${j.id}')">
+    <div class="j-title${j.status==='complete'?' done':''}">${j.title}</div>
+    <div class="j-meta">
+      ${j.areaLabel?`<span>📍 ${j.areaLabel}${j.location?' · '+j.location:''}</span>`:''}
+      ${j.workType?`<span>· ${WORK_TYPES.find(w=>w.id===j.workType)?.label||j.workType}</span>`:''}
+      ${j.priority==='urgent'&&j.status!=='complete'?`<span class="j-badge urgent">🔴 Urgent</span>`:''}
+      ${unassigned?`<span class="j-badge" style="background:#fff3e8;color:#c45c00">⏳ Unassigned</span>`:''}
+      ${occ}
+      ${j.voiceNote?`<span title="Voice note">🎙️</span>`:''}
+      ${(j.photos&&j.photos.length)?`<span title="Photos">📷${j.photos.length}</span>`:''}
+      ${j.status==='in-progress'?`<span class="j-badge in-prog">⏱ In progress</span>`:''}
+      ${j.status==='complete'?`<span class="j-badge complete">✓ Complete</span>`:''}
+      <span style="margin-left:auto;font-size:11px;color:#9ca3af">${fmtShort(j.createdAt?.slice(0,10)||j.createdAt)}</span>
+    </div>
+    ${assignees.length?`<div class="j-avs">${assignees.map(u=>`<div class="av" style="background:${u.color}" title="${u.name}">${initials(u.name)}</div>`).join('')}</div>`:''}
+  </div>`;
+}
+
+
+// ── NEW JOB FORM ──────────────────────────────────────────────────────────────
+function openNewJob(){
+  FS={ module:'maintenance', area:'', location:'', workType:'', title:'', description:'',
+    status:'not-started', priority:'medium', assignees:[], cost:0, photos:[], materials:[],
+    occupancy:'', voiceNote:null, newJobPhoto:null };
+  if(IS_REPORTER){ renderReporterForm(); } else { renderNewJobForm(); }
+}
+
+function renderNewJobForm(){
+  const isSup=IS_SUPER;
+  const f=FS;
+
+  let html=`<div class="modal-title">New job</div>
+
+  <div class="f-field"><label>Area</label>
+    <select id="nj-area">
+      <option value="">Select area…</option>
+      ${Object.entries(PROPERTY).map(([k,v])=>`<option value="${k}" ${f.area===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="f-field" id="nj-room-wrap" style="${f.area?'':'display:none'}"><label>Room / Location</label>
+    <select id="nj-room">
+      <option value="">Select room…</option>
+      ${f.area&&PROPERTY[f.area]?PROPERTY[f.area].rooms.map(r=>`<option value="${r}" ${f.location===r?'selected':''}>${r}</option>`).join(''):''}
+    </select>
+  </div>
+
+  <div class="f-field"><label>Work type</label>
+    <select id="nj-wtype">
+      <option value="">Select type…</option>
+      ${WORK_TYPES.map(w=>`<option value="${w.id}" ${f.workType===w.id?'selected':''}>${w.icon} ${w.label}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="f-field"><label>Job title *</label>
+    <input type="text" id="nj-title" placeholder="e.g. Leaking tap in bathroom" value="${f.title}">
+  </div>
+
+  <div class="f-field"><label>Details / notes</label>
+    <textarea id="nj-desc" placeholder="What was found, access notes, any hazards…">${f.description}</textarea>
+  </div>
+
+  <div class="f-field"><label>Status</label>
+    <div class="toggle-row">
+      <button type="button" class="toggle-opt ${f.status==='not-started'?'on-ns':''}" onclick="setFS('status','not-started',this,'on-ns','toggle-row')">Not started</button>
+      <button type="button" class="toggle-opt ${f.status==='in-progress'?'on-ip':''}" onclick="setFS('status','in-progress',this,'on-ip','toggle-row')">In progress</button>
+      <button type="button" class="toggle-opt ${f.status==='complete'?'on-co':''}" onclick="setFS('status','complete',this,'on-co','toggle-row')">Complete</button>
+      <button type="button" class="toggle-opt ${f.status==='urgent'?'on-ur':''}" onclick="setFS('status','not-started',this,'on-ur','toggle-row');setFS('priority','urgent',null,'','')">URGENT</button>
+    </div>
+  </div>
+
+  <div class="f-field"><label>Priority</label>
+    <div class="prio-row">
+      ${['urgent','high','medium','low'].map(p=>`
+        <button type="button" class="prio-opt ${f.priority===p?'on':''}" onclick="setFS('priority','${p}',this,'on','prio-row')">${p.charAt(0).toUpperCase()+p.slice(1)}</button>`).join('')}
+    </div>
+  </div>
+
+  ${isSup?`<div class="f-field"><label>Assign to</label>
+    <div id="nj-assignees">
+      ${FIXER_TIER.map(id=>USERS.find(x=>x.id===id)).filter(Boolean).map(u=>`
+        <div class="arow ${(f.assignees||[]).includes(u.id)?'selected':''}" data-uid="${u.id}">
+          <div class="av" style="background:${u.color}">${initials(u.name)}</div>
+          <div><div class="ar-name">${u.name}</div><div class="ar-role">${u.role}</div></div>
+          <div class="ar-ck">✓</div>
+        </div>`).join('')}
+    </div>
+  </div>`:`<input type="hidden" id="nj-assignee-hidden" value="${ME}">`}
+
+  <div class="f-field"><label>Cost estimate (£)</label>
+    <input type="number" id="nj-cost" value="${f.cost||0}" min="0" step="0.01">
+  </div>
+
+  <div class="f-field">
+    <label>Photo (optional)</label>
+    <div class="photo-zone" id="nj-photo-zone">📷 Tap to add a photo</div>
+    <div id="nj-photo-preview" style="margin-top:8px"></div>
+  </div>
+
+  <div class="btn-row" style="margin-top:18px">
+    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button type="button" class="btn btn-navy btn-full" onclick="submitJob()">✓ Log job</button>
+  </div>`;
+
+  openModal(html);
+
+  // Wire events AFTER modal is in DOM
+  // Photo zone — use global input element
+  if($('_nj_photo_inp')) document.body.removeChild($('_nj_photo_inp'));
+  const njPhotoInp=document.createElement('input');
+  njPhotoInp.id='_nj_photo_inp';
+  njPhotoInp.type='file'; njPhotoInp.accept='image/*'; njPhotoInp.capture='environment';
+  njPhotoInp.style.cssText='position:fixed;top:-200px;left:-200px;opacity:0;width:1px;height:1px';
+  document.body.appendChild(njPhotoInp);
+  $('nj-photo-zone').addEventListener('click',()=>njPhotoInp.click());
+  njPhotoInp.addEventListener('change',function(){
+    const file=this.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      compressPhoto(e.target.result,800,0.6,function(compressed){
+        FS.newJobPhoto=compressed;
+        const pz=$('nj-photo-zone');
+        const pv=$('nj-photo-preview');
+        if(pz){pz.className='photo-zone captured';pz.textContent='✓ Photo added';}
+        if(pv) pv.innerHTML='<img src="'+compressed+'" style="width:100%;border-radius:10px;max-height:150px;object-fit:cover">';
+        toast('Photo added ✓');
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Area change → show rooms
+  $('nj-area').addEventListener('change',function(){
+    FS.area=this.value; FS.location='';
+    const wrap=$('nj-room-wrap');
+    const sel=$('nj-room');
+    if(this.value&&PROPERTY[this.value]){
+      sel.innerHTML='<option value="">Select room…</option>'+
+        PROPERTY[this.value].rooms.map(r=>`<option value="${r}">${r}</option>`).join('');
+      wrap.style.display='';
+    } else { wrap.style.display='none'; }
+  });
+
+  // Assignee toggles (supervisors only)
+  if(isSup){
+    $('nj-assignees').querySelectorAll('.arow').forEach(row=>{
+      row.addEventListener('click',()=>{
+        const uid=row.dataset.uid;
+        if(!FS.assignees) FS.assignees=[];
+        const idx=FS.assignees.indexOf(uid);
+        if(idx>-1){ FS.assignees.splice(idx,1); row.classList.remove('selected'); }
+        else { FS.assignees.push(uid); row.classList.add('selected'); }
+      });
+    });
+  }
+
+  // submit via inline onclick on button
+}
+
+// ── REPORTER FORM (simple: where · occupied? · what's wrong · photos · 25s voice) ──
+function renderReporterForm(){
+  const f=FS; if(!f.photos) f.photos=[];
+  let html=`<div class="modal-title">📣 Report an issue</div>
+  <p style="font-size:13px;color:#7a8494;margin:-6px 0 14px">Quick report — where it is, what's wrong, a photo or voice note. The team allocates it.</p>
+
+  <div class="f-field"><label>Where is it?</label>
+    <select id="rp-area"><option value="">Select area…</option>
+      ${Object.entries(PROPERTY).map(([k,v])=>`<option value="${k}" ${f.area===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}
+    </select>
+  </div>
+  <div class="f-field" id="rp-room-wrap" style="${f.area?'':'display:none'}"><label>Room / location</label>
+    <select id="rp-room"><option value="">Select room…</option>
+      ${f.area&&PROPERTY[f.area]?PROPERTY[f.area].rooms.map(r=>`<option value="${r}" ${f.location===r?'selected':''}>${r}</option>`).join(''):''}
+    </select>
+  </div>
+
+  <div class="f-field"><label>Is the room occupied?</label>
+    <div class="occ-row">
+      <button type="button" class="occ-opt ${f.occupancy==='occupied'?'on':''}" onclick="rpOcc(this,'occupied')">🚪 Occupied</button>
+      <button type="button" class="occ-opt ${f.occupancy==='vacant'?'on':''}" onclick="rpOcc(this,'vacant')">✅ Vacant</button>
+      <button type="button" class="occ-opt ${f.occupancy==='unknown'?'on':''}" onclick="rpOcc(this,'unknown')">❔ Not sure</button>
+    </div>
+  </div>
+
+  <div class="f-field"><label>What's wrong? *</label>
+    <input type="text" id="rp-title" placeholder="e.g. Leaking tap / no heating" value="${f.title||''}">
+  </div>
+  <div class="f-field"><label>More detail (optional)</label>
+    <textarea id="rp-desc" placeholder="Anything useful for the team…">${f.description||''}</textarea>
+  </div>
+
+  <div class="f-field"><label>Priority</label>
+    <div class="toggle-row" style="grid-template-columns:1fr 1fr">
+      <button type="button" class="toggle-opt ${f.priority!=='urgent'?'on-co':''}" id="rp-normal" onclick="FS.priority='medium';this.classList.add('on-co');document.getElementById('rp-urgent').classList.remove('on-ur')">Normal</button>
+      <button type="button" class="toggle-opt ${f.priority==='urgent'?'on-ur':''}" id="rp-urgent" onclick="FS.priority='urgent';this.classList.add('on-ur');document.getElementById('rp-normal').classList.remove('on-co')">🔴 Urgent</button>
+    </div>
+  </div>
+
+  <div class="f-field"><label>Photo * <span style="font-weight:400;color:#7a8494">— at least one</span></label>
+    <div class="photo-zone" id="rp-photo-zone">📷 Tap to add photo(s)</div>
+    <div id="rp-photo-preview" class="photo-thumbs" style="margin-top:8px"></div>
+  </div>
+
+  <div class="f-field"><label>Voice note (up to 20s)</label>
+    <div id="nj-voice-box"></div>
+  </div>
+
+  <div class="btn-row" style="margin-top:18px">
+    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button type="button" class="btn btn-orange btn-full" onclick="submitReporterJob()">📣 Send report</button>
+  </div>`;
+  openModal(html);
+
+  $('rp-area').addEventListener('change',function(){
+    FS.area=this.value; FS.location='';
+    const wrap=$('rp-room-wrap'), sel=$('rp-room');
+    if(this.value&&PROPERTY[this.value]){ sel.innerHTML='<option value="">Select room…</option>'+PROPERTY[this.value].rooms.map(r=>`<option value="${r}">${r}</option>`).join(''); wrap.style.display=''; }
+    else wrap.style.display='none';
+  });
+  const rm=$('rp-room'); if(rm) rm.addEventListener('change',function(){ FS.location=this.value; });
+
+  if($('_rp_photo_inp')){ try{document.body.removeChild($('_rp_photo_inp'));}catch(e){} }
+  const inp=document.createElement('input'); inp.id='_rp_photo_inp'; inp.type='file'; inp.accept='image/*'; inp.capture='environment'; inp.multiple=true;
+  inp.style.cssText='position:fixed;top:-200px;left:-200px;opacity:0;width:1px;height:1px';
+  document.body.appendChild(inp);
+  $('rp-photo-zone').addEventListener('click',()=>inp.click());
+  inp.addEventListener('change',function(){
+    [].slice.call(this.files).forEach(function(file){
+      const reader=new FileReader();
+      reader.onload=e=>compressPhoto(e.target.result,900,0.6,function(c){ FS.photos=FS.photos||[]; FS.photos.push(c); rpRenderPhotos(); });
+      reader.readAsDataURL(file);
+    });
+  });
+
+  rpRenderPhotos();
+  njRenderVoice();
+}
+function rpOcc(el,v){ FS.occupancy=v; document.querySelectorAll('.occ-opt').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+function rpRenderPhotos(){
+  const pv=$('rp-photo-preview'); if(!pv) return;
+  const ph=FS.photos||[];
+  pv.innerHTML=ph.map((p,i)=>`<div style="position:relative;display:inline-block"><img src="${p}" class="photo-thumb"><button type="button" onclick="FS.photos.splice(${i},1);rpRenderPhotos()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#b3261e;color:#fff;font-size:12px;line-height:1;cursor:pointer">×</button></div>`).join('');
+  const z=$('rp-photo-zone'); if(z){ if(ph.length){ z.className='photo-zone captured'; z.textContent='✓ '+ph.length+' photo'+(ph.length>1?'s':'')+' — tap to add more'; } else { z.className='photo-zone'; z.textContent='📷 Tap to add photo(s)'; } }
+}
+
+// ── 25-second voice note (MediaRecorder) ──
+let _rec=null,_recChunks=[],_recTimer=null,_recStart=0;
+function njStartVoice(){
+  if(_rec && _rec.state==='recording'){ njStopVoice(); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast('Voice notes not supported on this device'); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    _recChunks=[]; try{ _rec=new MediaRecorder(stream); }catch(e){ _rec=new MediaRecorder(stream,{}); }
+    _rec.ondataavailable=e=>{ if(e.data && e.data.size) _recChunks.push(e.data); };
+    _rec.onstop=function(){
+      stream.getTracks().forEach(t=>t.stop());
+      clearInterval(_recTimer); _recTimer=null;
+      const blob=new Blob(_recChunks,{type:(_rec&&_rec.mimeType)||'audio/webm'});
+      const r=new FileReader(); r.onload=function(){ FS.voiceNote=r.result; njRenderVoice(); toast('Voice note saved ✓'); }; r.readAsDataURL(blob);
+    };
+    _rec.start(); _recStart=Date.now(); njRenderVoice(true);
+    _recTimer=setInterval(function(){ const left=20-Math.floor((Date.now()-_recStart)/1000); const el=$('nj-voice-time'); if(el) el.textContent=Math.max(0,left)+'s'; if(left<=0) njStopVoice(); },250);
+  }).catch(function(){ toast('Microphone blocked — allow mic access to record'); });
+}
+function njStopVoice(){ try{ if(_rec && _rec.state==='recording') _rec.stop(); }catch(e){} }
+function njRenderVoice(recording){
+  const box=$('nj-voice-box'); if(!box) return;
+  if(recording){ box.innerHTML='<button type="button" class="btn btn-red" onclick="njStopVoice()">⏹ Stop recording — <span id="nj-voice-time">20s</span></button>'; return; }
+  if(FS.voiceNote){ box.innerHTML='<audio controls src="'+FS.voiceNote+'" style="width:100%;margin-bottom:6px"></audio><button type="button" class="btn btn-ghost" onclick="FS.voiceNote=null;njRenderVoice()">✕ Remove voice note</button>'; return; }
+  box.innerHTML='<button type="button" class="btn btn-ghost" onclick="njStartVoice()">🎙️ Record voice note</button>';
+}
+
+function submitReporterJob(){
+  try{
+    const title=($('rp-title')?.value||'').trim();
+    if(!title){ toast('⚠️ Please say what needs fixing'); return; }
+    if(!(FS.photos&&FS.photos.length)){ toast('📷 Please add at least one photo'); return; }
+    const area=$('rp-area')?.value||FS.area||'';
+    const location=$('rp-room')?.value||FS.location||'';
+    const description=$('rp-desc')?.value||'';
+    const job={ id:makeId(), title, area, areaLabel:(PROPERTY[area]&&PROPERTY[area].label)||area||'—',
+      location, workType:'', description,
+      status:'not-started', priority:FS.priority==='urgent'?'urgent':'medium',
+      assignees:['catherine'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
+      photos:(FS.photos||[]).slice(), voiceNote:FS.voiceNote||null, materials:[],
+      notes:[{text:'Reported via HosFix'+(FS.occupancy?(' — room '+FS.occupancy):''),by:MY_USER?.name||ME,at:todayStr()}],
+      createdAt:new Date().toISOString(), createdBy:ME, reportedBy:MY_USER?.name||'', source:'reporter',
+      approvedBy:null, approvedAt:null, completedAt:null };
+    JOBS.unshift(job); saveJobs();
+    try{ if(typeof fcmNotify==='function') fcmNotify(job.priority==='urgent'?'job_urgent':'job_new', job, []); }catch(e){}
+    VIEW='jobs'; FILTER='all';
+    try{ $('bnav').querySelectorAll('.bnav').forEach(b=>b.classList.remove('on')); $('bnav').querySelector('[data-v="jobs"]')?.classList.add('on'); }catch(e){}
+    render(); closeModal();
+    toast('✓ Report sent — the team will allocate it');
+  }catch(err){ toast('Error: '+err.message); console.error('submitReporterJob',err); }
+}
+
+// ── REPORTER MODE (no login) — opens straight to the form; name picked here ──
+let REPORTER_MODE=false;
+function reporterNameOptions(){
+  return USERS.filter(u=>!STD_OPS.includes(u.id)).map(u=>({id:u.id,name:u.name})).sort((a,b)=>a.name.localeCompare(b.name));
+}
+function enterReporterMode(){
+  REPORTER_MODE=true;
+  try{ document.querySelectorAll('.screen').forEach(s=>s.style.display='none'); }catch(e){}
+  const app=$('app'); if(app) app.style.display='none';
+  const sr=$('scr-report'); if(sr) sr.style.display='block';
+  renderGuestReport();
+  setTimeout(()=>{ try{ maybeAskNotifications(); }catch(e){} },1500);
+}
+function renderGuestReport(){
+  FS={photos:[],priority:'medium'};
+  const opts=reporterNameOptions();
+  const body=$('report-body'); if(!body) return;
+  body.innerHTML=`
+    <p style="font-size:13px;color:#7a8494;margin:0 0 14px;line-height:1.5">Tell us where it is and what's wrong — add a photo, and a voice note if it helps. The maintenance team takes it from there.</p>
+
+    <div class="rcard">
+      <div class="rcard-t">📍 Where &amp; who</div>
+      <div class="f-field"><label>Your name *</label>
+        <select id="gr-name"><option value="">Select your name…</option>${opts.map(o=>`<option value="${o.id}">${o.name}</option>`).join('')}</select></div>
+      <div class="f-field"><label>Where is it? *</label>
+        <select id="rp-area"><option value="">Select area…</option>${Object.entries(PROPERTY).map(([k,v])=>`<option value="${k}">${v.icon} ${v.label}</option>`).join('')}</select></div>
+      <div class="f-field" id="rp-room-wrap" style="display:none"><label>Room / location</label>
+        <select id="rp-room"><option value="">Select room…</option></select></div>
+      <div class="f-field"><label>Is the room occupied?</label>
+        <div class="occ-row">
+          <button type="button" class="occ-opt" onclick="rpOcc(this,'occupied')">🚪 Occupied</button>
+          <button type="button" class="occ-opt" onclick="rpOcc(this,'vacant')">✅ Vacant</button>
+          <button type="button" class="occ-opt" onclick="rpOcc(this,'unknown')">❔ Not sure</button>
+        </div></div>
+    </div>
+
+    <div class="rcard">
+      <div class="rcard-t">🔧 What's wrong</div>
+      <div class="f-field"><label>The problem *</label>
+        <input type="text" id="rp-title" placeholder="e.g. Leaking tap / no heating"></div>
+      <div class="f-field"><label>More detail (optional)</label>
+        <textarea id="rp-desc" placeholder="Anything useful for the team…"></textarea></div>
+      <div class="f-field"><label>Priority</label>
+        <div class="toggle-row" style="grid-template-columns:1fr 1fr">
+          <button type="button" class="toggle-opt on-co" id="rp-normal" onclick="FS.priority='medium';this.classList.add('on-co');document.getElementById('rp-urgent').classList.remove('on-ur')">Normal</button>
+          <button type="button" class="toggle-opt" id="rp-urgent" onclick="FS.priority='urgent';this.classList.add('on-ur');document.getElementById('rp-normal').classList.remove('on-co')">🔴 Urgent</button>
+        </div></div>
+    </div>
+
+    <div class="rcard">
+      <div class="rcard-t">📷 Photo &amp; voice</div>
+      <div class="f-field"><label>Photo * <span style="font-weight:400;color:#7a8494">— at least one</span></label>
+        <div class="photo-zone" id="rp-photo-zone">📷 Tap to add photo(s)</div>
+        <div id="rp-photo-preview" class="photo-thumbs" style="margin-top:8px"></div></div>
+      <div class="f-field"><label>Voice note (up to 20s)</label><div id="nj-voice-box"></div></div>
+    </div>
+
+    <button type="button" class="btn btn-orange btn-full" style="margin-top:4px" onclick="submitGuestReport()">📣 Send report</button>`;
+  $('rp-area').addEventListener('change',function(){
+    FS.area=this.value; FS.location='';
+    const wrap=$('rp-room-wrap'), sel=$('rp-room');
+    if(this.value&&PROPERTY[this.value]){ sel.innerHTML='<option value="">Select room…</option>'+PROPERTY[this.value].rooms.map(r=>`<option value="${r}">${r}</option>`).join(''); wrap.style.display=''; }
+    else wrap.style.display='none';
+  });
+  const rm=$('rp-room'); if(rm) rm.addEventListener('change',function(){ FS.location=this.value; });
+  if($('_rp_photo_inp')){ try{document.body.removeChild($('_rp_photo_inp'));}catch(e){} }
+  const inp=document.createElement('input'); inp.id='_rp_photo_inp'; inp.type='file'; inp.accept='image/*'; inp.capture='environment'; inp.multiple=true;
+  inp.style.cssText='position:fixed;top:-200px;left:-200px;opacity:0;width:1px;height:1px';
+  document.body.appendChild(inp);
+  $('rp-photo-zone').addEventListener('click',()=>inp.click());
+  inp.addEventListener('change',function(){
+    [].slice.call(this.files).forEach(function(file){
+      const reader=new FileReader();
+      reader.onload=e=>compressPhoto(e.target.result,900,0.6,function(c){ FS.photos=FS.photos||[]; FS.photos.push(c); rpRenderPhotos(); });
+      reader.readAsDataURL(file);
+    });
+  });
+  rpRenderPhotos(); njRenderVoice();
+}
+function submitGuestReport(){
+  try{
+    const uid=($('gr-name')?.value)||'';
+    if(!uid){ toast('⚠️ Please select your name'); return; }
+    const who=USERS.find(u=>u.id===uid);
+    const title=($('rp-title')?.value||'').trim();
+    if(!title){ toast('⚠️ Please say what needs fixing'); return; }
+    if(!(FS.photos&&FS.photos.length)){ toast('📷 Please add at least one photo'); return; }
+    const area=$('rp-area')?.value||FS.area||'';
+    const location=$('rp-room')?.value||FS.location||'';
+    const description=$('rp-desc')?.value||'';
+    const job={ id:makeId(), title, area, areaLabel:(PROPERTY[area]&&PROPERTY[area].label)||area||'—',
+      location, workType:'', description,
+      status:'not-started', priority:FS.priority==='urgent'?'urgent':'medium',
+      assignees:['catherine'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
+      photos:(FS.photos||[]).slice(), voiceNote:FS.voiceNote||null, materials:[],
+      notes:[{text:'Reported via HosFix'+(FS.occupancy?(' — room '+FS.occupancy):''),by:(who&&who.name)||uid,at:todayStr()}],
+      createdAt:new Date().toISOString(), createdBy:uid, reportedBy:(who&&who.name)||'', source:'reporter',
+      approvedBy:null, approvedAt:null, completedAt:null };
+    JOBS.unshift(job); saveJobs();
+    try{ if(typeof fcmNotify==='function') fcmNotify(job.priority==='urgent'?'job_urgent':'job_new', job, []); }catch(e){}
+    try{ if(typeof jobSyncPush==='function') jobSyncPush(); }catch(e){}
+    guestReportDone((who&&who.name)||'');
+  }catch(err){ toast('Error: '+err.message); console.error('submitGuestReport',err); }
+}
+function guestReportDone(name){
+  const body=$('report-body'); if(!body) return;
+  body.innerHTML=`<div style="text-align:center;padding:48px 16px">
+    <div style="font-size:60px;margin-bottom:12px">✅</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:25px;color:var(--navy);margin-bottom:8px">Thanks${name?(', '+String(name).split(' ')[0]):''}!</div>
+    <div style="font-size:14px;color:#5b6b7b;max-width:320px;margin:0 auto 28px;line-height:1.55">Your report has gone to the maintenance team. They'll take it from here.</div>
+    <button type="button" class="btn btn-orange" style="max-width:300px;margin:0 auto" onclick="renderGuestReport()">➕ Report another fault</button>
+  </div>`;
+}
+
+function setFS(key,val,el,cls,parentClass){
+  FS[key]=val;
+  if(el&&cls&&parentClass){
+    el.closest('.'+parentClass)?.querySelectorAll('.toggle-opt,.prio-opt').forEach(b=>{
+      b.className=b.className.replace(/\bon-\w+/,'').trim();
+    });
+    el.classList.add(cls);
+  }
+}
+
+function submitJob(){
+  try{
+
+  // Read values from DOM
+  const title=($('nj-title')?.value||'').trim();
+  if(!title){ toast('⚠️ Please add a job title'); return; }
+
+  const area=$('nj-area')?.value||FS.area;
+  if(!area){ toast('⚠️ Please select an area'); return; }
+
+  const location=$('nj-room')?.value||FS.location||'';
+  const workType=$('nj-wtype')?.value||FS.workType||'';
+  const description=$('nj-desc')?.value||'';
+  const cost=parseFloat($('nj-cost')?.value)||0;
+  const needsApproval=IS_APPROVER===false&&cost>APPROVAL_THRESHOLD;
+
+  // Jobs default to Catherine (manager-operative) — she allocates to an operative.
+  let assignees = (IS_SUPER && FS.assignees && FS.assignees.length) ? FS.assignees : ['catherine'];
+
+  const job={
+    id:makeId(),
+    title,
+    area,
+    areaLabel:PROPERTY[area]?.label||area,
+    location,
+    workType,
+    description,
+    status:needsApproval?'pending_approval':FS.status||'not-started',
+    priority:FS.priority||'medium',
+    assignees,
+    cost,
+    module:FS.module||'maintenance',
+    photos:FS.newJobPhoto?[FS.newJobPhoto]:[],
+    materials:[],
+    notes:[],
+    createdAt:new Date().toISOString(),
+    createdBy:ME,
+    approvedBy:null, approvedAt:null, completedAt:null
+  };
+
+  JOBS.unshift(job);
+  saveJobs();
+  // Notifications go to OTHER people only — admins hear about the new job,
+  // each assignee gets "Job assigned to you". Nothing buzzes on the logger's own phone.
+  try{
+    const others=assignees.filter(a=>a!==ME);
+    if(typeof fcmNotify==='function'){
+      fcmNotify(job.priority==='urgent'?'job_urgent':'job_new', job, [], others);
+      if(others.length) fcmNotify('job_assigned', job, others).then(r=>fcmReportDelivery(r, others));
+    }
+    others.forEach(aid=>{ if(!ADMIN_IDS.includes(aid)) sendPersonNotification(aid,job); });
+  }catch(e){ console.warn('notify failed',e); }
+
+  // Build WhatsApp links for each assignee
+  const jobUrl='https://thebarnhotel.hospro.co.uk/hosfix.html#job='+job.id;
+  const waLinks=[];
+  assignees.forEach(uid=>{
+    if(uid===ME) return;
+    const u=USERS.find(x=>x.id===uid); if(!u||!u.whatsapp) return;
+    const lines=['🔧 *HosFIX — New job allocated*','','*'+title+'*'];
+    if(job.location) lines.push('📍 '+job.location);
+    if(job.priority==='urgent') lines.push('🔴 URGENT');
+    lines.push('','Tap to open job:',jobUrl);
+    waLinks.push({name:u.name, url:'https://wa.me/'+u.whatsapp+'?text='+encodeURIComponent(lines.join('\n'))});
+  });
+
+  // Show confirmation screen with WhatsApp tap buttons
+  VIEW='jobs'; FILTER='all';
+  $('bnav').querySelectorAll('.bnav').forEach(b=>b.classList.remove('on'));
+  $('bnav').querySelector('[data-v="jobs"]')?.classList.add('on');
+  render();
+
+  if(waLinks.length){
+    showWANotifyModal(job, waLinks);
+  } else {
+    toast(needsApproval?'Job logged — awaiting approval ✓':'Job logged ✓');
+  }
+
+  } catch(err){
+    toast('Error: '+err.message);
+    console.error('submitJob error:', err);
+  }
+}
+
+function showWANotifyModal(job, waLinks){
+  let html='<div class="modal-title">✅ Job logged!</div>';
+  html+='<div style="background:#e8f3ee;border-radius:12px;padding:13px 14px;margin-bottom:16px">';
+  html+='<div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:3px">'+job.title+'</div>';
+  if(job.location) html+='<div style="font-size:12px;color:#2a6a4a">📍 '+job.location+'</div>';
+  html+='</div>';
+  html+='<div style="font-size:13px;color:#7a8494;margin-bottom:14px;font-weight:600">TAP TO NOTIFY ASSIGNEE VIA WHATSAPP:</div>';
+  waLinks.forEach(function(w){
+    html+='<a href="'+w.url+'" target="_blank" style="display:flex;align-items:center;gap:12px;background:#25D366;color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;text-decoration:none;font:700 15px Lato;touch-action:manipulation">';
+    html+='<span style="font-size:22px">📲</span>';
+    html+='<span>WhatsApp '+w.name+'</span>';
+    html+='</a>';
+  });
+  html+='<button type="button" class="btn btn-ghost" style="margin-top:6px" onclick="closeModal()">Done</button>';
+  openModal(html);
+}
+
+
+// ── JOB DETAIL ────────────────────────────────────────────────────────────────
+function openJobDetail(jobId){
+  _jid=jobId;
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  const assignees=(j.assignees||[]).map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  const isRunning=ACTIVE_TIMER&&ACTIVE_TIMER.jobId===jobId&&ACTIVE_TIMER.state==='running';
+  const isPaused=ACTIVE_TIMER&&ACTIVE_TIMER.jobId===jobId&&ACTIVE_TIMER.state==='paused';
+  const isDone=j.status==='complete';
+
+  let elapsed='';
+  if(ACTIVE_TIMER&&ACTIVE_TIMER.jobId===jobId){
+    let ms=ACTIVE_TIMER.accumulatedMs||0;
+    if(isRunning) ms+=Date.now()-new Date(ACTIVE_TIMER.currentStart).getTime();
+    const m=Math.round(ms/60000);
+    elapsed=m>0?Math.floor(m/60)+'h '+m%60+'m':'0m';
+  }
+
+  const canStart=MY_USER&&(j.assignees||[]).includes(ME)||IS_SUPER;
+
+  let html=`
+  <div class="modal-title">${j.title}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    ${j.areaLabel?`<span style="font-size:12px;background:#f1f5f9;color:#475569;padding:3px 9px;border-radius:6px;font-weight:600">📍 ${j.areaLabel}${j.location?' · '+j.location:''}</span>`:''}
+    ${j.priority==='urgent'?`<span style="font-size:12px;background:#fde8e6;color:#b3261e;padding:3px 9px;border-radius:6px;font-weight:700">🔴 URGENT</span>`:''}
+    ${j.status==='complete'?`<span style="font-size:12px;background:#e8f3ee;color:#2a6a4a;padding:3px 9px;border-radius:6px;font-weight:700">✓ Complete</span>`:''}
+    ${j.status==='in-progress'?`<span style="font-size:12px;background:#fffbe6;color:#997300;padding:3px 9px;border-radius:6px;font-weight:700">⏱ In progress</span>`:''}
+    ${j.occupancy==='occupied'?`<span style="font-size:12px;background:#fde8e6;color:#b3261e;padding:3px 9px;border-radius:6px;font-weight:700">🚪 Room occupied</span>`:(j.occupancy==='vacant'?`<span style="font-size:12px;background:#e8f3ee;color:#2a6a4a;padding:3px 9px;border-radius:6px;font-weight:700">✅ Room vacant</span>`:'')}
+    ${(!(j.assignees||[]).length && j.status!=='complete')?`<span style="font-size:12px;background:#fff3e8;color:#c45c00;padding:3px 9px;border-radius:6px;font-weight:700">⏳ Unassigned</span>`:''}
+  </div>
+
+  ${j.description?`<div style="background:#f5f7f9;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--ink);line-height:1.5">${j.description}</div>`:''}
+
+  ${j.voiceNote?`<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🎙️ Voice note</div><audio controls src="${j.voiceNote}" style="width:100%"></audio></div>`:''}
+  ${(j.photos&&j.photos.length)?`<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📷 Reported photos</div><div style="display:flex;gap:8px;flex-wrap:wrap">${j.photos.map(ph=>`<img src="${ph}" style="width:100px;height:100px;border-radius:10px;object-fit:cover">`).join('')}</div></div>`:''}
+
+  <div style="background:#fff;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;overflow:hidden">
+    ${[['Work type',j.workType?WORK_TYPES.find(w=>w.id===j.workType)?.label||j.workType:'—'],
+       ['Priority',(j.priority||'medium').charAt(0).toUpperCase()+(j.priority||'medium').slice(1)],
+       ['Cost est.',money(j.cost)],
+       ['Logged',fmtShort(j.createdAt?.slice(0,10))]
+      ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--line);font-size:13px">
+        <span style="color:#7a8494">${k}</span><span style="font-weight:700">${v}</span>
+      </div>`).join('').replace(/border-bottom[^"]*"([^<]*)(<\/div>)(?=\s*<\/div>)/,'$1$2')}
+  </div>
+
+  ${assignees.length?`<div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Assigned to</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${assignees.map(u=>`<div style="display:flex;align-items:center;gap:7px;background:#f5f7f9;border-radius:20px;padding:5px 12px 5px 5px">
+        <div class="av" style="background:${u.color};width:24px;height:24px;font-size:9px">${initials(u.name)}</div>
+        <span style="font-size:13px;font-weight:600">${u.name}</span>
+      </div>`).join('')}
+      ${IS_SUPER&&!isDone?`<button type="button" onclick="openReassign('${j.id}')" style="background:none;border:1px solid var(--line);border-radius:20px;padding:5px 12px;font:600 12px 'Lato';cursor:pointer;color:var(--navy);touch-action:manipulation">Reassign</button>`:''}
+    </div>
+  </div>`:''}
+
+  ${(IS_SUPER && j.status!=='complete' && !(j.assignees||[]).some(a=>FIXER_TIER.includes(a)))?`<div style="margin-bottom:14px"><button type="button" class="btn btn-orange" onclick="openReassign('${j.id}')">👤 Allocate to an operative</button></div>`:''}
+
+  <!-- Materials -->
+  ${!isDone?`<div style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px">Materials used</div>
+      <button type="button" onclick="openStockPicker('${j.id}')" style="padding:5px 12px;border-radius:8px;border:none;background:var(--navy);color:#fff;font:700 12px 'Lato';cursor:pointer;touch-action:manipulation">+ Add stock</button>
+    </div>
+    <div style="background:#f5f7f9;border-radius:10px;padding:10px" id="mat-list">
+      ${(j.materials||[]).length
+        ?(j.materials.map(m=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px">
+            <span>${m.name}</span><span style="font-weight:700;color:var(--amber)">x${m.qty} · ${money(m.qty*m.tradePrice)}</span>
+          </div>`).join(''))
+        :'<div style="font-size:12px;color:#9ca3af">No stock items added yet</div>'}
+    </div>
+  </div>`:''}
+
+  <!-- Photos -->
+  ${(j.startPhoto||j.completionPhoto)?`<div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Photos</div>
+    ${j.startPhoto?`<div style="margin-bottom:8px"><div style="font-size:11px;color:#7a8494;margin-bottom:4px;font-weight:600">BEFORE</div>
+      <img src="${j.startPhoto}" style="width:100%;border-radius:10px;max-height:160px;object-fit:cover"></div>`:''}
+    ${j.completionPhoto?`<div><div style="font-size:11px;color:var(--green);margin-bottom:4px;font-weight:600">AFTER</div>
+      <img src="${j.completionPhoto}" style="width:100%;border-radius:10px;max-height:160px;object-fit:cover"></div>`:''}
+  </div>`:''}
+
+  <!-- Notes -->
+  ${(j.notes||[]).length?`<div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Notes</div>
+    ${j.notes.map(n=>`<div class="note-item"><div class="note-by">${n.by} · ${n.at}</div><div class="note-text">${n.text}</div></div>`).join('')}
+  </div>`:''}
+
+  <!-- Receipt / purchase -->
+  ${!isDone?`<div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Purchase / receipt</div>
+    <div style="background:#f5f7f9;border-radius:10px;padding:12px">
+      ${(j.receipts||[]).length?j.receipts.map((r,i)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px"><span>'+r.desc+'</span><span style="font-weight:700;color:var(--amber)">£'+r.amount.toFixed(2)+'</span></div>').join(''):'<div style="font-size:12px;color:#9ca3af">No purchases logged yet</div>'}
+      <button type="button" onclick="addReceipt('${j.id}')" style="width:100%;margin-top:8px;padding:9px;border-radius:8px;border:1px dashed var(--line);background:#fff;font:600 13px Lato;cursor:pointer;color:var(--navy);touch-action:manipulation">+ Add purchase / receipt</button>
+    </div>
+  </div>`:''}
+
+  <!-- Add note -->
+  ${!isDone?`<div class="f-field">
+    <label>Add note / update</label>
+    <textarea id="det-note" placeholder="Progress update, parts needed, completed works…" style="min-height:60px"></textarea>
+  </div>
+  <button type="button" class="btn btn-ghost" onclick="saveNote('${j.id}')" style="margin-bottom:12px">Save note</button>`:''}
+
+  <!-- Timer / action buttons -->
+  ${!isDone&&canStart?`<div style="margin-bottom:8px">
+    ${isRunning?`<div style="background:#e8f3ee;border-radius:10px;padding:10px 14px;text-align:center;font:700 13px 'Lato';color:var(--green);margin-bottom:8px">⏱ In progress${elapsed?' · '+elapsed:''}</div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-ghost" onclick="pauseJob('${j.id}')">⏸ Pause</button>
+        <button type="button" class="btn btn-green" onclick="completeJobFlow('${j.id}')">✓ Complete job</button>
+      </div>`:
+    isPaused?`<div style="background:#fffbe6;border-radius:10px;padding:10px 14px;text-align:center;font:700 13px 'Lato';color:#997300;margin-bottom:8px">⏸ Paused${elapsed?' · '+elapsed+' logged':''}</div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-green" onclick="resumeJob('${j.id}')">▶ Resume</button>
+        <button type="button" class="btn btn-navy" onclick="completeJobFlow('${j.id}')">✓ Complete job</button>
+      </div>`:
+    `<button type="button" class="btn btn-orange" onclick="startJobFlow('${j.id}')">▶ Start job</button>`}
+  </div>`:''}
+  ${isDone?`<div style="background:#e8f3ee;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px">
+    <div style="font:700 14px 'Lato';color:var(--green)">✓ Completed by ${j.completedBy||'team'}</div>
+    <div style="font-size:12px;color:#7a8494;margin-top:2px">${fmtDate(j.completedAt?.slice(0,10))}</div>
+  </div>`:''}
+  <button type="button" class="btn btn-ghost" onclick="closeModal()" style="margin-top:4px">← Back to jobs</button>`;
+
+  openModal(html);
+
+  // buttons use inline onclick
+}
+
+
+// ── JOB FLOW: start → photo → timer → complete ────────────────────────────────
+function startJobFlow(jobId){
+  _jid=jobId;
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  let html=`<div class="modal-title">▶ Start job</div>
+  <div style="font-size:13px;color:#7a8494;margin:-4px 0 12px">${j.title}${j.location?' · '+j.location:''}</div>
+  <div style="background:#fffbe6;border:1px solid var(--amber);border-radius:12px;padding:14px;margin-bottom:16px">
+    <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:14px;line-height:1.5;touch-action:manipulation">
+      <input type="checkbox" id="safety-chk" style="width:22px;height:22px;margin-top:1px;flex-shrink:0;accent-color:var(--green)" onclick="var b=$('btn-confirm-start');if(b){b.disabled=!this.checked;b.style.opacity=this.checked?'1':'0.4'}">
+      <span><strong>Safe to start</strong> — the room is free of guests and safe to work in</span>
+    </label>
+  </div>
+  <button type="button" class="btn btn-green" id="btn-confirm-start" disabled style="opacity:.4" onclick="confirmAndStart()">▶ Start job</button>
+  <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>`;
+  openModal(html);
+}
+
+// Global functions for modal buttons that need inline onclick
+
+function confirmAndStart(){
+  const chk=$('safety-chk');
+  if(!chk||!chk.checked){ toast('Please confirm the area is safe'); return; }
+  const j=JOBS.find(x=>x.id===_jid); if(!j) return;
+  j.safetyConfirmed=true;
+  j.notes=j.notes||[];
+  j.notes.push({text:'Area confirmed safe — no guests in proximity',by:MY_USER?.name||ME,at:todayStr()});
+  saveJobs();
+  doStartTimer(_jid);
+}
+
+let _reassignees=[];
+function doReassign(){
+  const j=JOBS.find(x=>x.id===_jid); if(!j) return;
+  const before=j.assignees||[];
+  j.assignees=_reassignees;
+  const _wt=$('ra-wtype')?$('ra-wtype').value:''; if(_wt) j.workType=_wt;
+  // Notify anyone newly added to the job (in-app + push)
+  try{
+    const added=_reassignees.filter(id=>!before.includes(id)&&id!==ME);
+    added.forEach(aid=>{ if(!ADMIN_IDS.includes(aid)) sendPersonNotification(aid,j); });
+    if(added.length && typeof fcmNotify==='function') fcmNotify('job_assigned',j,added).then(r=>fcmReportDelivery(r, added));
+  }catch(e){ console.warn('reassign notify failed',e); }
+  j.notes=j.notes||[];
+  j.notes.push({text:(_reassignees.length?'Allocated to '+_reassignees.map(id=>USERS.find(u=>u.id===id)?.name||id).join(', '):'Unassigned')+(_wt?(' · '+(WORK_TYPES.find(w=>w.id===_wt)?.label||_wt)):''),by:MY_USER?.name||ME,at:todayStr()});
+  saveJobs(); render(); closeModal(); toast('Allocated ✓'); openJobDetail(_jid);
+}
+
+function addReceipt(jobId){
+  _jid=jobId;
+  let html='<div class="modal-title">Add purchase / receipt</div>';
+  html+='<div class="f-field"><label>Description</label><input type="text" id="rcpt-desc" placeholder="e.g. Bath plug, shower hose, paint"></div>';
+  html+='<div class="f-field"><label>Amount (£)</label><input type="number" id="rcpt-amount" value="0" min="0" step="0.01"></div>';
+  html+='<div class="f-field"><label>Receipt photo (optional)</label>';
+  html+='<div class="photo-zone" id="rcpt-zone">📷 Tap to photograph receipt</div>';
+  html+='<div id="rcpt-preview" style="margin-top:8px"></div></div>';
+  html+='<button type="button" class="btn btn-navy" onclick="saveReceipt()">Save purchase</button>';
+  html+='<button type="button" class="btn btn-ghost" onclick="closeModal();openJobDetail(_jid)" style="margin-top:8px">Cancel</button>';
+  openModal(html);
+  
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='image/*'; inp.capture='environment';
+  inp.style.cssText='position:fixed;top:-200px;opacity:0;width:1px;height:1px';
+  document.body.appendChild(inp);
+  window._rcptInp=inp;
+  
+  $('rcpt-zone').addEventListener('click',()=>inp.click());
+  inp.addEventListener('change',function(){
+    const f=this.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=function(e){
+      compressPhoto(e.target.result,600,0.6,function(c){
+        window._rcptPhoto=c;
+        const pz=$('rcpt-zone'); const pv=$('rcpt-preview');
+        if(pz){pz.className='photo-zone captured';pz.textContent='✓ Receipt photo saved';}
+        if(pv) pv.innerHTML='<img src="'+c+'" style="width:100%;border-radius:10px;max-height:150px;object-fit:cover">';
+        toast('Receipt photo saved');
+      });
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function saveReceipt(){
+  const j=JOBS.find(x=>x.id===_jid); if(!j) return;
+  const desc=($('rcpt-desc')?.value||'').trim();
+  const amount=parseFloat($('rcpt-amount')?.value)||0;
+  if(!desc){ toast('Please add a description'); return; }
+  j.receipts=j.receipts||[];
+  j.receipts.push({desc,amount,photo:window._rcptPhoto||null,at:todayStr(),by:MY_USER?.name||ME});
+  j.cost=(j.cost||0)+amount;
+  if(window._rcptInp){ try{document.body.removeChild(window._rcptInp);}catch(e){} }
+  window._rcptPhoto=null; window._rcptInp=null;
+  saveJobs(); toast('Purchase logged ✓'); closeModal(); openJobDetail(_jid);
+}
+
+function saveNote(jobId){
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  const note=($('det-note')?.value||'').trim();
+  if(!note){ toast('Type a note first'); return; }
+  j.notes=j.notes||[];
+  j.notes.push({text:note,by:MY_USER?.name||ME,at:todayStr()});
+  saveJobs(); toast('Note saved ✓'); openJobDetail(jobId);
+}
+
+function finishStockPicker(){
+  closeModal();
+  if(_jid) openJobDetail(_jid);
+}
+
+function doStartTimer(jobId){
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  const now=new Date().toISOString();
+  ACTIVE_TIMER={jobId,state:'running',startedAt:now,currentStart:now,accumulatedMs:0};
+  j.status='in-progress'; j.startedAt=j.startedAt||now;
+  j.notes=j.notes||[];
+  j.notes.push({text:'Job started',by:MY_USER?.name||ME,at:todayStr()});
+  saveTimer(); saveJobs(); closeModal();
+  toast('Job started ⏱');
+  updateTimerBar(); render(); openJobDetail(jobId);
+}
+
+function pauseJob(jobId){
+  if(!ACTIVE_TIMER||ACTIVE_TIMER.jobId!==jobId||ACTIVE_TIMER.state==='paused') return;
+  const now=Date.now();
+  ACTIVE_TIMER.accumulatedMs=(ACTIVE_TIMER.accumulatedMs||0)+(now-new Date(ACTIVE_TIMER.currentStart).getTime());
+  ACTIVE_TIMER.state='paused';
+  const j=JOBS.find(x=>x.id===jobId);
+  if(j){ j.notes=j.notes||[]; j.notes.push({text:'Job paused',by:MY_USER?.name||ME,at:todayStr()}); saveJobs(); }
+  saveTimer(); closeModal(); toast('Job paused ⏸'); render();
+}
+
+function resumeJob(jobId){
+  if(!ACTIVE_TIMER||ACTIVE_TIMER.jobId!==jobId) return;
+  ACTIVE_TIMER.state='running'; ACTIVE_TIMER.currentStart=new Date().toISOString();
+  const j=JOBS.find(x=>x.id===jobId);
+  if(j){ j.notes=j.notes||[]; j.notes.push({text:'Job resumed',by:MY_USER?.name||ME,at:todayStr()}); saveJobs(); }
+  saveTimer(); closeModal(); toast('Job resumed ▶'); updateTimerBar(); render(); openJobDetail(jobId);
+}
+
+function completeJobFlow(jobId){
+  _jid=jobId;
+  let html=`<div class="modal-title">📷 Completion photo</div>
+  <p style="font-size:13px;color:#7a8494;margin-bottom:14px">Take a photo showing the completed work, then tap Complete.</p>
+  <div class="photo-zone" id="after-zone">📷 Tap to photograph completed work</div>
+  <div id="after-preview" style="margin-top:8px;margin-bottom:12px"></div>
+  <div class="f-field">
+    <label>Completion notes (optional)</label>
+    <textarea id="comp-note" placeholder="What was done, materials used, any follow-up needed…" style="min-height:60px"></textarea>
+  </div>
+  <button type="button" class="btn btn-green" onclick="doCompleteJob(_jid)">✓ Complete job</button>
+  <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>`;
+
+  openModal(html);
+
+  const photoInp=document.createElement('input');
+  photoInp.type='file'; photoInp.accept='image/*'; photoInp.capture='environment';
+  photoInp.style.cssText='position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;top:0;left:0';
+  document.body.appendChild(photoInp);
+
+  $('after-zone').addEventListener('click',()=>photoInp.click());
+
+  photoInp.addEventListener('change',function(){
+    const file=this.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      if(JOBS.find(x=>x.id===_jid)){
+        compressPhoto(e.target.result,800,0.6,function(c){
+          const j2=JOBS.find(x=>x.id===_jid); if(j2){j2.completionPhoto=c; saveJobs();}
+        });
+      }
+      $('after-zone').className='photo-zone captured'; $('after-zone').textContent='✓ Photo saved';
+      $('after-preview').innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:10px;max-height:150px;object-fit:cover">`;
+      toast('Photo saved');
+      document.body.removeChild(photoInp);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // btn-do-complete uses inline onclick
+}
+
+function doCompleteJob(jobId){
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  const note=($('comp-note')?.value||'').trim();
+  const now=new Date().toISOString();
+  let totalMs=0;
+  if(ACTIVE_TIMER&&ACTIVE_TIMER.jobId===jobId){
+    totalMs=(ACTIVE_TIMER.accumulatedMs||0)+(ACTIVE_TIMER.state==='running'?Date.now()-new Date(ACTIVE_TIMER.currentStart).getTime():0);
+    ACTIVE_TIMER=null; saveTimer();
+  }
+  const mins=Math.round(totalMs/60000);
+  j.status='complete'; j.completedAt=now; j.completedBy=MY_USER?.name||ME;
+  j.totalTimeMins=mins;
+  j.notes=j.notes||[];
+  j.notes.push({text:`Job completed${mins>0?' · '+Math.floor(mins/60)+'h '+mins%60+'m':''}`,by:MY_USER?.name||ME,at:todayStr()});
+  if(note) j.notes.push({text:note,by:MY_USER?.name||ME,at:todayStr()});
+  saveJobs();            // instant local save + push to the team (Firestore)
+  render();              // refresh the list straight away
+  updateTimerBar();
+  closeModal();
+  toast('✓ Job completed');
+  // Notify managers — wrapped so a notification hiccup can never block the save or the UI
+  try{ sendAdminNotification(j,'complete'); }catch(e){}
+  try{ fcmNotify('job_completed', j, []); }catch(e){}
+}
+
+function updateTimerBar(){
+  const tb=$('timer-bar'); if(!tb) return;
+  if(!ACTIVE_TIMER){ tb.style.display='none'; return; }
+  const j=JOBS.find(x=>x.id===ACTIVE_TIMER.jobId);
+  let ms=(ACTIVE_TIMER.accumulatedMs||0);
+  if(ACTIVE_TIMER.state==='running') ms+=Date.now()-new Date(ACTIVE_TIMER.currentStart).getTime();
+  const m=Math.round(ms/60000);
+  tb.style.display='block';
+  tb.textContent=`⏱ ${j?.title||'Job'} · ${Math.floor(m/60)}h ${m%60}m ${ACTIVE_TIMER.state==='paused'?'(paused)':''}`;
+  tb.onclick=()=>{ if(j) openJobDetail(j.id); };
+}
+if(ACTIVE_TIMER) setTimeout(updateTimerBar,100);
+
+// ── STOCK / MATERIALS PICKER ──────────────────────────────────────────────────
+function openStockPicker(jobId){
+  _jid=jobId;
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  j.materials=j.materials||[];
+
+  const cats=[...new Set(INVENTORY.map(i=>i.category))].sort();
+  let activeCat='';
+
+  function renderPicker(){
+    const items=activeCat?INVENTORY.filter(i=>i.category===activeCat):INVENTORY;
+    let html=`<div class="modal-title">Add materials</div>
+    <div style="font-size:12px;color:#7a8494;margin-bottom:12px">${j.title}</div>
+    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch">
+      <button type="button" class="chip ${!activeCat?'on':''}" data-cat="">All</button>
+      ${cats.map(c=>`<button type="button" class="chip ${activeCat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}
+    </div>
+    <div id="stock-list" style="max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch">
+      ${items.map(item=>{
+        const used=j.materials.find(m=>m.id===item.id);
+        return `<div class="stock-item" data-inv="${item.id}">
+          <div style="flex:1">
+            <div class="s-name">${item.name}</div>
+            <div class="s-meta">${item.category} · ${money(item.tradePrice)}/${item.unit} · Stock: <span id="stk-${item.id}">${item.stock}</span></div>
+          </div>
+          <div class="s-qty">
+            <button type="button" class="qty-btn" data-inv="${item.id}" data-action="minus">−</button>
+            <div class="qty-val" id="qty-${item.id}">${used?used.qty:0}</div>
+            <button type="button" class="qty-btn" data-inv="${item.id}" data-action="plus">+</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button type="button" class="btn btn-navy" onclick="finishStockPicker()" style="margin-top:12px">✓ Done — back to job</button>`;
+
+    openModal(html);
+
+    // Category filter chips
+    $('modal-content').querySelectorAll('.chip[data-cat]').forEach(chip=>{
+      chip.addEventListener('click',()=>{ activeCat=chip.dataset.cat; renderPicker(); });
+    });
+
+    // Qty +/- buttons
+    $('modal-content').querySelectorAll('.qty-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const invId=btn.dataset.inv;
+        const action=btn.dataset.action;
+        const inv=INVENTORY.find(x=>x.id===invId); if(!inv) return;
+
+        if(action==='plus'){
+          if(inv.stock<=0){ toast('Out of stock'); return; }
+          const existing=j.materials.find(m=>m.id===invId);
+          if(existing){ existing.qty++; }
+          else { j.materials.push({id:invId,name:inv.name,qty:1,tradePrice:inv.tradePrice,unit:inv.unit}); }
+          inv.stock=Math.max(0,inv.stock-1);
+        } else {
+          const existing=j.materials.find(m=>m.id===invId);
+          if(!existing||existing.qty<=0) return;
+          existing.qty--;
+          if(existing.qty===0) j.materials=j.materials.filter(m=>m.id!==invId);
+          inv.stock++;
+        }
+        saveJobs(); saveInventory();
+        const qv=$('qty-'+invId); if(qv) qv.textContent=j.materials.find(m=>m.id===invId)?.qty||0;
+        const sv=$('stk-'+invId); if(sv) sv.textContent=inv.stock;
+      });
+    });
+
+    // done button uses inline onclick
+  }
+
+  renderPicker();
+}
+
+// ── REASSIGN ─────────────────────────────────────────────────────────────────
+function openReassign(jobId){
+  _jid=jobId;
+  const j=JOBS.find(x=>x.id===jobId); if(!j) return;
+  const ops=[...FIXER_TIER,...ADMIN_TIER].map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
+  let html=`<div class="modal-title">Allocate job</div>
+  <div style="font-size:13px;color:#7a8494;margin-bottom:14px">${j.title}${j.location?' · '+j.location:''}</div>
+  <div class="f-field"><label>Type of work / trade</label>
+    <select id="ra-wtype">
+      <option value="">Select trade…</option>
+      ${WORK_TYPES.map(w=>`<option value="${w.id}" ${j.workType===w.id?'selected':''}>${w.icon} ${w.label}</option>`).join('')}
+    </select>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Assign to operative</div>
+  ${ops.map(u=>`
+    <div class="arow ${(j.assignees||[]).includes(u.id)?'selected':''}" data-uid="${u.id}">
+      <div class="av" style="background:${u.color};width:30px;height:30px;font-size:10px">${initials(u.name)}</div>
+      <div style="flex:1"><div class="ar-name">${u.name}</div><div class="ar-role">${u.role}</div></div>
+      <div class="ar-ck">✓</div>
+    </div>`).join('')}
+  <div class="btn-row" style="margin-top:14px">
+    <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button type="button" class="btn btn-navy" onclick="doReassign()">Allocate</button>
+  </div>`;
+
+  openModal(html);
+  _reassignees=[...(j.assignees||[])];
+  $('modal-content').querySelectorAll('.arow[data-uid]').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const uid=row.dataset.uid;
+      const idx=_reassignees.indexOf(uid);
+      if(idx>-1){ _reassignees.splice(idx,1); row.classList.remove('selected'); }
+      else { _reassignees.push(uid); row.classList.add('selected'); }
+    });
+  });
+  // btn-do-reassign uses onclick=doReassign()
+}
+
+
+// ── STOCK VIEW ────────────────────────────────────────────────────────────────
+function renderStock(){
+  const cats=[...new Set(INVENTORY.map(i=>i.category))].sort();
+  let html=`<div style="padding:14px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:14px">Stock & Inventory</div>`;
+  cats.forEach(cat=>{
+    const items=INVENTORY.filter(i=>i.category===cat);
+    html+=`<div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${cat}</div>
+    <div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">`;
+    items.forEach((item,i)=>{
+      const low=item.stock<=item.reorderAt;
+      html+=`<div style="display:flex;align-items:center;padding:11px 13px;border-bottom:${i<items.length-1?'1px solid var(--line)':'none'}">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">${item.name}</div>
+          <div style="font-size:11px;color:#7a8494">${money(item.tradePrice)}/${item.unit}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700;font-size:16px;color:${low?'var(--red)':'var(--navy)'}">${item.stock}</div>
+          ${low?`<div style="font-size:10px;color:var(--red);font-weight:700">LOW</div>`:''}
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+// ── REPORT ────────────────────────────────────────────────────────────────────
+function renderReport(){
+  const open=JOBS.filter(j=>j.status!=='complete');
+  const complete=JOBS.filter(j=>j.status==='complete');
+  const urgent=open.filter(j=>j.priority==='urgent');
+  const matCost=JOBS.reduce((s,j)=>(j.materials||[]).reduce((ms,m)=>ms+(m.qty*m.tradePrice),s),0);
+
+  return `<div style="padding:14px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--navy);margin-bottom:16px">Report</div>
+    
+    ${IS_APPROVER?`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📱 WhatsApp numbers</div>
+      <div style="font-size:12px;color:#7a8494;margin-bottom:10px">Set numbers so Assignees are notified in-app when jobs are allocated</div>
+      ${USERS.map(u=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div class="av" style="background:${u.color};width:28px;height:28px;font-size:10px">${initials(u.name)}</div>
+        <div style="font-size:12px;font-weight:600;width:90px">${u.name.split(' ')[0]}</div>
+        <input type="tel" placeholder="447700123456" value="${u.whatsapp||''}"
+          style="flex:1;padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;font:13px 'Lato'"
+          data-uid="${u.id}" oninput="updatePhone('${u.id}',this.value)">
+      </div>`).join('')}
+    </div>`:''}
+    
+    <div style="background:#e8f3ee;border-radius:12px;padding:13px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:3px">👥 TEAM SYNC</div>
+        <div style="font-size:12px;color:#2a6a4a">Share all jobs with team members on other devices</div>
+      </div>
+      <button type="button" onclick="syncJobs()" style="padding:9px 14px;border-radius:9px;border:none;background:var(--green);color:#fff;font:700 12px 'Lato';cursor:pointer;touch-action:manipulation">📤 Sync</button>
+    </div>
+
+    <div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      ${[['Total jobs',JOBS.length,'var(--navy)'],['Open',open.length,'var(--amber)'],['Urgent',urgent.length,'var(--red)'],['Complete',complete.length,'var(--green)'],['Materials cost',money(matCost),'var(--navy)']].map(([l,v,c])=>`
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px">
+          <span style="color:#7a8494">${l}</span><span style="font-weight:700;color:${c}">${v}</span>
+        </div>`).join('')}
+    </div>
+
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy);margin-bottom:10px">Open by assignee</div>
+    ${USERS.filter(u=>open.some(j=>(j.assignees||[]).includes(u.id))).map(u=>{
+      const mine=open.filter(j=>(j.assignees||[]).includes(u.id));
+      const urg=mine.filter(j=>j.priority==='urgent');
+      return `<div style="background:#fff;border-radius:10px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+        <div class="av" style="background:${u.color}">${initials(u.name)}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:13px">${u.name}</div><div style="font-size:11px;color:#7a8494">${u.role}</div></div>
+        <span style="font-size:13px;color:#7a8494">${mine.length} open</span>
+        ${urg.length?`<span style="background:#fde8e6;color:#b3261e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px">${urg.length} urgent</span>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// sync button uses inline onclick
+
+function updatePhone(uid, phone){
+  const u=USERS.find(x=>x.id===uid); if(!u) return;
+  u.whatsapp=phone.replace(/[^0-9]/g,'');
+  // Save to localStorage
+  const phones=JSON.parse(localStorage.getItem('hf_phones')||'{}');
+  phones[uid]=u.whatsapp;
+  localStorage.setItem('hf_phones',JSON.stringify(phones));
+}
+
+// Load saved phone numbers on startup
+function showDOBScreen(){
+  const u=USERS.find(x=>x.id===PRESET_USER); if(!u) return;
+  $('scr-dob').style.display='flex';
+  const av=$('dob-avatar');
+  const nm=$('dob-name');
+  const rl=$('dob-role');
+  // Show selfie if stored, otherwise initials
+  const selfie=localStorage.getItem('hf_selfie_'+u.id);
+  if(av){
+    if(selfie){
+      av.style.backgroundImage='url('+selfie+')';
+      av.style.backgroundSize='cover';
+      av.style.backgroundPosition='center';
+      av.textContent='';
+    } else {
+      av.textContent=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      av.style.background=u.color||'var(--navy)';
+    }
+  }
+  if(nm) nm.textContent=u.name;
+  if(rl) rl.textContent=u.role;
+}
+
+function verifyDOB(){
+  if(!$('age-chk')?.checked){ return; }
+  $('scr-dob').style.display='none';
+  loginAs(PRESET_USER);
+}
+
+function loginAs(uid, tier){
+  ME=uid;
+  MY_USER=USERS.find(u=>u.id===uid);
+  SESSION_TIER = tier || SESSION_TIER || null;   // role chosen via the link/code
+  sessionStorage.setItem('hf_user',uid);
+  try{ localStorage.setItem('hf_me',uid); if(SESSION_TIER) localStorage.setItem('hf_tier',SESSION_TIER); }catch(e){}
+  // Role for this session (admin / fixer / reporter), honouring the chosen tier
+  if(MY_USER){ MY_USER.tier=tierOf(uid); MY_USER.admin=isAdmin(uid); MY_USER.seeCosts=isAdmin(uid); }
+  IS_SUPER=isAdmin(uid);
+  IS_APPROVER=isAdmin(uid);
+  IS_FIXER=isFixer(uid);
+  IS_REPORTER=isReporter(uid);
+  if(typeof fcmEnsureRegistered==='function') setTimeout(()=>fcmEnsureRegistered(true),1500);
+  loadPhones();
+  $('tb-user') && ($('tb-user').textContent=MY_USER.name.split(' ')[0]+' ('+MY_USER.role.split(' ')[0]+')');
+  enterApp();
+  checkSyncHash();
+  try{ const pj=sessionStorage.getItem('hf_pending_job'); if(pj){ sessionStorage.removeItem('hf_pending_job'); setTimeout(()=>hfOpenJob(pj),400); } }catch(e){}
+}
+
+function loadPhones(){
+  const phones=JSON.parse(localStorage.getItem('hf_phones')||'{}');
+  Object.entries(phones).forEach(([uid,phone])=>{
+    const u=USERS.find(x=>x.id===uid); if(u) u.whatsapp=phone;
+  });
+}
+
+function syncJobs(){
+  const data={jobs:JOBS,ts:Date.now(),by:MY_USER?.name||ME};
+  const url=location.origin+location.pathname+'#sync='+btoa(encodeURIComponent(JSON.stringify(data)));
+  if(navigator.share){ navigator.share({title:'HosFIX Sync',url}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(url).then(()=>toast('Sync link copied ✓')); }
+  else { prompt('Copy sync link:',url); }
+}
+
+function checkSyncHash(){
+  // Direct job link: #job=<id>
+  if(location.hash.startsWith('#job=')){
+    const jobId=location.hash.replace('#job=','');
+    history.replaceState(null,'',location.pathname);
+    // Open maintenance module and show the job
+    setTimeout(()=>{
+      if(!ME){ try{ sessionStorage.setItem('hf_pending_job',jobId); }catch(e){} return; }
+      enterApp();
+      VIEW='jobs'; render();
+      setTimeout(()=>openJobDetail(jobId), 300);
+    }, 500);
+    return;
+  }
+  if(!location.hash.startsWith('#sync=')) return;
+  try{
+    const data=JSON.parse(decodeURIComponent(atob(location.hash.replace('#sync=',''))));
+    let added=0,updated=0;
+    (data.jobs||[]).forEach(ij=>{
+      const ex=JOBS.find(j=>j.id===ij.id);
+      if(!ex){ JOBS.push(ij); added++; }
+      else if(new Date(ij.completedAt||ij.createdAt||0)>new Date(ex.completedAt||ex.createdAt||0)){
+        Object.assign(ex,ij); updated++;
+      }
+    });
+    if(added||updated){ saveJobs(); toast(`Synced: ${added} new, ${updated} updated ✓`); }
+    history.replaceState(null,'',location.pathname);
+  }catch(e){}
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  initInstall();
+  loadAddedUsers();
+  initLogin();
+
+  loadPhones();
+  // Per-person link (?me=catherine) and Reporter link (?report) take priority — they
+  // decide who this device is, so they override any remembered sign-in.
+  try{
+    const q=new URLSearchParams(location.search);
+    if(q.has('report') || (q.get('tier')||'').toLowerCase()==='reporter' || q.has('reporter') || q.has('reporters')){
+      try{ localStorage.removeItem('hf_me'); localStorage.removeItem('hf_tier'); }catch(e){}
+      enterReporterMode(); return;
+    }
+    const meId=(q.get('me')||'').toLowerCase();
+    if(meId && USERS.find(u=>u.id===meId)){ try{ localStorage.setItem('hf_me',meId); localStorage.removeItem('hf_tier'); }catch(e){} loginAs(meId); return; }
+  }catch(e){}
+  // Remembered sign-in (persists across launches), then this-session restore
+  const remembered=localStorage.getItem('hf_me');
+  if(remembered && USERS.find(u=>u.id===remembered)){ loginAs(remembered, localStorage.getItem('hf_tier')||null); return; }
+  const saved=sessionStorage.getItem('hf_user');
+  if(saved && USERS.find(u=>u.id===saved)){ loginAs(saved); return; }
+
+  // Onboarding: 1 add to home screen → 2 notifications → 3 selfie → over-18 sign-in
+  const installed   = window.matchMedia('(display-mode:standalone)').matches || navigator.standalone === true;
+  const seen        = localStorage.getItem('hf_install_seen');
+  const notifDone   = localStorage.getItem('hf_notif_granted') !== null;
+  const canNotify   = typeof Notification !== 'undefined';
+  const hasPreset   = PRESET_USER && USERS.find(u=>u.id===PRESET_USER);
+
+  const hasTier = /[?&](tier=|management|manager|admin|reporter|operative|maintenance|fixer)/i.test(location.search);
+  if (!installed && !seen && !hasTier) {
+    showScreen('scr-install');                       // first visit: offer add-to-home
+  } else {
+    showScreen('scr-login');                         // tier links & returning users → straight to name list
+  }
+  checkSyncHash();
+});
+
+
+// ── IN-APP NOTIFICATION SYSTEM ────────────────────────────────────────────────
+function sendAdminNotification(job, type){
+  const notifs = JSON.parse(localStorage.getItem('barn_notifications')||'[]');
+  const msg = type==='complete'
+    ? `✅ Job #${job.id.slice(-4).toUpperCase()} completed: "${job.title}" — ${job.areaLabel||job.area}`
+    : `🔧 New job logged: "${job.title}" — ${job.areaLabel||job.area} [${job.priority||'medium'}]`;
+  const n = {
+    id:'n'+Date.now(), type, jobId:job.id, msg,
+    for:'admin', readBy:[], at:new Date().toISOString()
+  };
+  notifs.unshift(n);
+  // Keep last 100
+  if(notifs.length>100) notifs.splice(100);
+  localStorage.setItem('barn_notifications', JSON.stringify(notifs));
+  showToastNotification(msg);
+  updateNotifBadge();
+}
+
+function sendPersonNotification(userId, job){
+  const notifs = JSON.parse(localStorage.getItem('barn_notifications')||'[]');
+  const n = {
+    id:'n'+Date.now()+'_'+userId, type:'assigned', jobId:job.id,
+    msg:`📋 Job assigned to you: "${job.title}" — ${job.areaLabel||job.area} [${job.priority||'medium'}]`,
+    for:'person', forUser:userId, readBy:[], at:new Date().toISOString()
+  };
+  notifs.unshift(n);
+  if(notifs.length>100) notifs.splice(100);
+  localStorage.setItem('barn_notifications', JSON.stringify(notifs));
+  // If current user is the assignee, show toast
+  if(userId===ME) showToastNotification(n.msg);
+  updateNotifBadge();
+}
+
+function getMyNotifications(){
+  const all=JSON.parse(localStorage.getItem('barn_notifications')||'[]');
+  if(IS_SUPER) return all.filter(n=>n.for==='admin'||n.forUser===ME);
+  return all.filter(n=>n.forUser===ME||(n.for==='admin'&&ADMIN_IDS.includes(ME)));
+}
+
+function updateNotifBadge(){
+  const unread=getMyNotifications().filter(n=>!n.readBy.includes(ME)).length;
+  const badge=document.getElementById('notif-badge');
+  if(badge){ badge.textContent=unread||''; badge.style.display=unread?'flex':'none'; }
+  document.querySelectorAll('.hf-bell-n').forEach(b=>{ b.textContent=unread>9?'9+':(unread||''); b.style.display=unread?'flex':'none'; });
+}
+
+function showToastNotification(msg){
+  // Use existing toast if available, else create one
+  const existing=document.getElementById('hf-toast');
+  if(existing){
+    existing.textContent=msg; existing.style.display='block';
+    setTimeout(()=>{ if(existing) existing.style.display='none'; },4000);
+    return;
+  }
+  const toast=document.createElement('div');
+  toast.id='hf-toast-notif';
+  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2b3a;border:1px solid rgba(255,255,255,.2);color:#fff;padding:12px 20px;border-radius:24px;font:600 13px Lato,sans-serif;z-index:999;max-width:380px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>{ toast.remove(); },4000);
+}
+
+function showNotificationsPanel(){
+  const notifs=getMyNotifications();
+  // Mark all as read
+  const all=JSON.parse(localStorage.getItem('barn_notifications')||'[]');
+  all.forEach(n=>{ if(!n.readBy.includes(ME)) n.readBy.push(ME); });
+  localStorage.setItem('barn_notifications',JSON.stringify(all));
+  updateNotifBadge();
+
+  const html=`<div style="padding:4px">
+    <div style="font-size:16px;font-weight:700;color:#1a2b3a;margin-bottom:14px">🔔 Notifications</div>
+    ${notifs.length?notifs.slice(0,20).map(n=>`
+      <div onclick="if('${n.jobId}'){document.getElementById('modal-overlay')&&document.getElementById('modal-overlay').remove();hfOpenJob('${n.jobId}');}"
+        style="padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px;cursor:pointer;background:${n.readBy.includes(ME)?'#fff':'#f0f9ff'}"
+        onmouseover="this.style.background='#e6f4ff'" onmouseout="this.style.background='${n.readBy.includes(ME)?'#fff':'#f0f9ff'}'">
+        <div style="font-size:13px;font-weight:600;color:#1a2b3a">${n.msg}</div>
+        <div style="font-size:11px;color:#374151;margin-top:3px">${new Date(n.at).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`).join(''):'<div style="text-align:center;padding:24px;color:#374151;font-size:13px">No notifications yet</div>'}
+    <button onclick="document.getElementById('modal-overlay')&&document.getElementById('modal-overlay').remove();hfRunAlertTest()" style="width:100%;padding:11px;background:#4DA69C;border:none;border-radius:8px;font:800 13px Lato;cursor:pointer;color:#fff;margin-top:8px">🔔 Test my alerts</button>
+    <button onclick="document.getElementById('modal-overlay')&&document.getElementById('modal-overlay').remove()" style="width:100%;padding:10px;background:#f3f4f6;border:none;border-radius:8px;font:600 13px Lato;cursor:pointer;color:#374151;margin-top:8px">Close</button>
+  </div>`;
+  // Show modal
+  const bg=document.createElement('div');
+  bg.id='modal-overlay';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:flex-start;justify-content:flex-end;padding:60px 16px 0';
+  const box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:14px;padding:20px;width:100%;max-width:380px;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)';
+  box.innerHTML=html;
+  bg.appendChild(box);
+  bg.onclick=e=>{ if(e.target===bg) bg.remove(); };
+  document.getElementById('modal-overlay')?.remove();
+  document.body.appendChild(bg);
+}
+
+</script>
+
+<script>
+// ── Firebase config ───────────────────────────────────────────────────────────
+const FB_CONFIG = {
+  apiKey:            "AIzaSyDnPWrPGInDRTCF1Go710XC_8_77l_72i0",
+  authDomain:        "brandonhall-7bdef.firebaseapp.com",
+  projectId:         "brandonhall-7bdef",
+  storageBucket:     "brandonhall-7bdef.firebasestorage.app",
+  messagingSenderId: "391317900568",
+  appId:             "1:391317900568:web:643c9d6691f7f16d65226d"
+};
+const FB_VAPID   = "BEBKqO0IojcBixBGbEb8hH-aCuy9J6MwQct5dp08xs6J2CjpPEStpSNoJuDpqHcvWuYpRviNVzfDKy4gQUigQPI";
+// Cloud Function base URL — update after first deploy
+const FCM_BASE   = "https://europe-west1-brandonhall-7bdef.cloudfunctions.net";
+// Push recipients for admin events (must match HosFIX user ids used for /register)
+const FCM_ADMIN_IDS = ["catherine"];
+
+let fbApp, fbMsg, fbDb;
+
+function fbInit() {
+  if (fbApp) return;
+  try {
+    fbApp = firebase.initializeApp(FB_CONFIG);
+    fbMsg = firebase.messaging(fbApp);
+    fbDb  = firebase.firestore(fbApp);
+  } catch(e) { console.warn("Firebase init error:", e); }
+}
+
+// Register this device's FCM token for the signed-in user
+async function fcmRegisterToken(userId) {
+  fbInit();
+  if (!fbMsg) return false;
+  try {
+    const sw  = await hfWithTimeout(navigator.serviceWorker.ready, 10000, "service worker not ready");
+    const tok = await hfWithTimeout(fbMsg.getToken({ vapidKey: FB_VAPID, serviceWorkerRegistration: sw }), 15000, "token timed out");
+    if (!tok) return false;
+    localStorage.setItem("hf_fcm_token", tok);
+    // Save to Firestore via Cloud Function
+    const r = await fetch(FCM_BASE + "/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, token: tok })
+    });
+    const j = await r.json().catch(()=>({}));
+    console.log("FCM token registered for", userId, j);
+    return !!(r.ok && j.ok);
+  } catch(e) { console.warn("FCM token error:", e); return false; }
+}
+
+// Send event to Cloud Function → triggers push to recipients
+async function fcmNotify(event, job, assignees = [], skipAdmins = []) {
+  try {
+    const r = await fetch(FCM_BASE + "/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event, job: fcmSlimJob(job), assignees, senderId: ME || "", adminIds: FCM_ADMIN_IDS.filter(id=>id!==ME && !skipAdmins.includes(id)) })
+    });
+    return await r.json().catch(()=>null);
+  } catch(e) { console.warn("FCM notify error:", e); return null; }
+}
+
+// Tell the person assigning who actually got the push, and who hasn't set up HosFIX yet
+function fcmReportDelivery(resp, ids){
+  try{
+    const name=id=>(USERS.find(u=>u.id===id)?.name||id).split(' ')[0];
+    if(!resp || !Array.isArray(resp.results)){ showToastNotification("Couldn't reach the notification service — use the WhatsApp buttons"); return; }
+    const ok=[], missing=[];
+    ids.forEach(id=>{ const r=resp.results.find(x=>x.userId===id); (r&&r.sent>0?ok:missing).push(name(id)); });
+    let msg='';
+    if(ok.length) msg+='📲 Notified '+ok.join(' & ');
+    if(missing.length) msg+=(msg?' · ':'')+'⚠ '+missing.join(' & ')+(missing.length>1?" haven't":" hasn't")+' switched on HosFIX notifications — send WhatsApp';
+    if(msg) showToastNotification(msg);
+  }catch(e){}
+}
+
+// Foreground messages (app open) — show in-app toast + bell
+fbInit();
+if (fbMsg) {
+  fbMsg.onMessage(payload => {
+    const d = payload.data || {};
+    const jobId = d.jobId || String(d.url||"").split("#job=")[1] || "";
+    const job = JOBS.find(j=>j.id===jobId) || { id: jobId||("p"+Date.now()), title: (d.body||"").replace(/^"|"\s*—.*$/g,""), priority: d.urgent==="true"?"urgent":"" };
+    const kind = d.kind || (/assigned/i.test(d.title||"")?"assigned":/urgent/i.test(d.title||"")?"urgent":/complete/i.test(d.title||"")?"complete":"new");
+    hfNotify(kind, job, { fromPush:true });
+  });
+}
+
+// ── Small job payload for push (photos are data-URLs and can be MBs) ─────────
+function fcmSlimJob(j){
+  if(!j) return {};
+  return { id:j.id, title:j.title, area:j.area, areaLabel:j.areaLabel, location:j.location||"",
+           priority:j.priority||"medium", status:j.status, createdBy:j.createdBy||"" };
+}
+
+// ── Register this device for push whenever permission is granted ─────────────
+// Runs on load (tokens rotate) and straight after permission is given.
+async function fcmEnsureRegistered(force){
+  try{
+    if(typeof Notification==="undefined" || Notification.permission!=="granted") return;
+    const uid = ME || window.PRESET_USER; if(!uid) return;
+    const key="hf_fcm_reg_"+uid, last=+localStorage.getItem(key)||0;
+    if(!force && Date.now()-last < 12*3600*1000) return;   // at most twice a day
+    const ok = await fcmRegisterToken(uid);
+    if(ok) localStorage.setItem(key, String(Date.now()));
+    else localStorage.removeItem(key);
+  }catch(e){ console.warn("FCM ensure error:",e); }
+}
+
+// ── Shared jobs (Firestore: barn_fix_jobs/{jobId}) ─────────────────────────────
+// Each phone used to keep its own private job list in localStorage, so a job
+// logged by one person never reached the assignee. Jobs are now mirrored to
+// Firestore and merged on every device (newest updatedAt wins). localStorage
+// stays as the offline cache.
+const JOB_SYNC = { on:false, sent:{} };
+function jobStamp(j){ return j.updatedAt || j.completedAt || j.createdAt || ""; }
+function jobSig(j){ const c=Object.assign({}, j); delete c.updatedAt; return JSON.stringify(c); }
+function jobForCloud(j){
+  const c = Object.assign({}, j);
+  // Firestore docs are capped at 1 MB — keep photos on the device if the job is too big
+  if(JSON.stringify(c).length > 900000){
+    ["photos","startPhoto","completionPhoto","voiceNote"].forEach(k=>{ if(k in c) c[k] = Array.isArray(c[k])?[]:null; });
+    c.photosLocalOnly = true;
+  }
+  return JSON.parse(JSON.stringify(c));                // strips undefined values
+}
+function jobSyncPush(){
+  if(!JOB_SYNC.on || !fbDb) return;
+  JOBS.forEach(j=>{
+    const sig = jobSig(j);
+    if(JOB_SYNC.sent[j.id] === sig) return;
+    j.updatedAt = new Date().toISOString();
+    j.updatedBy = ME || j.updatedBy || "";
+    JOB_SYNC.sent[j.id] = jobSig(j);
+    fbDb.collection("barn_fix_jobs").doc(String(j.id)).set(jobForCloud(j)).catch(e=>{
+      console.warn("Job sync write failed:", j.id, e && e.message);
+      delete JOB_SYNC.sent[j.id];
+      if(!JOB_SYNC.warned){ JOB_SYNC.warned=true; showToastNotification("⚠ Jobs not syncing to the team: "+((e&&e.message)||"connection problem")); }
+    });
+  });
+}
+
+// ── CLEAN SLATE ──────────────────────────────────────────────────────────────
+// No demo/seed jobs. The board only ever holds jobs reporters actually log.
+// Archiving hides a job everywhere (Firestore blocks deletes, so we never delete).
+function hfIsDemo(j){ const id=String(j.id||''); return id.indexOf('td-')===0 || id.indexOf('wa-')===0 || j.source==='WhatsApp' || j.createdBy==='System'; }
+function hfArchive(filterFn){
+  const now=new Date().toISOString(); let n=0;
+  JOBS.forEach(j=>{ if(!j.demoHidden && filterFn(j)){ j.demoHidden=true; if(j.status!=='complete') j.status='cancelled'; j.updatedAt=now; n++; } });
+  if(n){ try{ localStorage.setItem('barn_fix_jobs',JSON.stringify(JOBS)); }catch(e){} try{ jobSyncPush(); }catch(e){} }
+  return n;
+}
+// Auto (once per device): clear only the old seeded demo jobs — never real reports.
+function hfSeedJobs(){
+  if(localStorage.getItem('hf_clean_v1')==='1') return;
+  hfArchive(hfIsDemo);
+  try{ localStorage.setItem('hf_clean_v1','1'); localStorage.setItem('hf_seed_today_v2','1'); localStorage.setItem('hf_seed_wa_v2','1'); }catch(e){}
+}
+// Manager control: clear the WHOLE board on demand (archives, never deletes).
+function hfClearAllJobs(){
+  if(!confirm('Clear ALL jobs from the board?\n\nThey are hidden from everyone, not deleted. New reports still come through as normal.')) return;
+  const n=hfArchive(()=>true);
+  try{ VIEW='jobs'; FILTER='all'; render(); }catch(e){}
+  try{ toast('✓ Board cleared ('+n+' archived)'); }catch(e){}
+}
+function jobSyncStart(){
+  fbInit(); if(!fbDb || JOB_SYNC.on) return;
+  JOB_SYNC.on = true;
+  JOB_SYNC.first = true;
+  fbDb.collection("barn_fix_jobs").onSnapshot(qs=>{
+    JOB_SYNC.lastSnap = Date.now();
+    let changed=false;
+    // Alerts for the person on THIS phone (new job / assigned to me / completed)
+    const pending=[];
+    qs.docChanges().forEach(ch=>{
+      if(ch.type==="removed" || (ch.doc.metadata && ch.doc.metadata.hasPendingWrites)) return;
+      const r=ch.doc.data()||{}; if(hfOldJob(r) || r.demoHidden) return; const prev=JOBS.find(j=>j.id===r.id);
+      const kind=hfAlertForChange(prev, r, JOB_SYNC.first);
+      if(kind) pending.push([kind,r]);
+    });
+    const wasFirst = JOB_SYNC.first;
+    JOB_SYNC.first = false;
+    qs.docChanges().forEach(ch=>{
+      if(ch.type==="removed") return;
+      const r = ch.doc.data(); if(!r || !r.id || hfOldJob(r)) return;
+      const i = JOBS.findIndex(j=>j.id===r.id);
+      if(i<0){ JOBS.push(r); changed=true; }
+      else if(jobStamp(r) > jobStamp(JOBS[i])){
+        const keep = r.photosLocalOnly ? {photos:JOBS[i].photos, startPhoto:JOBS[i].startPhoto, completionPhoto:JOBS[i].completionPhoto} : {};
+        JOBS[i] = Object.assign({}, r, keep); changed=true;
+      }
+      const j = JOBS.find(x=>x.id===r.id);
+      if(j) JOB_SYNC.sent[j.id] = jobSig(j);
+    });
+    // Anything on this phone that the cloud doesn't have yet gets uploaded
+    const cloudIds = new Set(qs.docs.map(d=>d.id));
+    JOBS.forEach(j=>{ if(!cloudIds.has(String(j.id))) delete JOB_SYNC.sent[j.id]; });
+    JOBS.sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+    try{ localStorage.setItem("barn_fix_jobs", JSON.stringify(JOBS)); }catch(e){}
+    if(wasFirst){ try{ hfSeedJobs(); }catch(e){} }
+    jobSyncPush();
+    if(pending.length){
+      if(wasFirst){
+        const n=pending.filter(([k,r])=>hfNotify(k,r,{quiet:true})).length;
+        if(n && ME){ hfPopup("🔔 "+n+" new job update"+(n>1?"s":""), "Tap the bell to see them", n===1?pending[0][1].id:"", pending.some(([k])=>k==="assigned"||k==="urgent")); hfChime(true); try{ navigator.vibrate&&navigator.vibrate([600,200,600]); }catch(e){} }
+      } else pending.forEach(([k,r])=>hfNotify(k,r));
+    }
+    if(changed){
+      const typing = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+      const appOpen = document.getElementById("app") && document.getElementById("app").style.display==="flex";
+      if(ME && appOpen && !typing && VIEW!=="new" && typeof render==="function"){ try{ render(); }catch(e){} }
+      if(typeof updateNotifBadge==="function"){ try{ updateNotifBadge(); }catch(e){} }
+    }
+  }, err=>{ console.warn("Job sync unavailable (check Firestore rules):", err && err.message); JOB_SYNC.on=false; });
+}
+jobSyncStart();
+setTimeout(()=>fcmEnsureRegistered(false), 4000);
+
+// ── RECEIVER-SIDE ALERTS ─────────────────────────────────────────────────────
+// Every alert is created on the phone of the person it is FOR: a bell entry,
+// a pop-up card with sound + long vibration, and a system banner if the app
+// is in the background. Pushes and the live job sync both feed in here and are
+// de-duplicated per job, so nobody gets the same alert twice.
+const HF_ALERT_KEY = () => "hf_alerted_" + (ME || window.PRESET_USER || "x");
+function hfAlerted(){ try{ return new Set(JSON.parse(localStorage.getItem(HF_ALERT_KEY())||"[]")); }catch(e){ return new Set(); } }
+function hfMarkAlerted(key){ try{ const s=[...hfAlerted(),key].slice(-400); localStorage.setItem(HF_ALERT_KEY(),JSON.stringify(s)); }catch(e){} }
+
+let HF_AUDIO=null;
+function hfUnlockAudio(){
+  try{
+    if(!HF_AUDIO){ const C=window.AudioContext||window.webkitAudioContext; if(C) HF_AUDIO=new C(); }
+    if(HF_AUDIO && HF_AUDIO.state==="suspended") HF_AUDIO.resume();
+  }catch(e){}
+}
+["touchstart","click","keydown"].forEach(ev=>document.addEventListener(ev,hfUnlockAudio,{passive:true}));
+function hfChime(loud){
+  try{
+    hfUnlockAudio(); if(!HF_AUDIO) return;
+    const notes = loud ? [880,1175,1568,1175,1568] : [880,1318];
+    notes.forEach((f,i)=>{
+      const o=HF_AUDIO.createOscillator(), g=HF_AUDIO.createGain(), t=HF_AUDIO.currentTime+i*0.18;
+      o.type="sine"; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.35,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.17);
+      o.connect(g); g.connect(HF_AUDIO.destination); o.start(t); o.stop(t+0.18);
+    });
+  }catch(e){}
+}
+
+function hfPopup(title, body, jobId, loud){
+  try{
+    const old=document.getElementById("hf-popup"); if(old) old.remove();
+    const p=document.createElement("div");
+    p.id="hf-popup";
+    p.style.cssText="position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:10050;background:#182A3E;color:#fff;border-radius:16px;"+
+      "border:2px solid "+(loud?"#E0A43B":"#4DA69C")+";box-shadow:0 14px 40px rgba(0,0,0,.45);padding:16px 16px 14px;font-family:Lato,sans-serif;animation:hfPop .25s ease";
+    p.innerHTML=`<style>@keyframes hfPop{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}</style>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:26px;line-height:1">${loud?"🔔":"🔧"}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:15px;margin-bottom:3px">${title}</div>
+          <div style="font-size:13.5px;color:#C7D2E0;line-height:1.4">${body||""}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        ${jobId?`<button id="hf-pop-open" style="flex:1;padding:11px;border:none;border-radius:10px;background:#4DA69C;color:#fff;font:800 14px Lato">Open job</button>`:""}
+        <button id="hf-pop-close" style="flex:1;padding:11px;border:1px solid rgba(255,255,255,.25);border-radius:10px;background:transparent;color:#fff;font:700 14px Lato">Dismiss</button>
+      </div>`;
+    document.body.appendChild(p);
+    const close=()=>{ p.remove(); };
+    p.querySelector("#hf-pop-close").onclick=close;
+    const ob=p.querySelector("#hf-pop-open"); if(ob) ob.onclick=()=>{ close(); hfOpenJob(jobId); };
+    if(!loud) setTimeout(()=>{ if(document.body.contains(p)) close(); }, 12000);
+  }catch(e){ showToastNotification(title+(body?": "+body:"")); }
+}
+
+function hfOpenJob(jobId){
+  if(!jobId) return;
+  if(!ME){ try{ sessionStorage.setItem("hf_pending_job",jobId); }catch(e){} return; }
+  try{
+    ACTIVE_MODULE="maintenance"; VIEW="jobs";
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    $("app").style.display="flex";
+    buildMaintenanceNav(); render();
+    setTimeout(()=>openJobDetail(jobId), 250);
+  }catch(e){ console.warn("open job failed",e); }
+}
+
+// kind: assigned | urgent | new | complete
+function hfNotify(kind, job, opts){
+  opts=opts||{};
+  if(!job || !job.id) return false;
+  const key=kind+"-"+job.id;
+  if(hfAlerted().has(key)) return false;
+  hfMarkAlerted(key);
+  const where=(job.location||job.areaLabel||job.area||"");
+  const T={ assigned:"📋 Job assigned to you", urgent:"🚨 URGENT job", new:"🔧 New job logged", complete:"✅ Job completed", test:"🔔 HosFIX test alert" };
+  const title=T[kind]||"HosFIX";
+  const body=`${job.title||""}${where?" — "+where:""}${kind==="complete"&&job.completedBy?" · by "+((USERS.find(u=>u.id===job.completedBy)||{}).name||job.completedBy):""}`;
+  const loud = kind==="assigned" || kind==="urgent" || kind==="test" || job.priority==="urgent";
+  if(kind==="test"){ hfPopup(title,"Alerts are working on this phone.","",true); hfChime(true); try{ navigator.vibrate&&navigator.vibrate([600,200,600,200,900]); }catch(e){} return true; }
+  // bell entry on THIS phone, for THIS person
+  try{
+    const all=JSON.parse(localStorage.getItem("bh_notifications")||"[]");
+    all.unshift({ id:"n"+Date.now()+"_"+kind, type:kind, jobId:job.id, msg:title+": "+body, for:"person", forUser:ME||window.PRESET_USER, readBy:[], at:new Date().toISOString() });
+    if(all.length>100) all.splice(100);
+    localStorage.setItem("bh_notifications",JSON.stringify(all));
+    if(typeof updateNotifBadge==="function") updateNotifBadge();
+  }catch(e){}
+  if(opts.quiet) return true;
+  if(document.visibilityState==="visible"){
+    hfPopup(title, body, job.id, loud);
+    hfChime(loud);
+    try{ if(navigator.vibrate) navigator.vibrate(loud?[600,200,600,200,900]:[300,150,300]); }catch(e){}
+  } else if(!opts.fromPush && !localStorage.getItem("hf_fcm_reg_"+(ME||""))){
+    try{
+      if(swReg && typeof Notification!=="undefined" && Notification.permission==="granted")
+        swReg.showNotification(title,{ body, icon:"assets/icon-192.png", badge:"assets/icon-192.png", tag:key, renotify:true,
+          requireInteraction:loud, vibrate:loud?[600,200,600,200,900]:[300,150,300], data:{ url:location.pathname+"#job="+job.id, jobId:job.id } });
+    }catch(e){}
+  }
+  return true;
+}
+
+// Decide which alert (if any) a job change means for the person on this phone
+function hfAlertForChange(prev, r, first){
+  if(!ME || !r || !r.id) return null;
+  const isAdmin = FCM_ADMIN_IDS.includes(ME);
+  const recent = d => d && (Date.now()-new Date(d).getTime()) < 3*864e5;
+  const nowAs=r.assignees||[], wasAs=(prev&&prev.assignees)||[];
+  const myName=(MY_USER&&MY_USER.name)||"";
+  if(r.updatedBy===ME) return null;                      // my own change, made on another device
+  if(nowAs.includes(ME) && !wasAs.includes(ME) && r.createdBy!==ME && r.status!=="complete" && (!first || recent(r.updatedAt||r.createdAt)))
+    return r.priority==="urgent" ? "urgent" : "assigned";
+  if(isAdmin && !prev && r.createdBy!==ME && r.status!=="complete" && recent(r.createdAt))
+    return r.priority==="urgent" ? "urgent" : "new";
+  if((isAdmin || r.createdBy===ME) && r.status==="complete" && (!prev || prev.status!=="complete") && r.completedBy!==ME && r.completedBy!==myName && recent(r.completedAt))
+    return "complete";
+  return null;
+}
+
+// Tapping a system notification while the app is open
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.addEventListener("message", e=>{
+    if(e.data && e.data.type==="hf-open-job") hfOpenJob(e.data.jobId);
+  });
+}
+
+// ── "TEST MY ALERTS" — checks every link in the alert chain on THIS phone ────
+const HF_SW_VERSION = "20261106a";
+function hfWithTimeout(p, ms, label){
+  return Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error(label||"timed out")), ms))]);
+}
+async function hfRunAlertTest(){
+  document.getElementById("modal-overlay")?.remove();
+  const bg=document.createElement("div");
+  bg.id="hf-test-overlay";
+  bg.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10060;display:flex;align-items:flex-start;justify-content:center;padding:calc(20px + env(safe-area-inset-top,0px)) 12px 12px;overflow:auto";
+  bg.innerHTML=`<div style="background:#fff;border-radius:16px;width:100%;max-width:440px;padding:18px;font-family:Lato,sans-serif;color:#1a2b3a">
+    <div style="font-size:17px;font-weight:800;margin-bottom:4px">🔔 Alert check</div>
+    <div style="font-size:12.5px;color:#4b5563;margin-bottom:12px">Checking this phone for <b>${(MY_USER&&MY_USER.name)||ME||"you"}</b>…</div>
+    <div id="hf-test-rows"></div>
+    <div id="hf-test-sum" style="margin-top:12px;font-size:13.5px;font-weight:700"></div>
+    <button id="hf-test-close" style="margin-top:14px;width:100%;padding:12px;border:none;border-radius:10px;background:#182A3E;color:#fff;font:800 14px Lato">Close</button>
+  </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector("#hf-test-close").onclick=()=>bg.remove();
+  const box=bg.querySelector("#hf-test-rows");
+  let fails=0;
+  const row=(ok,label,fix)=>{
+    if(ok===false) fails++;
+    const d=document.createElement("div");
+    d.style.cssText="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #eef1f4;font-size:13.5px;line-height:1.4";
+    d.innerHTML=`<div style="font-size:16px">${ok===true?"✅":ok===false?"❌":"⚠️"}</div><div style="flex:1"><div style="font-weight:700">${label}</div>${fix?`<div style="color:#4b5563;font-size:12.5px;margin-top:2px">${fix}</div>`:""}</div>`;
+    box.appendChild(d); return d;
+  };
+  const done=msg=>{ bg.querySelector("#hf-test-sum").innerHTML=msg; };
+  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);
+  const standalone=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+
+  // 1. Signed in
+  if(!ME){ row(false,"Not signed in","Sign in first, then run this check again."); return done("Fix the item above and try again."); }
+  row(true,"Signed in as "+((MY_USER&&MY_USER.name)||ME));
+
+  // 2. Opened from the home-screen icon (iPhone requires it)
+  if(isIOS && !standalone){ row(false,"Opened in Safari, not from the HosFIX icon","iPhone only allows alerts from the home-screen app: Share → Add to Home Screen, then open HosFIX from the jade H icon."); return done("Open HosFIX from the home-screen icon and run the check again."); }
+  row(standalone?true:null, standalone?"Opened as the HosFIX app":"Opened in the browser", standalone?"":"Works on Android, but installing HosFIX (Install button / Add to Home screen) is more reliable.");
+
+  // 3. Browser support
+  if(typeof Notification==="undefined" || !("serviceWorker" in navigator)){ row(false,"This browser can't receive alerts","iPhone: update to iOS 16.4 or later and open from the home-screen icon. Android: use Chrome."); return done("This phone can't receive alerts as it is."); }
+  row(true,"Phone supports alerts");
+
+  // 4. Permission
+  if(Notification.permission==="default"){
+    const r=row(null,"Alerts not allowed yet",`<button id="hf-test-allow" style="margin-top:6px;padding:8px 14px;border:none;border-radius:8px;background:#4DA69C;color:#fff;font:800 13px Lato">Allow alerts</button>`);
+    r.querySelector("#hf-test-allow").onclick=async()=>{ try{ const p=await Notification.requestPermission(); if(p==="granted") localStorage.setItem("hf_notif_granted","1"); }catch(e){} bg.remove(); hfRunAlertTest(); };
+    return done("Tap <b>Allow alerts</b>, then Allow.");
+  }
+  if(Notification.permission==="denied"){
+    row(false,"Alerts are blocked on this phone", isIOS?"Settings → Notifications → HosFIX → Allow Notifications on, with Sounds and Banners on.":"Chrome → ⋮ → Settings → Site settings → Notifications → thebarnhotel.hospro.co.uk → Allow. Or long-press the HosFIX icon → App info → Notifications on.");
+    return done("Switch alerts on in your phone settings, then run the check again.");
+  }
+  row(true,"Alerts allowed");
+
+  // 5. Alert service file (service worker), latest version
+  let reg=null;
+  try{
+    reg=await hfWithTimeout(navigator.serviceWorker.getRegistration("/"),5000,"no answer");
+    if(!reg) reg=await hfWithTimeout(navigator.serviceWorker.register("hosfix-sw.js?v="+HF_SW_VERSION),8000,"could not install");
+    await hfWithTimeout(navigator.serviceWorker.ready,8000,"not ready");
+    const url=(reg.active&&reg.active.scriptURL)||"";
+    if(!url.includes(HF_SW_VERSION)){
+      try{ await reg.update(); }catch(e){}
+      row(null,"Alert file is an older version","Updating now — close HosFIX completely (swipe it away) and reopen it, then run the check again.");
+    } else row(true,"Alert file up to date");
+  }catch(e){ row(false,"Alert service didn't start ("+e.message+")","Close HosFIX completely and reopen it. If this keeps failing, delete the icon and add HosFIX again from your personal link."); return done("Fix the item above and try again."); }
+
+  // 6. Push address for this phone
+  fbInit();
+  if(!fbMsg){ row(false,"Alert system didn't load","Check this phone has internet (try mobile data instead of hotel Wi-Fi), then reopen HosFIX."); return done("Fix the item above and try again."); }
+  let tok="";
+  try{ tok=await hfWithTimeout(fbMsg.getToken({ vapidKey: FB_VAPID, serviceWorkerRegistration: reg }),15000,"timed out"); }catch(e){ tok=""; row(false,"Couldn't get a push address ("+e.message+")","Close HosFIX fully, reopen, and run again. On iPhone make sure it's opened from the home-screen icon."); return done("Fix the item above and try again."); }
+  if(!tok){ row(false,"No push address","Reopen HosFIX and run again."); return done("Fix the item above and try again."); }
+  row(true,"Push address created");
+
+  // 7. Registered with the HosPRO push server
+  try{
+    const r=await hfWithTimeout(fetch(FCM_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:ME,token:tok})}),12000,"no answer");
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok || !j.ok) throw new Error(j.error||("HTTP "+r.status));
+    localStorage.setItem("hf_fcm_token",tok); localStorage.setItem("hf_fcm_reg_"+ME,String(Date.now()));
+    row(true,"Phone registered for "+((MY_USER&&MY_USER.name)||ME));
+  }catch(e){ row(false,"Couldn't register with the server ("+e.message+")","Check internet. If it persists, tell Ajay — the cloud function may need redeploying."); return done("Fix the item above and try again."); }
+
+  // 8. Live job sharing
+  const fresh = JOB_SYNC.on && JOB_SYNC.lastSnap && (Date.now()-JOB_SYNC.lastSnap) < 10*60*1000;
+  row(fresh?true:false, fresh?"Jobs are syncing with the team":"Jobs aren't syncing", fresh?"":"Check internet and reopen HosFIX. If it persists, the Firestore rule may be missing.");
+
+  // 9. Send a real test alert to this phone
+  try{
+    const r=await hfWithTimeout(fetch(FCM_BASE+"/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event:"test",testUser:ME})}),12000,"no answer");
+    const j=await r.json().catch(()=>({}));
+    const res=(j.results||[])[0];
+    if(j.event!=="test") row(false,"Server is running an older version","Ask Ajay to redeploy the cloud function, then run the check again.");
+    else if(res && res.sent>0){ row(true,"Test alert sent to this phone","It arrives in a few seconds. Lock your phone now to check the sound and banner."); }
+    else row(false,"Test alert couldn't be delivered ("+((res&&res.reason)||"unknown")+")","Close HosFIX fully, reopen it and run the check again.");
+  }catch(e){ row(false,"Couldn't reach the alert server ("+e.message+")","Check internet and try again."); }
+
+  done(fails ? "Fix the ❌ items, then run the check again." :
+    "✅ This phone is set up. If the test alert doesn't arrive: "+(isIOS?"turn off Silent mode and Focus, and check Settings → Notifications → HosFIX has Sounds and Banners on.":"check Settings → Apps → HosFIX (or Chrome) → Notifications is on, with sound."));
+}
+
+// ── ONBOARDING FLOW ───────────────────────────────────────────────────────────
+function onbInstallClick() {
+  localStorage.setItem("hf_install_seen","1");
+  if (window._deferredPrompt) {
+    window._deferredPrompt.prompt();
+    window._deferredPrompt.userChoice.then(() => onbGoStep2());
+  } else {
+    onbGoStep2();
+  }
+}
+
+function onbGoStep2() {
+  localStorage.setItem("hf_install_seen","1");
+  // iPhone Safari only offers notifications once HosFIX is opened from the home-screen icon;
+  // if the browser can't ask (or already answered), move straight on to the selfie step.
+  if (typeof Notification === "undefined" || Notification.permission !== "default") { onbGoStep3(); return; }
+  showScreen("scr-onb-notif");
+}
+
+async function onbRequestNotif() {
+  try { if(typeof hfRequestPermissions==='function') await hfRequestPermissions(); } catch(e) {}
+  onbGoStep3();
+}
+
+function onbGoStep3() { showScreen("scr-login"); }
+
+function onbSelfieChosen(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById("onb-selfie-img");
+    const ph  = document.getElementById("onb-selfie-placeholder");
+    const btn = document.getElementById("onb-selfie-save");
+    img.src = e.target.result;
+    img.style.display = "block";
+    if (ph) ph.style.display = "none";
+    if (btn) btn.style.display = "";
+    window._pendingSelfie = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function onbSaveSelfie() {
+  const uid = window.PRESET_USER;
+  if (window._pendingSelfie && uid) {
+    try { localStorage.setItem("hf_selfie_" + uid, window._pendingSelfie); }
+    catch(e) { showToastNotification("Photo too large to save — continuing without it"); }
+  }
+  onbGoSignIn();
+}
+
+function onbGoSignIn() { localStorage.setItem("hf_onboarded","1"); showScreen("scr-login"); }
+
+// Show toast for FCM foreground messages
+function showToastNotification(msg) {
+  const existing = document.getElementById("hf-toast-fcm");
+  if (existing) existing.remove();
+  const t = document.createElement("div");
+  t.id = "hf-toast-fcm";
+  t.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a2b3a;border:1px solid rgba(255,255,255,.2);color:#fff;padding:12px 20px;border-radius:24px;font:600 13px Lato,sans-serif;z-index:9999;max-width:320px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:fadeIn .2s ease";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 5000);
+}
+</script>
+
+</body>
+</html>

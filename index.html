@@ -1,1 +1,39 @@
-
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="theme-color" content="#1a2b3a">
+<title>HosPRO — The Barn Hotel</title>
+<link rel="icon" type="image/png" href="assets/hosdesk-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:'Lato',sans-serif;color:#fff}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 22px;
+  background:linear-gradient(180deg,rgba(13,27,42,.82),rgba(13,27,42,.72)),url('assets/barn-hero.jpg') center/cover no-repeat,#0d1b2a}
+.nm{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:700;letter-spacing:1px}
+.nm b{color:#c9a978}
+.sub{font-size:11px;letter-spacing:3px;color:#c9a978;text-transform:uppercase;font-weight:700;margin:4px 0 30px}
+.grid{display:grid;gap:12px;width:100%;max-width:380px}
+a.card{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;text-decoration:none;color:#fff;text-align:left;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px)}
+a.card img{width:52px;height:52px;border-radius:13px;flex-shrink:0}
+a.card .t{font-size:16px;font-weight:700}
+a.card .d{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
+.foot{margin-top:28px;font-size:11px;color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+  <div class="nm">The <b>Barn</b> Hotel</div>
+  <div class="sub">Ruislip · HosPRO</div>
+  <div class="grid">
+    <a class="card" href="hosdesk.html?board"><img src="assets/hosdesk-192.png" alt=""><div><div class="t">HosDesk</div><div class="d">Reception console — guest requests, deliveries, maintenance</div></div></a>
+    <a class="card" href="hosfix-catherine.html"><img src="assets/hosfix-mgr-192.png" alt=""><div><div class="t">HosFix — Manager</div><div class="d">Catherine · sees and allocates all jobs</div></div></a>
+    <a class="card" href="hosfix-josh.html"><img src="assets/hosfix-ops-192.png" alt=""><div><div class="t">HosFix — Operative</div><div class="d">Josh · your allocated jobs</div></div></a>
+    <a class="card" href="hosfix.html?tier=reporter"><img src="assets/hosfix-192.png" alt=""><div><div class="t">HosFix — Report a fault</div><div class="d">Any team member · log a fault from a phone</div></div></a>
+  </div>
+  <div class="foot">The Barn Hotel · West End Road, Ruislip HA4 6JB</div>
+</body>
+</html>

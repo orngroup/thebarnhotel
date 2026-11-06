@@ -1,0 +1,13 @@
+{
+  "name": "HosDesk - The Barn Hotel",
+  "short_name": "Barn HosDesk",
+  "start_url": "hosdesk.html?board",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#1a2b3a",
+  "theme_color": "#1a2b3a",
+  "icons": [
+    { "src": "assets/hosdesk-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/hosdesk-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

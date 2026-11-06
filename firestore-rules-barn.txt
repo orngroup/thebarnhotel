@@ -1,0 +1,12 @@
+    // ===== THE BARN HOTEL (thebarnhotel.hospro.co.uk) — paste inside the
+    // "match /databases/{database}/documents {" block of the live rules,
+    // then Publish. Same pattern as the Brandon Hall HosDesk/HosFix
+    // collections: open read/write, deletes blocked on jobs. =====
+    match /barn_fix_jobs/{jobId} {
+      allow read, create, update: if true;
+      allow delete: if false;
+    }
+    match /barn_requests/{doc}   { allow read, write: if true; }
+    match /barn_deliveries/{doc} { allow read, write: if true; }
+    match /barn_visitors/{doc}   { allow read, write: if true; }
+    match /barn_config/{doc}     { allow read, write: if true; }
