@@ -1,0 +1,38 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Marketing library files — any signed-in staff member can read/write.
+    match /marketing/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    // HosHUB document files — any signed-in staff member can read/write.
+    match /hoshub/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    // HosFIRE certificates, reports and documents — HosPRO password logins
+    // only (not the anonymous website chat). Files cannot be deleted.
+    match /hosfire/{allPaths=**} {
+      allow read: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'password';
+      allow create, update: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.resource.size < 25 * 1024 * 1024;
+      allow delete: if false;
+    }
+    // BarnHUB (thebarnhotel.hospro.co.uk) — compliance documents uploaded from the
+    // reception console, which has no Firebase login (code-gated page). Anyone may
+    // read; uploads limited to 25 MB and to PDF, image and Office types; never deleted.
+    match /barn_hub/{allPaths=**} {
+      allow read: if true;
+      allow create: if request.resource.size < 25 * 1024 * 1024
+        && (request.resource.contentType.matches('application/pdf')
+            || request.resource.contentType.matches('image/.*')
+            || request.resource.contentType.matches('application/msword')
+            || request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*')
+            || request.resource.contentType.matches('application/vnd.ms-excel'));
+      allow update, delete: if false;
+    }
+    // Deny everything else.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

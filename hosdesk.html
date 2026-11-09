@@ -129,7 +129,7 @@ body.console .wrap{max-width:1200px}
 .hub-file{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);margin-top:7px;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.3;background:#fafbfc}
 .hub-file:hover{background:#f1f4f8;border-color:#c9d2dc}
 .hub-file .ft{font:800 10px Lato;letter-spacing:.5px;color:#fff;border-radius:6px;padding:3px 6px;flex-shrink:0}
-.hub-file .ft.pdf{background:#b3261e}.hub-file .ft.image{background:#2a6a4a}
+.hub-file .ft.pdf{background:#b3261e}.hub-file .ft.image{background:#2a6a4a}.hub-file .ft.doc{background:#1f5fbf}
 .hub-file .fs{margin-left:auto;color:var(--muted);font-size:11px;white-space:nowrap}
 .hub-note{font-size:12px;color:var(--muted);margin:4px 0 14px}
 @media(max-width:900px){ .bigcards.three{grid-template-columns:1fr} }
@@ -176,6 +176,25 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 .bigcard .bc-ic{width:64px;height:64px;border-radius:18px;background:rgba(255,255,255,.18);display:grid;place-items:center}
 .bigcard .bc-ic svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ovl{position:fixed;inset:0;background:rgba(16,26,36,.55);z-index:140;display:none;align-items:center;justify-content:center;padding:18px}
+#login{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,rgba(13,27,42,.80),rgba(13,27,42,.70)),var(--hero) center/cover no-repeat,#0d1b2a}
+#login.hide{display:none}
+.lg-card{background:rgba(255,255,255,.97);border-radius:22px;padding:34px 30px 28px;width:100%;max-width:400px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.lg-card .lg-nm{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.05}
+.lg-card .lg-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 0 22px}
+.lg-card .lg-app{font:800 15px Lato;color:var(--navy);margin-bottom:4px}
+.lg-card .lg-hint{font-size:13px;color:var(--muted);margin-bottom:16px}
+.lg-card input{width:100%;max-width:240px;margin:0 auto;display:block;text-align:center;letter-spacing:12px;font:900 26px Lato;padding:12px;border:2px solid var(--line);border-radius:14px;outline:none}
+.lg-card input:focus{border-color:var(--navy)}
+.lg-card .lg-err{color:var(--red);font-size:12px;min-height:18px;margin:10px 0 4px}
+.lg-card .lg-foot{font-size:11px;color:var(--muted);margin-top:18px}
+.hub-tools{display:flex;align-items:center;gap:10px;margin:0 0 14px;flex-wrap:wrap}
+.hub-tools .hub-note{margin:0;flex:1 1 280px}
+.btn-up{background:var(--navy);color:#fff;border:0;border-radius:12px;padding:10px 16px;font:800 13px Lato;cursor:pointer;white-space:nowrap}
+.btn-up:hover{filter:brightness(1.1)}
+.hub-file .fx{margin-left:6px;color:var(--muted);font-size:14px;border:0;background:none;cursor:pointer;padding:0 2px;flex-shrink:0}
+.hub-file .fx:hover{color:var(--red)}
+.hub-prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:10px}
+.hub-prog>div{height:100%;width:0;background:var(--green);transition:width .2s}
 .ovl.on{display:flex}
 .sheet{background:#fff;border-radius:18px;max-width:600px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,.32)}
 .sheet-hd{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1}
@@ -197,6 +216,19 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 </style>
 </head>
 <body>
+<!-- ===== LOGIN — shown on every load until the code is entered (remembered for this browser session) ===== -->
+<div id="login">
+  <div class="lg-card">
+    <div class="lg-nm">The Barn Hotel</div>
+    <div class="lg-sub">Ruislip · HosDesk</div>
+    <div class="lg-app">🖥️ Reception console</div>
+    <div class="lg-hint">Enter the staff code to continue.</div>
+    <input id="lg-in" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()">
+    <div class="lg-err" id="lg-err"></div>
+    <button class="btn btn-go" style="max-width:240px;margin:0 auto" onclick="checkLogin()">Open HosDesk</button>
+    <div class="lg-foot">The Barn Hotel · West End Road, Ruislip HA4 6JB</div>
+  </div>
+</div>
 <div class="top">
   <div class="top-weather"><div class="wx" id="wx"><div class="wx-i" id="wx-i">☁️</div><div><div class="wx-t" id="wx-t">--°C</div><div class="wx-d" id="wx-d">Ruislip · loading…</div></div></div></div>
   <div class="top-brand">
@@ -357,7 +389,10 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
     <!-- Maintenance: log (left) · all jobs (right). Logs straight to the HosFIX app. -->
     <div class="pane" id="pane-hub">
       <div>
-        <div class="hub-note">Compliance documents for The Barn Hotel, 2026–27. Tap a file to open it in a new tab. To add or replace a document, send it to HosPRO.</div>
+        <div class="hub-tools">
+          <div class="hub-note">Compliance documents for The Barn Hotel, 2026–27. Tap a file to open it in a new tab.</div>
+          <button type="button" class="btn-up" onclick="openUpload()">⬆️ Upload a document</button>
+        </div>
         <div class="hub-grid" id="hub-grid"></div>
       </div>
     </div>
@@ -404,6 +439,23 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 <div class="toast" id="toast"></div>
 
 <!-- ===== Maintenance code gate (remove this block to open maintenance to all) ===== -->
+<div class="ovl" id="ovl-up" onclick="if(event.target===this)closeUpload()">
+  <div class="sheet" style="max-width:460px">
+    <div class="sheet-hd"><span style="font-size:20px">⬆️</span><span class="st">Upload to BarnHUB</span><button class="sheet-x" onclick="closeUpload()">✕</button></div>
+    <div class="sheet-bd">
+      <label class="fl">Folder</label>
+      <select id="up-folder" onchange="$('up-newfolder').style.display=this.value==='__new'?'':'none'"></select>
+      <input id="up-newfolder" type="text" placeholder="New folder name, e.g. Lift Service" style="display:none;margin-top:8px">
+      <label class="fl" style="margin-top:12px">Document title</label>
+      <input id="up-title" type="text" placeholder="e.g. Gas Safety Record 2027">
+      <label class="fl" style="margin-top:12px">File <span class="muted">(PDF, image or Word — up to 25 MB)</span></label>
+      <input id="up-file" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onchange="upPickName()">
+      <div class="hub-prog hide" id="up-prog"><div id="up-bar"></div></div>
+      <div id="up-err" style="color:var(--red);font-size:12px;min-height:16px;margin:8px 0 2px"></div>
+      <button class="btn btn-go" id="up-go" onclick="doUpload()">Upload</button>
+    </div>
+  </div>
+</div>
 <div class="ovl" id="ovl-hub" onclick="if(event.target===this)closeHubGate()">
   <div class="sheet" style="max-width:380px">
     <div class="sheet-hd"><span style="font-size:20px">🔒</span><span class="st">BarnHUB — access code</span><button class="sheet-x" onclick="closeHubGate()">✕</button></div>
@@ -467,6 +519,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="barn-config.js"></script>
 <script>
 'use strict';
@@ -691,20 +744,66 @@ async function startBoard(){
 }
 function stopBoard(){ if(B_UNSUB){ B_UNSUB(); B_UNSUB=null; } stopVD(); B_READY=false; }
 function bSetFilter(f){ B_FILTER=f; $('b-chips').innerHTML=B_FILTERS.map(([ff,l])=>`<button class="chip ${B_FILTER===ff?'on':''}" onclick="bSetFilter('${ff}')">${l}</button>`).join(''); bRender(); }
-/* ---- BarnHUB — compliance documents (files live in /hub/<folder>/) ---- */
+/* ---- LOGIN — code required on every visit (remembered for this browser session only) ---- */
+const LOGIN_CODE='3132';
+function loginOk(){ try{ return sessionStorage.getItem('barn_login')==='1'; }catch(e){ return false; } }
+function checkLogin(){ const v=($('lg-in').value||'').trim(); if(v===LOGIN_CODE){ try{ sessionStorage.setItem('barn_login','1'); }catch(e){} $('login').classList.add('hide'); startBoard(); } else { $('lg-err').textContent='Wrong code — please try again'; $('lg-in').value=''; $('lg-in').focus(); } }
+
+/* ---- BarnHUB — compliance documents (built-in files live in /hub/<folder>/; uploads go to Firebase Storage barn_hub/ + Firestore barn_hub_docs) ---- */
+let HUB_CLOUD=[], HUB_UNSUB=null;
+function hubWatch(){
+  if(HUB_UNSUB||!db) return;
+  HUB_UNSUB=db.collection('barn_hub_docs').onSnapshot(snap=>{ HUB_CLOUD=snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>!d.hidden); renderHub(); }, e=>console.warn('barn_hub_docs',e));
+}
+function hubFolders(){
+  const map=new Map(); HUB_DOCS.forEach(f=>map.set(f.id,{id:f.id,label:f.label,icon:f.icon,files:f.files.slice()}));
+  HUB_CLOUD.forEach(d=>{ const id=d.folderId||slugify(d.folder||'Other'); if(!map.has(id)) map.set(id,{id,label:d.folder||'Other',icon:'📁',files:[]}); map.get(id).files.push({file:d.url,title:d.title||d.name,type:(d.type||'').startsWith('image')?'image':(d.type==='application/pdf'?'pdf':'doc'),kb:Math.round((d.size||0)/1024),cloudId:d.id}); });
+  return Array.from(map.values());
+}
+function slugify(t){ return String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function openUpload(){
+  const sel=$('up-folder'); sel.innerHTML=hubFolders().map(f=>`<option value="${esc(f.id)}" data-label="${esc(f.label)}">${esc(f.label)}</option>`).join('')+'<option value="__new">＋ New folder…</option>';
+  $('up-newfolder').style.display='none'; $('up-newfolder').value=''; $('up-title').value=''; $('up-file').value=''; $('up-err').textContent=''; $('up-prog').classList.add('hide'); $('up-bar').style.width='0'; $('up-go').disabled=false; $('up-go').textContent='Upload';
+  $('ovl-up').classList.add('on');
+}
+function closeUpload(){ $('ovl-up').classList.remove('on'); }
+function upPickName(){ const f=$('up-file').files[0]; if(f && !$('up-title').value.trim()) $('up-title').value=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' '); }
+async function doUpload(){
+  const f=$('up-file').files[0]; const title=$('up-title').value.trim(); const sel=$('up-folder'); let folderId=sel.value, folder=sel.selectedOptions[0]?.dataset.label||'';
+  if(folderId==='__new'){ folder=$('up-newfolder').value.trim(); folderId=slugify(folder); if(!folder){ $('up-err').textContent='Give the new folder a name.'; return; } }
+  if(!f){ $('up-err').textContent='Choose a file to upload.'; return; }
+  if(f.size>25*1024*1024){ $('up-err').textContent='That file is over 25 MB.'; return; }
+  if(!db || typeof firebase==='undefined' || !firebase.storage){ $('up-err').textContent='Not connected — try again in a moment.'; return; }
+  $('up-err').textContent=''; $('up-go').disabled=true; $('up-go').textContent='Uploading…'; $('up-prog').classList.remove('hide');
+  try{
+    const safe=slugify(f.name.replace(/\.[^.]+$/,''))+'.'+(f.name.split('.').pop()||'bin').toLowerCase();
+    const path=`barn_hub/${folderId}/${Date.now()}_${safe}`;
+    const task=firebase.storage().ref(path).put(f,{contentType:f.type||'application/octet-stream'});
+    await new Promise((res,rej)=>task.on('state_changed',sn=>{ $('up-bar').style.width=Math.round(sn.bytesTransferred/sn.totalBytes*100)+'%'; },rej,res));
+    const url=await task.snapshot.ref.getDownloadURL();
+    await db.collection('barn_hub_docs').add({ folder, folderId, title:title||f.name, name:f.name, path, url, size:f.size, type:f.type||'', uploadedAt:new Date().toISOString(), by:'HosDesk' });
+    closeUpload(); toast('Document uploaded ✓');
+  }catch(e){ console.warn('upload',e); $('up-err').textContent=(e&&e.code==='storage/unauthorized')?'Upload refused — the storage rules for barn_hub have not been published yet.':'Upload failed — '+(e&&e.message||e); $('up-go').disabled=false; $('up-go').textContent='Upload'; }
+}
+async function hubRemove(id,title){
+  if(!confirm('Remove "'+title+'" from BarnHUB?')) return;
+  try{ await db.collection('barn_hub_docs').doc(id).update({hidden:true,hiddenAt:new Date().toISOString()}); toast('Removed'); }catch(e){ toast('Could not remove'); }
+}
+
 const HUB_CODE='3131';
 const HUB_DOCS=[{"id": "fra", "label": "Fire Risk Assessment", "icon": "🔥", "files": [{"file": "hub/fra/fra-the-barn-hotel-1-4-2026.pdf", "title": "Fire Risk Assessment — 1 April 2026", "type": "pdf", "kb": 14329}]}, {"id": "fire-alarm", "label": "Fire Alarm", "icon": "🚨", "files": [{"file": "hub/fire-alarm/fire-alarm-service-by-terry.pdf", "title": "Fire Alarm Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 165}]}, {"id": "fire-ext", "label": "Fire Extinguishers", "icon": "🧯", "files": [{"file": "hub/fire-ext/extinguisher-service-by-terry.pdf", "title": "Fire Extinguisher Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 92}]}, {"id": "emergency-lighting", "label": "Emergency Lighting", "icon": "💡", "files": [{"file": "hub/emergency-lighting/emlcertificate-94878607.pdf", "title": "Emergency Lighting Certificate 94878607", "type": "pdf", "kb": 2326}]}, {"id": "electrical", "label": "Electrical (EICR)", "icon": "⚡", "files": [{"file": "hub/electrical/the-barn.pdf", "title": "Electrical Installation Condition Report", "type": "pdf", "kb": 898}, {"file": "hub/electrical/barn-hotel-play-areas-provisional-plan.pdf", "title": "Play Areas — Provisional Plan", "type": "pdf", "kb": 5}]}, {"id": "gas", "label": "Gas Safety", "icon": "🔥", "files": [{"file": "hub/gas/nd-gsr-1742-8977-11568.pdf", "title": "Gas Safety Record ND-GSR-1742-8977-11568", "type": "pdf", "kb": 101}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm.jpg", "title": "Gas Safety — photo 1 (28 Jan 2026)", "type": "image", "kb": 218}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm-1.jpg", "title": "Gas Safety — photo 2 (28 Jan 2026)", "type": "image", "kb": 226}]}, {"id": "legionella", "label": "Legionella", "icon": "💧", "files": [{"file": "hub/legionella/legionella-risk-assess-the-barn-hotel-26-27.pdf", "title": "Legionella Risk Assessment 2026–27", "type": "pdf", "kb": 462}]}, {"id": "pat-test", "label": "PAT Testing", "icon": "🔌", "files": [{"file": "hub/pat-test/pat-test-report-barn-hotel-1-4-26.pdf", "title": "PAT Test Report — 1 April 2026", "type": "pdf", "kb": 356}]}];
 let HUB_UNLOCKED=false;
-function openHub(){ if(HUB_UNLOCKED){ renderHub(); showSection('hub'); return; } const i=$('hg-in'); if(i) i.value=''; const e=$('hg-err'); if(e) e.textContent=''; $('ovl-hub').classList.add('on'); setTimeout(()=>{ try{ $('hg-in').focus(); }catch(e){} },60); }
+function openHub(){ hubWatch(); if(HUB_UNLOCKED){ renderHub(); showSection('hub'); return; } const i=$('hg-in'); if(i) i.value=''; const e=$('hg-err'); if(e) e.textContent=''; $('ovl-hub').classList.add('on'); setTimeout(()=>{ try{ $('hg-in').focus(); }catch(e){} },60); }
 function closeHubGate(){ $('ovl-hub').classList.remove('on'); }
 function checkHubCode(){ const v=($('hg-in').value||'').trim(); if(v===HUB_CODE){ HUB_UNLOCKED=true; closeHubGate(); renderHub(); showSection('hub'); } else { $('hg-err').textContent='Wrong code — try again'; $('hg-in').value=''; $('hg-in').focus(); } }
 function renderHub(){
   const g=$('hub-grid'); if(!g) return;
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const size=kb=>kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB';
-  g.innerHTML=HUB_DOCS.map(f=>`<div class="hub-folder"><div class="hf-h"><span class="ic">${f.icon}</span>${esc(f.label)}<span class="hf-n">${f.files.length}</span></div>`+
-    f.files.map(d=>`<a class="hub-file" href="${esc(d.file)}" target="_blank" rel="noopener"><span class="ft ${d.type}">${d.type==='pdf'?'PDF':'IMG'}</span><span>${esc(d.title)}</span><span class="fs">${size(d.kb)}</span></a>`).join('')+`</div>`).join('');
-  const n=$('bc-hub-n'); if(n) n.textContent=HUB_DOCS.length;
+  const folders=hubFolders();
+  g.innerHTML=folders.map(f=>`<div class="hub-folder"><div class="hf-h"><span class="ic">${f.icon}</span>${esc(f.label)}<span class="hf-n">${f.files.length}</span></div>`+
+    f.files.map(d=>`<div style="display:flex;align-items:center"><a class="hub-file" style="flex:1" href="${esc(d.file)}" target="_blank" rel="noopener"><span class="ft ${d.type}">${d.type==='pdf'?'PDF':d.type==='image'?'IMG':'DOC'}</span><span>${esc(d.title)}</span><span class="fs">${size(d.kb)}</span></a>${d.cloudId?`<button class="fx" title="Remove" onclick="hubRemove('${d.cloudId}','${esc(d.title).replace(/'/g,'')}')">✕</button>`:''}</div>`).join('')+`</div>`).join('');
+  const n=$('bc-hub-n'); if(n) n.textContent=folders.length;
 }
 
 // Maintenance is gated by a staff code until go-live (remove the gate block below + ovl-code to open it to all).
@@ -973,8 +1072,8 @@ function mToggleAll(){ M_FILTER_ALL=!M_FILTER_ALL; const b=$('m-toggle'); if(b) 
 
 /* Header clock + weather are native (JS clock + Open-Meteo) */
 
-/* entry: reception link opens the console straight away */
-if(STAFF) startBoard();
+/* entry: login screen first (code remembered for this browser session), then straight into the console */
+if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeout(()=>{ try{ $('lg-in').focus(); }catch(e){} },80); }
 </script>
 </body>
 </html>
