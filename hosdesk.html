@@ -118,6 +118,21 @@ body.console .wrap{max-width:1200px}
 .bc-req{background:linear-gradient(135deg,#1a2b3a,#2c4155)}
 .bc-del{background:linear-gradient(135deg,#b9780a,#935f08)}
 .bc-mnt{background:linear-gradient(135deg,#c45c00,#8f4300)}
+.bc-hub{background:linear-gradient(135deg,#1a2b3a,#2c4155)}
+.bigcards.three{grid-template-columns:repeat(3,1fr)}
+#pane-hub.on{grid-template-columns:1fr}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
+.hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
+.hub-folder .hf-h .ic{font-size:22px}
+.hub-folder .hf-n{margin-left:auto;font:700 11px Lato;color:var(--muted);background:var(--bg);border-radius:999px;padding:3px 8px}
+.hub-file{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);margin-top:7px;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.3;background:#fafbfc}
+.hub-file:hover{background:#f1f4f8;border-color:#c9d2dc}
+.hub-file .ft{font:800 10px Lato;letter-spacing:.5px;color:#fff;border-radius:6px;padding:3px 6px;flex-shrink:0}
+.hub-file .ft.pdf{background:#b3261e}.hub-file .ft.image{background:#2a6a4a}
+.hub-file .fs{margin-left:auto;color:var(--muted);font-size:11px;white-space:nowrap}
+.hub-note{font-size:12px;color:var(--muted);margin:4px 0 14px}
+@media(max-width:900px){ .bigcards.three{grid-template-columns:1fr} }
 /* open section = full page: form 1/3 left, list 2/3 right */
 .pane{display:none;margin-top:12px}
 .pane.on{display:grid;grid-template-columns:1fr 2fr;gap:18px;align-items:start}
@@ -285,9 +300,10 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
         <div class="h2">Tap a card below to get started</div>
       </div>
 
-      <div class="bigcards">
+      <div class="bigcards three">
         <div class="bigcard bc-del" id="card-deliveries" onclick="showSection('deliveries')"><div class="bc-n" id="bc-del-n">0</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></div><div class="bc-t">Deliveries</div><div class="bc-s">Parcels in</div></div>
         <div class="bigcard bc-mnt" id="card-maintenance" onclick="showSection('maintenance')"><div class="bc-n" id="bc-mnt-n">0</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="bc-t">Maintenance</div><div class="bc-s">Repairs &amp; faults</div></div>
+        <div class="bigcard bc-hub" id="card-hub" onclick="openHub()"><div class="bc-n" id="bc-hub-n">8</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg></div><div class="bc-t">BarnHUB</div><div class="bc-s">Compliance documents &amp; certificates</div></div>
       </div>
 
       <div class="dash" style="margin-top:18px">
@@ -339,6 +355,13 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
     </div>
 
     <!-- Maintenance: log (left) · all jobs (right). Logs straight to the HosFIX app. -->
+    <div class="pane" id="pane-hub">
+      <div>
+        <div class="hub-note">Compliance documents for The Barn Hotel, 2026–27. Tap a file to open it in a new tab. To add or replace a document, send it to HosPRO.</div>
+        <div class="hub-grid" id="hub-grid"></div>
+      </div>
+    </div>
+
     <div class="pane" id="pane-maintenance">
       <div class="pane-form">
         <div class="card">
@@ -381,6 +404,17 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 <div class="toast" id="toast"></div>
 
 <!-- ===== Maintenance code gate (remove this block to open maintenance to all) ===== -->
+<div class="ovl" id="ovl-hub" onclick="if(event.target===this)closeHubGate()">
+  <div class="sheet" style="max-width:380px">
+    <div class="sheet-hd"><span style="font-size:20px">🔒</span><span class="st">BarnHUB — access code</span><button class="sheet-x" onclick="closeHubGate()">✕</button></div>
+    <div class="sheet-bd" style="text-align:center">
+      <div class="muted" style="margin-bottom:6px">Enter the code to open the compliance documents.</div>
+      <input id="hg-in" class="codein" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')checkHubCode()">
+      <div id="hg-err" style="color:var(--red);font-size:12px;min-height:16px;margin:8px 0 2px"></div>
+      <button class="btn btn-go" style="max-width:220px;margin:4px auto 0" onclick="checkHubCode()">Unlock</button>
+    </div>
+  </div>
+</div>
 <div class="ovl" id="ovl-code" onclick="if(event.target===this)closeCodeGate()">
   <div class="sheet" style="max-width:380px">
     <div class="sheet-hd"><span style="font-size:20px">🔒</span><span class="st">Maintenance — staff code</span><button class="sheet-x" onclick="closeCodeGate()">✕</button></div>
@@ -657,6 +691,22 @@ async function startBoard(){
 }
 function stopBoard(){ if(B_UNSUB){ B_UNSUB(); B_UNSUB=null; } stopVD(); B_READY=false; }
 function bSetFilter(f){ B_FILTER=f; $('b-chips').innerHTML=B_FILTERS.map(([ff,l])=>`<button class="chip ${B_FILTER===ff?'on':''}" onclick="bSetFilter('${ff}')">${l}</button>`).join(''); bRender(); }
+/* ---- BarnHUB — compliance documents (files live in /hub/<folder>/) ---- */
+const HUB_CODE='3131';
+const HUB_DOCS=[{"id": "fra", "label": "Fire Risk Assessment", "icon": "🔥", "files": [{"file": "hub/fra/fra-the-barn-hotel-1-4-2026.pdf", "title": "Fire Risk Assessment — 1 April 2026", "type": "pdf", "kb": 14329}]}, {"id": "fire-alarm", "label": "Fire Alarm", "icon": "🚨", "files": [{"file": "hub/fire-alarm/fire-alarm-service-by-terry.pdf", "title": "Fire Alarm Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 165}]}, {"id": "fire-ext", "label": "Fire Extinguishers", "icon": "🧯", "files": [{"file": "hub/fire-ext/extinguisher-service-by-terry.pdf", "title": "Fire Extinguisher Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 92}]}, {"id": "emergency-lighting", "label": "Emergency Lighting", "icon": "💡", "files": [{"file": "hub/emergency-lighting/emlcertificate-94878607.pdf", "title": "Emergency Lighting Certificate 94878607", "type": "pdf", "kb": 2326}]}, {"id": "electrical", "label": "Electrical (EICR)", "icon": "⚡", "files": [{"file": "hub/electrical/the-barn.pdf", "title": "Electrical Installation Condition Report", "type": "pdf", "kb": 898}, {"file": "hub/electrical/barn-hotel-play-areas-provisional-plan.pdf", "title": "Play Areas — Provisional Plan", "type": "pdf", "kb": 5}]}, {"id": "gas", "label": "Gas Safety", "icon": "🔥", "files": [{"file": "hub/gas/nd-gsr-1742-8977-11568.pdf", "title": "Gas Safety Record ND-GSR-1742-8977-11568", "type": "pdf", "kb": 101}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm.jpg", "title": "Gas Safety — photo 1 (28 Jan 2026)", "type": "image", "kb": 218}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm-1.jpg", "title": "Gas Safety — photo 2 (28 Jan 2026)", "type": "image", "kb": 226}]}, {"id": "legionella", "label": "Legionella", "icon": "💧", "files": [{"file": "hub/legionella/legionella-risk-assess-the-barn-hotel-26-27.pdf", "title": "Legionella Risk Assessment 2026–27", "type": "pdf", "kb": 462}]}, {"id": "pat-test", "label": "PAT Testing", "icon": "🔌", "files": [{"file": "hub/pat-test/pat-test-report-barn-hotel-1-4-26.pdf", "title": "PAT Test Report — 1 April 2026", "type": "pdf", "kb": 356}]}];
+let HUB_UNLOCKED=false;
+function openHub(){ if(HUB_UNLOCKED){ renderHub(); showSection('hub'); return; } const i=$('hg-in'); if(i) i.value=''; const e=$('hg-err'); if(e) e.textContent=''; $('ovl-hub').classList.add('on'); setTimeout(()=>{ try{ $('hg-in').focus(); }catch(e){} },60); }
+function closeHubGate(){ $('ovl-hub').classList.remove('on'); }
+function checkHubCode(){ const v=($('hg-in').value||'').trim(); if(v===HUB_CODE){ HUB_UNLOCKED=true; closeHubGate(); renderHub(); showSection('hub'); } else { $('hg-err').textContent='Wrong code — try again'; $('hg-in').value=''; $('hg-in').focus(); } }
+function renderHub(){
+  const g=$('hub-grid'); if(!g) return;
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const size=kb=>kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB';
+  g.innerHTML=HUB_DOCS.map(f=>`<div class="hub-folder"><div class="hf-h"><span class="ic">${f.icon}</span>${esc(f.label)}<span class="hf-n">${f.files.length}</span></div>`+
+    f.files.map(d=>`<a class="hub-file" href="${esc(d.file)}" target="_blank" rel="noopener"><span class="ft ${d.type}">${d.type==='pdf'?'PDF':'IMG'}</span><span>${esc(d.title)}</span><span class="fs">${size(d.kb)}</span></a>`).join('')+`</div>`).join('');
+  const n=$('bc-hub-n'); if(n) n.textContent=HUB_DOCS.length;
+}
+
 // Maintenance is gated by a staff code until go-live (remove the gate block below + ovl-code to open it to all).
 let MNT_UNLOCKED=true;
 function openCodeGate(){ const i=$('cg-in'); if(i) i.value=''; const e=$('cg-err'); if(e) e.textContent=''; $('ovl-code').classList.add('on'); setTimeout(()=>{ try{ $('cg-in').focus(); }catch(e){} },80); }
@@ -665,16 +715,16 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance'};
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance'};
 function showSection(x){
-  ['requests','deliveries','maintenance'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
   window.scrollTo({top:0,behavior:'smooth'});
