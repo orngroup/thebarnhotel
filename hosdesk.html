@@ -178,7 +178,7 @@ body.console .wrap{max-width:1500px}
 .em-prev{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;max-height:50vh;overflow:auto;font-size:13px;line-height:1.45}
 .em-prev table td{font-size:13px}
 .em-prev p{margin:0 0 8px}
-.book{margin:18px auto 0;max-width:1100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
+.book{margin:18px auto 0;max-width:none;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .book-hd{display:flex;align-items:center;gap:8px;font:800 14px Lato;color:var(--navy);margin-bottom:8px}
 .book-hd .cnt{background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 9px;font-size:11px}
 .book-t{width:100%;border-collapse:collapse;font-size:13px}
@@ -406,10 +406,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
         <div class="bigcard bc-hub" id="card-hub" onclick="openHub()"><div class="bc-n" id="bc-hub-n">8</div><div class="bc-ic"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg></div><div class="bc-t">BarnHUB</div><div class="bc-s">Compliance documents &amp; certificates</div></div>
       </div>
 
-      <div class="dash" style="margin-top:18px">
-        <div class="tile" style="cursor:pointer" onclick="showSection('maintenance')"><div class="v" id="t-mnt" style="color:#c45c00">0</div><div class="k">Maintenance open</div></div>
-        <div class="tile" style="cursor:pointer" onclick="showSection('deliveries')"><div class="v" id="t-del" style="color:var(--amber)">0</div><div class="k">Deliveries</div></div>
-      </div>
+      <div class="dash hide" style="margin-top:18px"><div class="tile hide"><div class="v" id="t-mnt">0</div></div><div class="tile hide"><div class="v" id="t-del">0</div></div></div>
       <div class="book" id="book-box">
         <div class="book-hd">🏗️ Contractors booked in <span class="cnt" id="book-n">0</span><span class="muted" style="margin-left:auto;font-weight:400;font-size:12px">External jobs with an appointment date</span></div>
         <table class="book-t"><thead><tr><th>Date booked</th><th>Job</th><th>Skill type</th><th>Contractor</th><th>Status</th></tr></thead><tbody id="book-body"></tbody></table>
