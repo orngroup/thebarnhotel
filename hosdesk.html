@@ -142,6 +142,16 @@ body.console .wrap{max-width:1500px}
 .md-ph img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 .md-ph span{position:absolute;left:6px;bottom:6px;background:rgba(26,43,58,.85);color:#fff;font:700 10px Lato;padding:2px 6px;border-radius:6px}
 @media(max-width:900px){ .md-grid{grid-template-columns:1fr} }
+.md-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.ebtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;font:800 12px Lato;color:var(--navy);cursor:pointer}
+.ebtn:hover{background:var(--bg)}
+.ebtn.done{border-color:#bfe0cf;color:var(--green);background:#f1faf5}
+.ebtn.danger{border-color:#f0b8b4;color:var(--red);background:#fff4f3}
+.xbtn{margin-left:auto;border:0;background:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px}
+.xbtn:hover{color:var(--red)}
+.ej-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
+.ej-grid .fl{margin-top:0}
+@media(max-width:600px){ .ej-grid{grid-template-columns:1fr} }
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
@@ -460,6 +470,38 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 <div class="toast" id="toast"></div>
 
 <!-- ===== Maintenance code gate (remove this block to open maintenance to all) ===== -->
+<div class="ovl" id="ovl-edit" onclick="if(event.target===this)closeEditGate()">
+  <div class="sheet" style="max-width:380px">
+    <div class="sheet-hd"><span style="font-size:20px">✏️</span><span class="st">Edit mode — manager code</span><button class="sheet-x" onclick="closeEditGate()">✕</button></div>
+    <div class="sheet-bd" style="text-align:center">
+      <div class="muted" style="margin-bottom:6px">Enter the manager code to edit, complete, archive or remove.</div>
+      <input id="ec-in" class="codein" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')checkEditCode()">
+      <div id="ec-err" style="color:var(--red);font-size:12px;min-height:16px;margin:8px 0 2px"></div>
+      <button class="btn btn-go" style="max-width:220px;margin:4px auto 0" onclick="checkEditCode()">Unlock</button>
+      <div class="muted" style="font-size:11px;margin-top:10px">Stays unlocked until this screen is reloaded.</div>
+    </div>
+  </div>
+</div>
+<div class="ovl" id="ovl-ej" onclick="if(event.target===this)closeEditJob()">
+  <div class="sheet" style="max-width:520px">
+    <div class="sheet-hd"><span style="font-size:20px">✏️</span><span class="st">Edit job</span><button class="sheet-x" onclick="closeEditJob()">✕</button></div>
+    <div class="sheet-bd">
+      <input type="hidden" id="ej-id">
+      <label class="fl">What's wrong</label><input id="ej-title" type="text">
+      <label class="fl" style="margin-top:10px">More detail</label><textarea id="ej-desc" rows="3"></textarea>
+      <div class="ej-grid">
+        <div><label class="fl">Area</label><select id="ej-area"></select></div>
+        <div><label class="fl">Room / location</label><input id="ej-loc" type="text"></div>
+        <div><label class="fl">Type of work</label><select id="ej-wt"><option value="">Not set</option><option value="plumbing">Plumbing</option><option value="electrical">Electrical / Heating</option><option value="fences">Fences / Driveway</option><option value="decorating">Painting &amp; Decorating</option><option value="locks">Locks</option><option value="flooring">Flooring</option><option value="fire">Fire Safety</option><option value="general">Other / General</option></select></div>
+        <div><label class="fl">Priority</label><select id="ej-prio"><option value="medium">Normal</option><option value="high">High</option><option value="urgent">🔴 Urgent</option></select></div>
+        <div><label class="fl">Status</label><select id="ej-status"><option value="not-started">Not started</option><option value="in-progress">In progress</option><option value="complete">Complete</option></select></div>
+        <div><label class="fl">Allocated to</label><select id="ej-who"><option value="catherine">Catherine (to allocate)</option><option value="josh">Josh</option></select></div>
+        <div><label class="fl">Room</label><select id="ej-occ"><option value="">—</option><option value="occupied">Occupied</option><option value="vacant">Vacant</option><option value="unknown">Not sure</option></select></div>
+      </div>
+      <button class="btn btn-go" style="margin-top:14px" onclick="saveEditJob()">Save changes</button>
+    </div>
+  </div>
+</div>
 <div class="ovl" id="ovl-up" onclick="if(event.target===this)closeUpload()">
   <div class="sheet" style="max-width:460px">
     <div class="sheet-hd"><span style="font-size:20px">⬆️</span><span class="st">Upload to BarnHUB</span><button class="sheet-x" onclick="closeUpload()">✕</button></div>
@@ -751,7 +793,7 @@ async function startBoard(){
     }, e=>{ console.warn('board snap',e); $('b-list').innerHTML='<div class="muted" style="padding:20px;text-align:center">Could not load requests — check connection.</div>'; });
     // Section 2 — deliveries (live)
     if(D_UNSUB) D_UNSUB();
-    D_UNSUB=db.collection('barn_deliveries').onSnapshot(snap=>{ D_ROWS=snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); renderDeliveries(); }, e=>{ $('d-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load deliveries.</div>'; });
+    D_UNSUB=db.collection('barn_deliveries').onSnapshot(snap=>{ D_ROWS=snap.docs.map(d=>d.data()).filter(r=>r && !r.hidden).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); renderDeliveries(); }, e=>{ $('d-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load deliveries.</div>'; });
     // Section 3 — maintenance (live, shared with the HosFIX app via barn_fix_jobs)
     if(M_UNSUB) M_UNSUB();
     M_UNSUB=db.collection('barn_fix_jobs').onSnapshot(snap=>{ connOk(true); M_ROWS=snap.docs.map(d=>d.data()).filter(j=>j && !j.demoHidden).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); mRender(); mDupCheck(); }, e=>{ console.warn('barn_fix_jobs',e); connOk(false,e); $('m-list').innerHTML='<div class="muted" style="padding:16px;text-align:center">Could not load maintenance — '+(e&&e.code==='permission-denied'?'the Firestore rules for <b>barn_fix_jobs</b> have not been published yet.':(e&&e.message||'check connection'))+'</div>'; });
@@ -984,7 +1026,7 @@ function renderDeliveries(){
   if(!rows.length){ $('d-list').innerHTML='<div class="muted" style="padding:20px;text-align:center">No deliveries in this period.</div>'; return; }
   const SZ={small:'Small',medium:'Medium',large:'Large'};
   $('d-list').innerHTML=rows.map(r=>`<div class="rec">
-    <div class="r1"><span class="nm2">${esc(r.supplier)}</span><span class="tag">${SZ[r.size]||'Medium'}</span>${r.ref?`<span class="tag">Ref ${esc(r.ref)}</span>`:''}</div>
+    <div class="r1"><span class="nm2">${esc(r.supplier)}</span><span class="tag">${SZ[r.size]||'Medium'}</span>${r.ref?`<span class="tag">Ref ${esc(r.ref)}</span>`:''}<button type="button" class="xbtn" title="Remove" onclick="withEditCode(()=>dRemove('${esc(r.id)}'))">✕</button></div>
     <div class="meta">📦 ${esc(r.desc)}</div>
     <div class="meta">${r.forWho?('👤 For '+esc(r.forWho)+' · '):''}${r.location?('📍 '+esc(r.location)+' · '):''}🕐 ${recWhen(r.createdAt)}</div>
   </div>`).join('');
@@ -1125,8 +1167,51 @@ function mDetail(j){
       ${j.startPhoto?`<a href="${esc(j.startPhoto)}" target="_blank" rel="noopener"><img src="${esc(j.startPhoto)}" alt=""><span>Before</span></a>`:''}
       ${j.completionPhoto?`<a href="${esc(j.completionPhoto)}" target="_blank" rel="noopener"><img src="${esc(j.completionPhoto)}" alt=""><span>After</span></a>`:''}
     </div></div>`:(j.photosLocalOnly?'<div class="md-sec muted" style="font-size:12px">Photos are on the phone that took them (too large to share).</div>':'')}
-    <div class="muted" style="font-size:11px;margin-top:8px">Job ref ${esc(j.id)}</div>
+    <div class="md-actions">
+      <button type="button" class="ebtn" onclick="withEditCode(()=>openEditJob('${esc(j.id)}'))">✏️ Edit job</button>
+      ${j.status!=='complete'?`<button type="button" class="ebtn done" onclick="withEditCode(()=>mSetStatus('${esc(j.id)}','complete'))">✓ Mark complete</button>`:`<button type="button" class="ebtn" onclick="withEditCode(()=>mSetStatus('${esc(j.id)}','not-started'))">↩ Reopen</button>`}
+      <button type="button" class="ebtn danger" onclick="withEditCode(()=>mArchive('${esc(j.id)}'))">🗑 Archive</button>
+      <span class="muted" style="font-size:11px;margin-left:auto">Job ref ${esc(j.id)}</span>
+    </div>
   </div>`;
+}
+/* ---- Edit mode (code 2222) — edit / complete / archive jobs and remove deliveries from reception ---- */
+const EDIT_CODE='2222'; let EDIT_OK=false, _editNext=null;
+function withEditCode(fn){ if(EDIT_OK){ fn(); return; } _editNext=fn; const i=$('ec-in'); if(i) i.value=''; const e=$('ec-err'); if(e) e.textContent=''; $('ovl-edit').classList.add('on'); setTimeout(()=>{ try{ $('ec-in').focus(); }catch(e){} },60); }
+function closeEditGate(){ $('ovl-edit').classList.remove('on'); _editNext=null; }
+function checkEditCode(){ const v=($('ec-in').value||'').trim(); if(v===EDIT_CODE){ EDIT_OK=true; $('ovl-edit').classList.remove('on'); const f=_editNext; _editNext=null; if(f) f(); } else { $('ec-err').textContent='Wrong code'; $('ec-in').value=''; $('ec-in').focus(); } }
+function mFind(id){ return M_ROWS.find(j=>j.id===id); }
+function mNote(j,text){ return (j.notes||[]).concat([{text, by:'Reception (HosDesk)', at:todayISO()}]); }
+async function mUpdate(id,patch,msg){
+  if(!db){ toast('Not connected'); return; }
+  try{ await db.collection('barn_fix_jobs').doc(id).update(Object.assign({updatedAt:new Date().toISOString()},patch)); if(msg) toast(msg); }
+  catch(e){ console.warn('mUpdate',e); toast('Could not save — '+(e&&e.code||'error')); }
+}
+function mSetStatus(id,st){ const j=mFind(id); if(!j) return; const patch={status:st, notes:mNote(j, st==='complete'?'Marked complete at reception':'Reopened at reception')}; if(st==='complete') patch.completedAt=new Date().toISOString(); else patch.completedAt=null; mUpdate(id,patch, st==='complete'?'Job marked complete ✓':'Job reopened'); }
+function mArchive(id){ const j=mFind(id); if(!j) return; if(!confirm('Archive "'+(j.title||'this job')+'"?\n\nIt is hidden from every screen, not deleted.')) return; mUpdate(id,{demoHidden:true, status:(j.status==='complete'?'complete':'cancelled'), notes:mNote(j,'Archived at reception')},'Job archived'); if(M_OPEN===id) M_OPEN=null; }
+function dRemove(id){ if(!confirm('Remove this delivery from the list?')) return; if(!db){ toast('Not connected'); return; } db.collection('barn_deliveries').doc(id).update({hidden:true, hiddenAt:new Date().toISOString()}).then(()=>toast('Delivery removed')).catch(e=>toast('Could not remove')); }
+function openEditJob(id){
+  const j=mFind(id); if(!j) return;
+  $('ej-id').value=id; $('ej-title').value=j.title||''; $('ej-desc').value=j.description||''; $('ej-loc').value=j.location||'';
+  const area=$('ej-area'); area.innerHTML=Object.keys(MAINT_PROP).map(k=>`<option value="${esc(k)}" ${k===j.area?'selected':''}>${esc(MAINT_PROP[k].label)}</option>`).join('');
+  $('ej-prio').value=(j.priority==='urgent')?'urgent':(j.priority==='high'?'high':'medium');
+  $('ej-status').value=j.status||'not-started';
+  $('ej-who').value=((j.assignees||[]).includes('josh'))?'josh':'catherine';
+  $('ej-occ').value=j.occupancy||'';
+  $('ej-wt').value=j.workType||'';
+  $('ovl-ej').classList.add('on');
+}
+function closeEditJob(){ $('ovl-ej').classList.remove('on'); }
+function saveEditJob(){
+  const id=$('ej-id').value; const j=mFind(id); if(!j) return;
+  const title=($('ej-title').value||'').trim(); if(!title){ toast('Give the job a title'); return; }
+  const area=$('ej-area').value; const who=$('ej-who').value;
+  const patch={ title, description:($('ej-desc').value||'').trim(), location:($('ej-loc').value||'').trim(), area, areaLabel:(MAINT_PROP[area]||{}).label||area,
+    priority:$('ej-prio').value, status:$('ej-status').value, assignees: who==='josh'?['josh']:['catherine'], occupancy:$('ej-occ').value, workType:$('ej-wt').value,
+    notes:mNote(j,'Edited at reception') };
+  if(patch.status==='complete' && !j.completedAt) patch.completedAt=new Date().toISOString();
+  if(patch.status!=='complete') patch.completedAt=null;
+  mUpdate(id,patch,'Job updated ✓'); closeEditJob();
 }
 function mShowAll(){ M_FILTER_ALL=true; mRender(); }
 function mToggleAll(){ M_FILTER_ALL=!M_FILTER_ALL; const b=$('m-toggle'); if(b) b.textContent=M_FILTER_ALL?'Hide completed':'Show completed'; mRender(); }
