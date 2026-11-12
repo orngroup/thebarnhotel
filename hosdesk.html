@@ -121,6 +121,24 @@ body.console .wrap{max-width:1200px}
 .bc-hub{background:linear-gradient(135deg,#1a2b3a,#2c4155)}
 .bigcards.three{grid-template-columns:repeat(3,1fr)}
 #pane-hub.on{grid-template-columns:1fr}
+.req.mj{cursor:pointer}
+.req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
+.req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
+.md{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);cursor:default;font-size:13px;line-height:1.45}
+.md-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 18px}
+.md-row{display:flex;gap:8px;padding:3px 0}
+.md-k{flex:0 0 96px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px;font-weight:700;padding-top:2px}
+.md-v{flex:1}
+.md-sec{margin-top:10px}
+.md-h{font:800 11px Lato;letter-spacing:.5px;text-transform:uppercase;color:var(--navy);margin-bottom:4px}
+.md-tl{display:flex;align-items:center;gap:8px;padding:2px 0}
+.md-tl span{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.md-note{background:var(--bg);border-radius:8px;padding:7px 10px;margin-bottom:5px}
+.md-ph{display:flex;flex-wrap:wrap;gap:8px}
+.md-ph a{position:relative;display:block}
+.md-ph img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.md-ph span{position:absolute;left:6px;bottom:6px;background:rgba(26,43,58,.85);color:#fff;font:700 10px Lato;padding:2px 6px;border-radius:6px}
+@media(max-width:900px){ .md-grid{grid-template-columns:1fr} }
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
@@ -1060,12 +1078,52 @@ function mRender(){
   const BORD={'not-started':'#c45c00','in-progress':'#b9780a','complete':'#2E6B5E'};
   $('m-list').innerHTML=rows.map(j=>{
     const col=(j.priority==='urgent'&&j.status!=='complete')?'#b3261e':(BORD[j.status]||'#c45c00');
-    return `<div class="req" style="border-left-color:${col}">
-      <div class="r1"><span class="rm">${esc(j.location||j.areaLabel||'—')}</span><span class="ty">${esc(j.title||'')}</span>${mStatusBadge(j)}</div>
-      ${j.description?`<div class="meta">${esc(j.description)}</div>`:''}
+    const open=M_OPEN===j.id;
+    return `<div class="req mj ${open?'open':''}" style="border-left-color:${col}" onclick="mToggle('${esc(j.id)}')">
+      <div class="r1"><span class="rm">${esc(j.location||j.areaLabel||'—')}</span><span class="ty">${esc(j.title||'')}</span>${mStatusBadge(j)}<span class="chev">${open?'▲':'▼'}</span></div>
+      ${(!open&&j.description)?`<div class="meta">${esc(j.description)}</div>`:''}
       <div class="meta">${esc(j.reportedBy||j.source||'')} · ${recWhen(j.createdAt)} ${mWho(j)?('· '+mWho(j)):''}</div>
+      ${open?mDetail(j):''}
     </div>`;
   }).join('');
+}
+let M_OPEN=null;
+function mToggle(id){ M_OPEN = (M_OPEN===id)?null:id; mRender(); }
+function mFmt(iso){ if(!iso) return ''; try{ const d=new Date(iso); if(isNaN(d)) return esc(iso); return d.toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return esc(iso); } }
+function mDetail(j){
+  const WT={plumbing:'Plumbing',electrical:'Electrical / Heating',fences:'Fences / Driveway',decorating:'Painting & Decorating',locks:'Locks',flooring:'Flooring',fire:'Fire Safety',general:'Other / General'};
+  const OCC={occupied:'🚪 Occupied',vacant:'✅ Vacant',unknown:'Not sure'};
+  const row=(k,v)=>v?`<div class="md-row"><span class="md-k">${k}</span><span class="md-v">${v}</span></div>`:'';
+  const prio=j.priority==='urgent'?'<b style="color:#b3261e">🔴 Urgent</b>':j.priority==='high'?'<b style="color:#c45c00">High</b>':'Normal';
+  const stat=j.status==='complete'?'✓ Completed':j.status==='in-progress'?'⏱ In progress':((j.assignees||[]).some(a=>a!=='catherine')?'Allocated':'New — awaiting allocation');
+  const photos=[].concat(j.photos||[]).filter(Boolean);
+  const notes=(j.notes||[]).slice().reverse();
+  const mats=(j.materials||[]).filter(Boolean);
+  const stamp=(label,iso)=>iso?`<div class="md-tl"><span></span><b>${label}</b> ${mFmt(iso)}</div>`:'';
+  return `<div class="md" onclick="event.stopPropagation()">
+    <div class="md-grid">
+      ${row('Where', esc((j.areaLabel||'')+(j.location?(' · '+j.location):'')))}
+      ${row('Type of work', esc(WT[j.workType]||j.workType||'Not set yet'))}
+      ${row('Priority', prio)}
+      ${row('Status', stat)}
+      ${row('Room', OCC[j.occupancy]||'')}
+      ${row('Reported by', esc(j.reportedBy||j.createdBy||'')+(j.source?` <span class="muted">(${esc(j.source)})</span>`:''))}
+      ${row('Allocated to', mWho(j).replace('👤 ',''))}
+      ${row('Cost', (j.cost&&j.cost>0)?('£'+Number(j.cost).toFixed(2)):'')}
+    </div>
+    ${j.description?`<div class="md-sec"><div class="md-h">Details</div><div>${esc(j.description)}</div></div>`:''}
+    <div class="md-sec"><div class="md-h">Timeline</div>
+      ${stamp('Logged',j.createdAt)}${stamp('Started',j.startedAt)}${stamp('Completed',j.completedAt)}${(!j.startedAt&&!j.completedAt&&j.updatedAt&&j.updatedAt!==j.createdAt)?stamp('Last updated',j.updatedAt):''}
+    </div>
+    ${notes.length?`<div class="md-sec"><div class="md-h">Notes</div>${notes.map(n=>`<div class="md-note"><div>${esc(n.text||'')}</div><div class="muted" style="font-size:11px">${esc(n.by||'')}${n.at?(' · '+esc(n.at)):''}</div></div>`).join('')}</div>`:''}
+    ${mats.length?`<div class="md-sec"><div class="md-h">Parts / materials</div>${mats.map(m=>`<div>• ${esc(typeof m==='string'?m:(m.name||m.item||JSON.stringify(m)))}${(m&&m.cost)?(' — £'+Number(m.cost).toFixed(2)):''}</div>`).join('')}</div>`:''}
+    ${(photos.length||j.startPhoto||j.completionPhoto)?`<div class="md-sec"><div class="md-h">Photos</div><div class="md-ph">
+      ${photos.map(p=>`<a href="${esc(p)}" target="_blank" rel="noopener"><img src="${esc(p)}" alt=""></a>`).join('')}
+      ${j.startPhoto?`<a href="${esc(j.startPhoto)}" target="_blank" rel="noopener"><img src="${esc(j.startPhoto)}" alt=""><span>Before</span></a>`:''}
+      ${j.completionPhoto?`<a href="${esc(j.completionPhoto)}" target="_blank" rel="noopener"><img src="${esc(j.completionPhoto)}" alt=""><span>After</span></a>`:''}
+    </div></div>`:(j.photosLocalOnly?'<div class="md-sec muted" style="font-size:12px">Photos are on the phone that took them (too large to share).</div>':'')}
+    <div class="muted" style="font-size:11px;margin-top:8px">Job ref ${esc(j.id)}</div>
+  </div>`;
 }
 function mShowAll(){ M_FILTER_ALL=true; mRender(); }
 function mToggleAll(){ M_FILTER_ALL=!M_FILTER_ALL; const b=$('m-toggle'); if(b) b.textContent=M_FILTER_ALL?'Hide completed':'Show completed'; mRender(); }

@@ -516,7 +516,7 @@ const NOTIFY_ASSIGN = ['josh','catherine'];
 // ── LOGIN PINs & ROLES (name + 4-digit PIN) ──────────────────────────────────
 // Manager (see everything): Catherine.  Operative (see only jobs assigned to them): Josh.
 // Everyone else is a reporter (log a fault + see own reports). Default PIN 9999.
-const PINS = { catherine:"0000", josh:"3333" };
+const PINS = { catherine:"3133", josh:"3133" };
 const pinFor = id => (PINS[id] || "9999");
 // ── ROLES ──────────────────────────────────────────────────────────────────
 // Two roles. Operatives come in two levels:
@@ -675,7 +675,9 @@ function initInstall(){
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 // New login: three shared access codes → pick your name → remembered on the device.
-const LG_CODES={ '0000':'admin', '1111':'reporter', '3333':'fixer' };
+// One staff code for the plain hosfix.html page (personal links and the QR reporter link need no code).
+// After the code, the person taps their name and their role follows from who they are.
+const LG_CODES={ '3133':'all' };
 let LG_TIER=null;
 function initLogin(){
   const code=$('lg-code'), cbtn=$('lg-code-btn'), err=$('lg-err');
@@ -701,6 +703,7 @@ function lgCheckCode(){
   LG_TIER=tier; if(err) err.textContent=''; lgShowNames(tier);
 }
 function lgTierUsers(tier){
+  if(tier==='all') return lgTierUsers('admin').concat(lgTierUsers('fixer'),lgTierUsers('reporter'));
   if(tier==='admin') return ADMIN_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
   if(tier==='fixer') return FIXER_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
   // reporter: the named reporters for this build + any names added on this device
@@ -711,13 +714,13 @@ function lgTierUsers(tier){
 function lgShowNames(tier){
   LG_TIER=tier;
   const sc=$('lg-step-code'), sn=$('lg-step-name'); if(sc) sc.style.display='none'; if(sn) sn.style.display='block';
-  const LB={admin:'👔 Management — tap your name', reporter:'📣 Report an issue — tap your name', fixer:'🔧 Maintenance team — tap your name'};
+  const LB={admin:'👔 Management — tap your name', reporter:'📣 Report an issue — tap your name', fixer:'🔧 Maintenance team — tap your name', all:'👋 Tap your name'};
   const lab=$('lg-tier-label'); if(lab) lab.textContent=LB[tier]||'Tap your name';
   const list=lgTierUsers(tier); const box=$('lg-names');
   if(box) box.innerHTML=list.map(u=>`<button type="button" onclick="lgPick('${u.id}')" style="padding:11px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:700 14px 'Lato';cursor:pointer;touch-action:manipulation">${u.name.split(' ')[0]}</button>`).join('');
-  const an=$('lg-addname'); if(an) an.style.display = tier==='reporter' ? 'block' : 'none';
+  const an=$('lg-addname'); if(an) an.style.display = (tier==='reporter'||tier==='all') ? 'block' : 'none';
 }
-function lgPick(uid){ if(!USERS.find(u=>u.id===uid)) return; try{localStorage.setItem('hf_me',uid);}catch(e){} loginAs(uid, LG_TIER); setTimeout(maybeAskNotifications,2500); }
+function lgPick(uid){ if(!USERS.find(u=>u.id===uid)) return; try{localStorage.setItem('hf_me',uid);}catch(e){} const tier = LG_TIER==='all' ? (ADMIN_TIER.includes(uid)?'admin':FIXER_TIER.includes(uid)?'fixer':'reporter') : LG_TIER; loginAs(uid, tier); setTimeout(maybeAskNotifications,2500); }
 function lgAddName(){
   const el=$('lg-newname'); const v=(el?el.value:'').trim(); if(!v){ if(el) el.focus(); return; }
   const existing=USERS.find(u=>u.name.toLowerCase()===v.toLowerCase());
