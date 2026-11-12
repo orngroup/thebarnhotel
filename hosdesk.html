@@ -519,6 +519,11 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
       <label class="fl" style="margin-top:10px">Message</label>
       <div id="em-prev" class="em-prev"></div>
       <textarea id="em-body" class="hide"></textarea>
+      <div id="em-photos" class="hide" style="margin-top:12px">
+        <label class="fl">Photos to attach <span style="font-weight:400;text-transform:none;color:#9aa7b5">(email links can't carry attachments — save these, then use the 📎 paperclip in Gmail)</span></label>
+        <div id="em-photo-list" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px"></div>
+        <button type="button" class="ebtn" style="margin-top:8px" onclick="emailSavePhotos()">⬇️ Save all photos</button>
+      </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
         <button class="btn btn-go" style="flex:1;min-width:160px;background:#c5221f" onclick="emailGmail()">✉️ Open in Gmail</button>
         <button class="btn" style="flex:1;min-width:160px;background:#fff;border:1.5px solid var(--line);color:var(--navy)" onclick="emailCopy()">📋 Copy email (with table)</button>
@@ -1205,8 +1210,7 @@ function emailRows(j){
     j.description?['Details', j.description]:null,
     j.accessNotes?['Access / timing', j.accessNotes]:null,
     ['Reported by', (j.reportedBy||'Catherine Virdee')+', '+when],
-    ['Job ref', j.id],
-    ['Link', location.origin+'/hosfix.html#job='+j.id]
+    ['Job ref', j.id]
   ].filter(Boolean);
 }
 function emailText(j){
@@ -1214,19 +1218,26 @@ function emailText(j){
   const rows=emailRows(j); const w=Math.max(...rows.map(r=>r[0].length))+2;
   const body=['Hi Raj,','',`We need an external ${j.contractorTrade||'contractor'} at The Barn Hotel, please.`,'',
     ...rows.map(([k,v])=>(k+':').padEnd(w)+'  '+v),'',
+    ...((j.photos||[]).length?[`Photos (${j.photos.length}) are attached.`,'']:[]),
     'Could you arrange a contractor and let me know who is coming and when, so reception can expect them?','',
     'Many thanks,','Catherine Virdee','The Barn Hotel, West End Road, Ruislip HA4 6JB'].join('\n');
   const html=`<div style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:11pt;color:#1a2b3a">
 <p>Hi Raj,</p><p>We need an external <b>${esc(j.contractorTrade||'contractor')}</b> at The Barn Hotel, please.</p>
 <table style="border-collapse:collapse;font-family:Aptos,Calibri,Arial,sans-serif;font-size:11pt;min-width:420px">
-${rows.map(([k,v],i)=>`<tr style="background:${i%2?'#ffffff':'#f3f5f8'}"><td style="border:1px solid #c8ced6;padding:6px 10px;font-weight:bold;color:#1F3864;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="border:1px solid #c8ced6;padding:6px 10px">${k==='Link'?`<a href="${esc(v)}">${esc(v)}</a>`:esc(v).replace(/\n/g,'<br>')}${(k==='Status'&&v==='URGENT')?' <span style="color:#b3261e;font-weight:bold">&#9888;</span>':''}</td></tr>`).join('')}
+${rows.map(([k,v],i)=>`<tr style="background:${i%2?'#ffffff':'#f3f5f8'}"><td style="border:1px solid #c8ced6;padding:6px 10px;font-weight:bold;color:#1F3864;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="border:1px solid #c8ced6;padding:6px 10px">${esc(v).replace(/\n/g,'<br>')}${(k==='Status'&&v==='URGENT')?' <span style="color:#b3261e;font-weight:bold">&#9888;</span>':''}</td></tr>`).join('')}
 </table>
+${(j.photos||[]).length?`<p style="margin-top:12px"><b>Photos (${j.photos.length}) are attached.</b></p>`:''}
 <p>Could you arrange a contractor and let me know who is coming and when, so reception can expect them?</p>
 <p>Many thanks,<br>Catherine Virdee<br>The Barn Hotel, West End Road, Ruislip HA4 6JB</p></div>`;
   return {subj, body, html};
 }
 let _emJob=null;
-function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('em-prev').innerHTML=e.html; $('ovl-em').classList.add('on'); }
+function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('em-prev').innerHTML=e.html;
+  const ph=(j.photos||[]).filter(Boolean); $('em-photos').classList.toggle('hide',!ph.length);
+  $('em-photo-list').innerHTML=ph.map((p,i)=>`<a class="q-link" style="flex-direction:column;padding:6px" href="${esc(p)}" download="${esc(emailPhotoName(j,i))}"><img src="${esc(p)}" style="width:110px;height:84px;object-fit:cover;border-radius:6px;display:block"><span style="font-size:11px;margin-top:4px">⬇️ Photo ${i+1}</span></a>`).join('');
+  $('ovl-em').classList.add('on'); }
+function emailPhotoName(j,i){ return 'BarnHotel-'+slugify((j.location||j.areaLabel||'job'))+'-'+slugify(j.title||'').slice(0,30)+'-photo'+(i+1)+'.jpg'; }
+function emailSavePhotos(){ const j=_emJob; if(!j) return; (j.photos||[]).forEach((p,i)=>{ setTimeout(()=>{ const a=document.createElement('a'); a.href=p; a.download=emailPhotoName(j,i); document.body.appendChild(a); a.click(); a.remove(); }, i*350); }); toast('Photos saved to Downloads — attach them with the paperclip'); }
 function closeEmail(){ $('ovl-em').classList.remove('on'); }
 function emailMarkDrafted(){ if(!_emJob||!db) return; const id=_emJob.id; db.collection('barn_fix_jobs').doc(id).update({emailDraftedAt:new Date().toISOString(), updatedAt:new Date().toISOString()}).catch(()=>{}); }
 function emailOpen(){ const to=encodeURIComponent($('em-to').value||''), su=encodeURIComponent($('em-subj').value||''), bo=encodeURIComponent($('em-body').value||''); emailMarkDrafted(); window.location.href=`mailto:${to}?subject=${su}&body=${bo}`; }
