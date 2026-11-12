@@ -150,6 +150,8 @@ body.console .wrap{max-width:1500px}
 .xbtn{margin-left:auto;border:0;background:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px}
 .xbtn:hover{color:var(--red)}
 .ej-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
+.ej-strip{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;background:var(--bg);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:13px}
+.ej-strip b{color:var(--navy)}
 .ej-tabs{display:flex;gap:6px;margin-bottom:12px;background:var(--bg);padding:4px;border-radius:12px}
 .ejt{flex:1;border:0;background:none;border-radius:9px;padding:8px;font:800 13px Lato;color:var(--muted);cursor:pointer}
 .ejt.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(26,43,58,.12)}
@@ -176,6 +178,17 @@ body.console .wrap{max-width:1500px}
 .em-prev{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;max-height:50vh;overflow:auto;font-size:13px;line-height:1.45}
 .em-prev table td{font-size:13px}
 .em-prev p{margin:0 0 8px}
+.book{margin:18px auto 0;max-width:1100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
+.book-hd{display:flex;align-items:center;gap:8px;font:800 14px Lato;color:var(--navy);margin-bottom:8px}
+.book-hd .cnt{background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 9px;font-size:11px}
+.book-t{width:100%;border-collapse:collapse;font-size:13px}
+.book-t th{text-align:left;font:800 11px Lato;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+.book-t td{padding:8px;border-bottom:1px solid #eef1f4;vertical-align:top}
+.book-t tr{cursor:pointer}
+.book-t tr:hover td{background:#f8f9fb}
+.book-t td.d{white-space:nowrap;font-weight:800;color:var(--navy)}
+.book-t td.d.today{color:var(--green)}
+.book-t td.d.past{color:var(--muted);font-weight:700}
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
@@ -397,6 +410,11 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
         <div class="tile" style="cursor:pointer" onclick="showSection('maintenance')"><div class="v" id="t-mnt" style="color:#c45c00">0</div><div class="k">Maintenance open</div></div>
         <div class="tile" style="cursor:pointer" onclick="showSection('deliveries')"><div class="v" id="t-del" style="color:var(--amber)">0</div><div class="k">Deliveries</div></div>
       </div>
+      <div class="book" id="book-box">
+        <div class="book-hd">🏗️ Contractors booked in <span class="cnt" id="book-n">0</span><span class="muted" style="margin-left:auto;font-weight:400;font-size:12px">External jobs with an appointment date</span></div>
+        <table class="book-t"><thead><tr><th>Date booked</th><th>Job</th><th>Skill type</th><th>Contractor</th><th>Status</th></tr></thead><tbody id="book-body"></tbody></table>
+        <div id="book-empty" class="muted" style="padding:10px 4px;font-size:13px">No contractor appointments booked yet — add a date on an external job's card and it appears here.</div>
+      </div>
     </div>
 
     <!-- SECTION header bar (shown when a card is open) -->
@@ -550,12 +568,13 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
     <div class="sheet-hd"><span style="font-size:20px">🗂️</span><span class="st" id="ej-head">Job card</span><button class="sheet-x" onclick="closeEditJob()">✕</button></div>
     <div class="sheet-bd">
       <input type="hidden" id="ej-id">
+      <div class="ej-strip" id="ej-strip"></div>
       <div class="ej-tabs"><button type="button" class="ejt on" id="ejt-card" onclick="ejTab('card')">Job card</button><button type="button" class="ejt" id="ejt-det" onclick="ejTab('det')">Job details</button></div>
 
       <!-- ===== Job card: Josh ===== -->
       <div id="ej-card-josh" class="ej-sec">
         <div class="ej-grid">
-          <div><label class="fl">Status</label><select id="ej-status"><option value="not-started">Not started</option><option value="in-progress">In progress</option><option value="complete">Complete</option></select></div>
+          <div><label class="fl">Job status</label><select id="ej-status"><option value="not-started">Not started</option><option value="in-progress">In progress</option><option value="complete">Complete</option></select></div>
           <div><label class="fl">Cost (£)</label><input id="ej-cost" type="number" min="0" step="0.01" placeholder="0.00"></div>
           <div><label class="fl">Cost approval</label><select id="ej-costok"><option value="">Not needed</option><option value="awaiting">Awaiting approval</option><option value="approved">Approved</option><option value="declined">Declined</option></select></div>
           <div><label class="fl">Priority</label><select id="ej-prio"><option value="medium">Normal</option><option value="high">High</option><option value="urgent">🔴 Urgent</option></select></div>
@@ -1264,6 +1283,7 @@ function mStatusBadge(j){
 }
 function mWho(j){ const a=(j.assignees||[]).map(id=>HFX_NAMES[id]||id); return a.length?('👤 '+esc(a.join(', '))):''; }
 function mRender(){
+  try{ renderBookings(); }catch(e){ console.warn('bookings',e); }
   const openCount=mOpenJobs().length;
   try{ const el=$('t-mnt'); if(el) el.textContent=openCount; }catch(e){}
   try{ const el=$('bc-mnt-n'); if(el) el.textContent=openCount; }catch(e){}
@@ -1290,6 +1310,15 @@ function mRender(){
 }
 let M_OPEN=null;
 function mToggle(id){ M_OPEN = (M_OPEN===id)?null:id; mRender(); }
+function renderBookings(){
+  const tb=$('book-body'); if(!tb) return;
+  const rows=M_ROWS.filter(j=>j.external && j.appointmentDate && j.status!=='complete' && j.extStatus!=='done' && j.extStatus!=='declined').sort((a,b)=>(a.appointmentDate+(a.appointmentTime||'')).localeCompare(b.appointmentDate+(b.appointmentTime||'')));
+  const today=todayISO();
+  tb.innerHTML=rows.map(j=>{ const cls=j.appointmentDate===today?'today':(j.appointmentDate<today?'past':''); const d=j.appointmentDate.split('-').reverse().join('/')+(j.appointmentTime?(' '+j.appointmentTime):'');
+    return `<tr onclick="mOpenFromHome('${esc(j.id)}')"><td class="d ${cls}">${cls==='today'?'Today ':''}${esc(d)}</td><td><b>${esc(j.title||'')}</b><div class="muted" style="font-size:11px">${esc((j.areaLabel||'')+(j.location?(' · '+j.location):''))}</div></td><td>${esc(j.contractorTrade||'—')}</td><td>${j.contractor?esc(j.contractor):'<span class="muted">to be confirmed</span>'}</td><td>${esc(EXT_STATUS[j.extStatus||'sent']||'')}</td></tr>`; }).join('');
+  $('book-n').textContent=rows.length; $('book-empty').classList.toggle('hide',!!rows.length); $('book-box').querySelector('.book-t').classList.toggle('hide',!rows.length);
+}
+function mOpenFromHome(id){ M_OPEN=id; showSection('maintenance'); mRender(); setTimeout(()=>{ try{ document.querySelector('.req.mj.open').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} },100); }
 function mFmt(iso){ if(!iso) return ''; try{ const d=new Date(iso); if(isNaN(d)) return esc(iso); return d.toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return esc(iso); } }
 function mDetail(j){
   const WT={plumbing:'Plumbing',electrical:'Electrical / Heating',fences:'Fences / Driveway',decorating:'Painting & Decorating',locks:'Locks',flooring:'Flooring',fire:'Fire Safety',general:'Other / General'};
@@ -1378,6 +1407,7 @@ function openEditJob(id){
   $('ej-cost').value=j.cost?Number(j.cost):''; $('ej-costok').value=j.costApproval||''; $('ej-note').value='';
   $('ej-extstatus').value=j.extStatus||'sent'; $('ej-extcost').value=j.extCost?Number(j.extCost):''; $('ej-appt').value=j.appointmentDate||''; $('ej-apptt').value=j.appointmentTime||''; $('ej-contractor').value=j.contractor||''; $('ej-rajnote').value=''; $('ej-quote').value='';
   ejRenderQuotes(j); $('ej-prog').classList.add('hide'); $('ej-bar').style.width='0'; $('ej-save').disabled=false; $('ej-save').textContent='Save job card';
+  $('ej-strip').innerHTML=`<span><b>${esc(j.location||j.areaLabel||'')}</b> · ${esc(j.title||'')}</span><span>${mStatusBadge(j)}</span><span class="muted">Logged ${mFmt(j.createdAt)}${j.updatedAt&&j.updatedAt!==j.createdAt?(' · updated '+mFmt(j.updatedAt)):''}</span>`;
   ejWhoChange(); ejTab('card'); $('ovl-ej').classList.add('on');
 }
 function closeEditJob(){ $('ovl-ej').classList.remove('on'); }
