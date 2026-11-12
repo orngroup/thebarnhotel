@@ -2528,14 +2528,7 @@ function hfSeedJobs(){
 // ── Pre-loaded jobs for The Barn Hotel (supplied by the hotel, 6 Nov 2026) ──
 // Create-if-absent by fixed id, so every device agrees and nothing is duplicated.
 // Runs once per device after the first cloud snapshot; skipped if the job already exists in the cloud.
-const BARN_SEED_JOBS=[
-  {id:'barn-2611-001', area:'deanes',    location:'Room 319',        workType:'plumbing',   priority:'high',   status:'not-started', reported:'2026-11-04', title:'Shower leaking down into Rooms 309 and 308', description:'Shower in Room 319 leaking through to Rooms 309 and 308 below. Materials ordered.', note:'Materials ordered'},
-  {id:'barn-2611-002', area:'middle',    location:'Room 29',         workType:'general',    priority:'medium', status:'not-started', reported:'2026-11-05', title:'Door frame damaged',                description:'Door frame damaged in Room 29.'},
-  {id:'barn-2611-003', area:'middle',    location:'Room 28',         workType:'plumbing',   priority:'medium', status:'not-started', reported:'2026-11-04', title:'Shower broken',                     description:'Shower not working in Room 28.'},
-  {id:'barn-2611-004', area:'back',      location:'Room 45',         workType:'decorating', priority:'medium', status:'in-progress', reported:'2026-11-02', title:'Paint bedroom walls',               description:'Repaint bedroom walls in Room 45. Work has started.', note:'Work started'},
-  {id:'barn-2611-005', area:'external',  location:'Hotel Entrance',  workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Fence broken',                      description:'Fence broken at the hotel entrance.'},
-  {id:'barn-2611-006', area:'external',  location:'Hotel Entrance',  workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Pot holes in driveway',             description:'Pot holes at the hotel entrance / driveway.'}
-];
+const BARN_SEED_JOBS=[];   // pre-load removed 12 Nov 2026 — board cleared
 function hfSeedBarnJobs(){
   if(localStorage.getItem('barn_seed_v1')==='1') return;
   if(!fbDb){ return; }   // need the cloud to check existence; try again next load

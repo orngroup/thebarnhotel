@@ -152,6 +152,14 @@ body.console .wrap{max-width:1500px}
 .ej-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
 .ej-grid .fl{margin-top:0}
 @media(max-width:600px){ .ej-grid{grid-template-columns:1fr} }
+.route{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px 10px 12px;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink);text-align:center}
+.rb .ri{font-size:26px;line-height:1;margin-bottom:4px}
+.rb b{font:900 15px Lato}
+.rb small{font-size:11.5px;color:var(--muted)}
+.rb.on{border-color:#c45c00;background:#fff6ee;box-shadow:0 0 0 3px rgba(196,92,0,.12)}
+#rb-ext.on{border-color:#5b21b6;background:#f5f3ff;box-shadow:0 0 0 3px rgba(91,33,182,.14)}
+.rb.on b{color:var(--navy)}
 .ext-check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;border:1.5px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;font-size:13px;line-height:1.35}
 .ext-check input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--navy)}
 .ext-box{margin-top:10px;padding:12px;border-radius:11px;background:#f4f6f8;border:1px solid var(--line)}
@@ -160,7 +168,9 @@ body.console .wrap{max-width:1500px}
 .m-sechd{font:800 12px Lato;letter-spacing:.6px;text-transform:uppercase;color:var(--navy);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .m-sechd:first-child{margin-top:0}
 .m-sechd .cnt{background:var(--bg);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--muted)}
-.em-box{width:100%;min-height:220px;font:13px/1.5 Consolas,Menlo,monospace;border:1.5px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.em-prev{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;max-height:50vh;overflow:auto;font-size:13px;line-height:1.45}
+.em-prev table td{font-size:13px}
+.em-prev p{margin:0 0 8px}
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
@@ -441,7 +451,23 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
       <div class="pane-form">
         <div class="card">
           <div id="m-dup" class="hide" style="background:#fdeceb;border:1px solid #f0c4c0;color:#b3261e;border-radius:11px;padding:11px 13px;font:700 13px Lato;margin-bottom:12px"></div>
-          <label class="fl">Area</label>
+          <label class="fl">Who will do this job?</label>
+          <div class="route" id="m-route">
+            <button type="button" class="rb on" id="rb-josh" onclick="mSetRoute('josh')"><span class="ri">🔧</span><b>Josh</b><small>In-house maintenance</small></button>
+            <button type="button" class="rb" id="rb-ext" onclick="mSetRoute('ext')"><span class="ri">🏗️</span><b>External contractor</b><small>Send to Raj Kumar</small></button>
+          </div>
+          <input type="checkbox" id="m-ext" class="hide" onchange="mExtToggle()">
+          <div id="m-ext-box" class="ext-box hide">
+            <label class="fl">Trade / skill needed</label>
+            <select id="m-ext-trade">
+              <option value="">Choose…</option>
+              <option>Plumber</option><option>Electrician</option><option>Gas Safe engineer</option><option>Heating engineer</option><option>Roofer</option><option>Builder</option><option>Carpenter / joiner</option><option>Painter &amp; decorator</option><option>Glazier</option><option>Locksmith</option><option>Drainage</option><option>Fencing / groundworks</option><option>Lift engineer</option><option>Fire alarm / fire safety</option><option>Pest control</option><option>Other</option>
+            </select>
+            <label class="fl" style="margin-top:10px">Access / timing notes <span style="font-weight:400;text-transform:none;color:#9aa7b5">(optional)</span></label>
+            <input id="m-ext-access" type="text" placeholder="e.g. room vacant from Thursday; contact reception on arrival">
+            <div class="muted" style="font-size:12px;margin-top:8px">An email for Raj Kumar is drafted when you save — open it in Outlook or copy it.</div>
+          </div>
+          <label class="fl" style="margin-top:12px">Area</label>
           <select id="m-area" onchange="mAreaChange()"><option value="">Select area…</option></select>
           <label class="fl" style="margin-top:12px">Room / location</label>
           <select id="m-room" class="hide" onchange="mRoomChange()"><option value="">Select…</option></select>
@@ -466,21 +492,10 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
           <div id="m-photo-prev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
           <label class="fl" style="margin-top:12px">Reported by <span style="font-weight:400;text-transform:none;color:#9aa7b5">(optional)</span></label>
           <input id="m-by" type="text" list="staff-list" placeholder="Default: Catherine Virdee">
-          <label class="ext-check"><input type="checkbox" id="m-ext" onchange="mExtToggle()"> <span><b>External contractor needed</b> — send to Raj Kumar instead of Josh</span></label>
-          <div id="m-ext-box" class="ext-box hide">
-            <label class="fl">Trade / skill needed</label>
-            <select id="m-ext-trade">
-              <option value="">Choose…</option>
-              <option>Plumber</option><option>Electrician</option><option>Gas Safe engineer</option><option>Heating engineer</option><option>Roofer</option><option>Builder</option><option>Carpenter / joiner</option><option>Painter &amp; decorator</option><option>Glazier</option><option>Locksmith</option><option>Drainage</option><option>Fencing / groundworks</option><option>Lift engineer</option><option>Fire alarm / fire safety</option><option>Pest control</option><option>Other</option>
-            </select>
-            <label class="fl" style="margin-top:10px">Access / timing notes <span style="font-weight:400;text-transform:none;color:#9aa7b5">(optional)</span></label>
-            <input id="m-ext-access" type="text" placeholder="e.g. room vacant from Thursday; contact reception on arrival">
-            <div class="muted" style="font-size:12px;margin-top:8px">An email for Raj Kumar is drafted when you send — copy it into Outlook or open it in your email app.</div>
-          </div>
           <button class="btn btn-go" id="m-send-btn" style="margin-top:14px;background:#c45c00" onclick="mSubmit()">🔧 Send to Josh →</button>
         </div>
       </div>
-      <div class="pane-list"><div class="sechd" style="margin-top:0;display:flex;align-items:center">Maintenance issues<button type="button" id="m-toggle" onclick="mToggleAll()" style="margin-left:auto;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 11px;font:700 12px Lato;color:var(--navy);cursor:pointer">Show completed</button></div><div id="m-list"></div></div>
+      <div class="pane-list"><div class="sechd" style="margin-top:0;display:flex;align-items:center">Maintenance issues<button type="button" class="ebtn danger" style="margin-left:auto;margin-right:8px" onclick="withEditCode(mClearAll)">🗑 Clear all jobs</button><button type="button" id="m-toggle" onclick="mToggleAll()" style="background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 11px;font:700 12px Lato;color:var(--navy);cursor:pointer">Show completed</button></div><div id="m-list"></div></div>
     </div>
   </div>
 
@@ -495,13 +510,15 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
     <div class="sheet-hd"><span style="font-size:20px">📧</span><span class="st">Email for Raj Kumar</span><button class="sheet-x" onclick="closeEmail()">✕</button></div>
     <div class="sheet-bd">
       <label class="fl">To</label><input id="em-to" type="text">
-      <label class="fl" style="margin-top:10px">Subject</label><input id="em-subj" type="text">
-      <label class="fl" style="margin-top:10px">Message</label><textarea id="em-body" class="em-box"></textarea>
+      <label class="fl" style="margin-top:10px">Subject <button type="button" class="ebtn" style="padding:3px 8px;font-size:11px;margin-left:6px" onclick="emailCopySubject()">copy</button></label><input id="em-subj" type="text">
+      <label class="fl" style="margin-top:10px">Message</label>
+      <div id="em-prev" class="em-prev"></div>
+      <textarea id="em-body" class="hide"></textarea>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
         <button class="btn btn-go" style="flex:1;min-width:180px" onclick="emailOpen()">📨 Open in email app</button>
-        <button class="btn" style="flex:1;min-width:180px;background:#fff;border:1.5px solid var(--line);color:var(--navy)" onclick="emailCopy()">📋 Copy email</button>
+        <button class="btn" style="flex:1;min-width:180px;background:#fff;border:1.5px solid var(--line);color:var(--navy)" onclick="emailCopy()">📋 Copy email (with table)</button>
       </div>
-      <div class="muted" style="font-size:12px;margin-top:10px">"Open in email app" starts a new message in whatever email program this computer uses (Outlook, Mail…). If nothing opens, use Copy and paste into a new Outlook message.</div>
+      <div class="muted" style="font-size:12px;margin-top:10px">"Open in email app" starts a new Outlook message with the text filled in (Outlook shows it as plain text — the table lines up in a fixed-width font). "Copy email" copies the version with the table above: open a new message in Outlook, paste, and it appears exactly like this.</div>
     </div>
   </div>
 </div>
@@ -642,14 +659,7 @@ const QUICK_LINKS = {
   events:  ""    // Local Events & Tourist Board
 };
 /* ---- Pre-loaded jobs (same fixed ids as HosFix's BARN_SEED_JOBS — create-if-absent, so never duplicated) ---- */
-const BARN_SEED_JOBS=[
-  {id:'barn-2611-001', area:'deanes',   areaLabel:'Deanes Lodge',       location:'Room 319',       workType:'plumbing',   priority:'high',   status:'not-started', reported:'2026-11-04', title:'Shower leaking down into Rooms 309 and 308', description:'Shower in Room 319 leaking through to Rooms 309 and 308 below. Materials ordered.', note:'Materials ordered'},
-  {id:'barn-2611-002', area:'middle',   areaLabel:'Middle Building',    location:'Room 29',        workType:'general',    priority:'medium', status:'not-started', reported:'2026-11-05', title:'Door frame damaged',  description:'Door frame damaged in Room 29.'},
-  {id:'barn-2611-003', area:'middle',   areaLabel:'Middle Building',    location:'Room 28',        workType:'plumbing',   priority:'medium', status:'not-started', reported:'2026-11-04', title:'Shower broken',       description:'Shower not working in Room 28.'},
-  {id:'barn-2611-004', area:'back',     areaLabel:'Back Building',      location:'Room 45',        workType:'decorating', priority:'medium', status:'in-progress', reported:'2026-11-02', title:'Paint bedroom walls', description:'Repaint bedroom walls in Room 45. Work has started.', note:'Work started'},
-  {id:'barn-2611-005', area:'external', areaLabel:'External / Grounds', location:'Hotel Entrance', workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Fence broken',        description:'Fence broken at the hotel entrance.'},
-  {id:'barn-2611-006', area:'external', areaLabel:'External / Grounds', location:'Hotel Entrance', workType:'fences',     priority:'medium', status:'not-started', reported:'2026-10-30', title:'Pot holes in driveway', description:'Pot holes at the hotel entrance / driveway.'}
-];
+const BARN_SEED_JOBS=[];   // pre-load removed 12 Nov 2026 — board cleared
 function barnSeedJobs(db){
   if(localStorage.getItem('barn_seed_v1')==='1') return;
   const col=db.collection('barn_fix_jobs');
@@ -1135,40 +1145,57 @@ function mSubmit(){
   MFS={ area:'', location:'', occ:'unknown', prio:'normal', photos:[] };
   $('m-area').value=''; const rs=$('m-room'); if(rs){ rs.classList.add('hide'); rs.value=''; } const rt=$('m-loc'); if(rt){ rt.classList.add('hide'); rt.value=''; }
   $('m-title').value=''; $('m-desc').value=''; $('m-by').value=''; mSetOcc('unknown'); mSetPrio('normal'); mRenderPhotos(); mDupCheck();
-  if(ext){ $('m-ext').checked=false; mExtToggle(); $('m-ext-trade').value=''; $('m-ext-access').value=''; openEmail(doc); }
+  if(ext){ mSetRoute('josh'); $('m-ext-trade').value=''; $('m-ext-access').value=''; openEmail(doc); }
   toast('🔧 Sent to maintenance ✓');
 }
 /* ---- External contractor jobs → Raj Kumar: email draft ---- */
 const RAJ_EMAIL='';   // ← put Raj Kumar's email address here, e.g. 'raj@example.com'
 function mTradeToWork(t){ t=(t||'').toLowerCase(); if(t.includes('plumb')||t.includes('drain')) return 'plumbing'; if(t.includes('electric')||t.includes('heating')||t.includes('gas')) return 'electrical'; if(t.includes('fenc')) return 'fences'; if(t.includes('paint')) return 'decorating'; if(t.includes('lock')) return 'locks'; if(t.includes('fire')) return 'fire'; return 'general'; }
+function mSetRoute(r){ $('m-ext').checked=(r==='ext'); $('rb-josh').classList.toggle('on',r!=='ext'); $('rb-ext').classList.toggle('on',r==='ext'); mExtToggle(); }
 function mExtToggle(){ const on=$('m-ext').checked; $('m-ext-box').classList.toggle('hide',!on); const b=$('m-send-btn'); if(b){ b.textContent=on?'📧 Save & draft email for Raj Kumar →':'🔧 Send to Josh →'; b.style.background=on?'#5b21b6':'#c45c00'; } }
-function emailText(j){
+function emailRows(j){
   const OCC={occupied:'Occupied',vacant:'Vacant',unknown:'Not sure'};
-  const subj=`The Barn Hotel — ${j.contractorTrade||'contractor'} needed: ${j.title} (${j.location||j.areaLabel||''})${j.priority==='urgent'?' — URGENT':''}`;
-  const lines=[
-    'Hi Raj,','',
-    `We need an external ${j.contractorTrade||'contractor'} at The Barn Hotel, please.`,'',
-    `Job:        ${j.title}`,
-    `Where:      ${j.areaLabel||''}${j.location?(' — '+j.location):''}`,
-    `Trade:      ${j.contractorTrade||''}`,
-    `Priority:   ${j.priority==='urgent'?'URGENT':'Normal'}`,
-    (j.occupancy&&j.occupancy!=='unknown')?`Room:       ${OCC[j.occupancy]||j.occupancy}`:null,
-    j.description?`Details:    ${j.description}`:null,
-    j.accessNotes?`Access:     ${j.accessNotes}`:null,
-    `Reported:   ${j.reportedBy||'Catherine Virdee'}, ${new Date(j.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`,
-    `Job ref:    ${j.id}`,
-    `Link:       ${location.origin}/hosfix.html#job=${j.id}`,'',
+  const when=new Date(j.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  return [
+    ['Description', j.title||''],
+    ['Status', j.priority==='urgent'?'URGENT':'Normal'],
+    ['Skill needed', j.contractorTrade||''],
+    ['Location', (j.areaLabel||'')+(j.location?(' — '+j.location):'')],
+    (j.occupancy&&j.occupancy!=='unknown')?['Room', OCC[j.occupancy]||j.occupancy]:null,
+    j.description?['Details', j.description]:null,
+    j.accessNotes?['Access / timing', j.accessNotes]:null,
+    ['Reported by', (j.reportedBy||'Catherine Virdee')+', '+when],
+    ['Job ref', j.id],
+    ['Link', location.origin+'/hosfix.html#job='+j.id]
+  ].filter(Boolean);
+}
+function emailText(j){
+  const subj=`Barn Hotel Maintenance: ${j.title||''}; Status: ${j.priority==='urgent'?'Urgent':'Normal'}; Skill: ${j.contractorTrade||'Contractor'}`;
+  const rows=emailRows(j); const w=Math.max(...rows.map(r=>r[0].length))+2;
+  const body=['Hi Raj,','',`We need an external ${j.contractorTrade||'contractor'} at The Barn Hotel, please.`,'',
+    ...rows.map(([k,v])=>(k+':').padEnd(w)+'  '+v),'',
     'Could you arrange a contractor and let me know who is coming and when, so reception can expect them?','',
-    'Many thanks,','Catherine Virdee','The Barn Hotel, West End Road, Ruislip HA4 6JB'
-  ].filter(x=>x!==null);
-  return {subj, body:lines.join('\n')};
+    'Many thanks,','Catherine Virdee','The Barn Hotel, West End Road, Ruislip HA4 6JB'].join('\n');
+  const html=`<div style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:11pt;color:#1a2b3a">
+<p>Hi Raj,</p><p>We need an external <b>${esc(j.contractorTrade||'contractor')}</b> at The Barn Hotel, please.</p>
+<table style="border-collapse:collapse;font-family:Aptos,Calibri,Arial,sans-serif;font-size:11pt;min-width:420px">
+${rows.map(([k,v],i)=>`<tr style="background:${i%2?'#ffffff':'#f3f5f8'}"><td style="border:1px solid #c8ced6;padding:6px 10px;font-weight:bold;color:#1F3864;white-space:nowrap;vertical-align:top">${esc(k)}</td><td style="border:1px solid #c8ced6;padding:6px 10px">${k==='Link'?`<a href="${esc(v)}">${esc(v)}</a>`:esc(v).replace(/\n/g,'<br>')}${(k==='Status'&&v==='URGENT')?' <span style="color:#b3261e;font-weight:bold">&#9888;</span>':''}</td></tr>`).join('')}
+</table>
+<p>Could you arrange a contractor and let me know who is coming and when, so reception can expect them?</p>
+<p>Many thanks,<br>Catherine Virdee<br>The Barn Hotel, West End Road, Ruislip HA4 6JB</p></div>`;
+  return {subj, body, html};
 }
 let _emJob=null;
-function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('ovl-em').classList.add('on'); }
+function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('em-prev').innerHTML=e.html; $('ovl-em').classList.add('on'); }
 function closeEmail(){ $('ovl-em').classList.remove('on'); }
 function emailMarkDrafted(){ if(!_emJob||!db) return; const id=_emJob.id; db.collection('barn_fix_jobs').doc(id).update({emailDraftedAt:new Date().toISOString(), updatedAt:new Date().toISOString()}).catch(()=>{}); }
 function emailOpen(){ const to=encodeURIComponent($('em-to').value||''), su=encodeURIComponent($('em-subj').value||''), bo=encodeURIComponent($('em-body').value||''); emailMarkDrafted(); window.location.href=`mailto:${to}?subject=${su}&body=${bo}`; }
-async function emailCopy(){ const t=`To: ${$('em-to').value}\nSubject: ${$('em-subj').value}\n\n${$('em-body').value}`; try{ await navigator.clipboard.writeText(t); toast('Email copied — paste into Outlook'); emailMarkDrafted(); }catch(e){ $('em-body').select(); document.execCommand('copy'); toast('Email copied'); } }
+async function emailCopy(){
+  const html=$('em-prev').innerHTML; const text=`To: ${$('em-to').value}\nSubject: ${$('em-subj').value}\n\n${$('em-body').value}`;
+  try{ await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([text],{type:'text/plain'})})]); toast('Email copied with the table — paste into Outlook'); emailMarkDrafted(); return; }catch(e){}
+  try{ await navigator.clipboard.writeText(text); toast('Email copied — paste into Outlook'); emailMarkDrafted(); }catch(e){ $('em-body').select(); document.execCommand('copy'); toast('Email copied'); }
+}
+async function emailCopySubject(){ try{ await navigator.clipboard.writeText($('em-subj').value); toast('Subject copied'); }catch(e){} }
 /* ---- Push to Josh's phone for jobs logged at reception (same Cloud Function HosFix uses) ---- */
 const FCM_BASE='https://europe-west1-brandonhall-7bdef.cloudfunctions.net';
 function mPushJosh(j){
@@ -1270,6 +1297,14 @@ async function mUpdate(id,patch,msg){
 }
 function mSetStatus(id,st){ const j=mFind(id); if(!j) return; const patch={status:st, notes:mNote(j, st==='complete'?'Marked complete at reception':'Reopened at reception')}; if(st==='complete') patch.completedAt=new Date().toISOString(); else patch.completedAt=null; mUpdate(id,patch, st==='complete'?'Job marked complete ✓':'Job reopened'); }
 function mArchive(id){ const j=mFind(id); if(!j) return; if(!confirm('Archive "'+(j.title||'this job')+'"?\n\nIt is hidden from every screen, not deleted.')) return; mUpdate(id,{demoHidden:true, status:(j.status==='complete'?'complete':'cancelled'), notes:mNote(j,'Archived at reception')},'Job archived'); if(M_OPEN===id) M_OPEN=null; }
+async function mClearAll(){
+  const list=M_ROWS.filter(j=>!j.demoHidden); if(!list.length){ toast('Nothing to clear'); return; }
+  const typed=prompt('This archives ALL '+list.length+' jobs on the board (hidden from every screen, not deleted).\n\nType CLEAR to confirm:'); if(typed!=='CLEAR') return;
+  if(!db){ toast('Not connected'); return; }
+  const now=new Date().toISOString(); let n=0;
+  for(const j of list){ try{ await db.collection('barn_fix_jobs').doc(j.id).update({demoHidden:true, status:(j.status==='complete'?'complete':'cancelled'), updatedAt:now, notes:mNote(j,'Board cleared at reception')}); n++; }catch(e){ console.warn('clear',j.id,e); } }
+  M_OPEN=null; toast(n+' job'+(n===1?'':'s')+' archived');
+}
 function dRemove(id){ if(!confirm('Remove this delivery from the list?')) return; if(!db){ toast('Not connected'); return; } db.collection('barn_deliveries').doc(id).update({hidden:true, hiddenAt:new Date().toISOString()}).then(()=>toast('Delivery removed')).catch(e=>toast('Could not remove')); }
 function openEditJob(id){
   const j=mFind(id); if(!j) return;
