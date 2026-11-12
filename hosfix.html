@@ -516,7 +516,7 @@ const NOTIFY_ASSIGN = ['josh','catherine'];
 // ── LOGIN PINs & ROLES (name + 4-digit PIN) ──────────────────────────────────
 // Manager (see everything): Catherine.  Operative (see only jobs assigned to them): Josh.
 // Everyone else is a reporter (log a fault + see own reports). Default PIN 9999.
-const PINS = { catherine:"3133", josh:"3133" };
+const PINS = { josh:"3131" };
 const pinFor = id => (PINS[id] || "9999");
 // ── ROLES ──────────────────────────────────────────────────────────────────
 // Two roles. Operatives come in two levels:
@@ -677,7 +677,8 @@ function initInstall(){
 // New login: three shared access codes → pick your name → remembered on the device.
 // One staff code for the plain hosfix.html page (personal links and the QR reporter link need no code).
 // After the code, the person taps their name and their role follows from who they are.
-const LG_CODES={ '3133':'all' };
+// 3131 opens the app straight in as Josh (the only app user). Reporter QR link needs no code.
+const LG_CODES={ '3131':'josh' };
 let LG_TIER=null;
 function initLogin(){
   const code=$('lg-code'), cbtn=$('lg-code-btn'), err=$('lg-err');
@@ -700,9 +701,12 @@ function initLogin(){
 function lgCheckCode(){
   const el=$('lg-code'); const entered=(el?el.value:'')||''; const tier=LG_CODES[entered]; const err=$('lg-err');
   if(!tier){ if(err) err.textContent='Incorrect code — ask your manager'; if(el) el.value=''; const b=$('lg-code-btn'); if(b) b.disabled=true; return; }
-  LG_TIER=tier; if(err) err.textContent=''; lgShowNames(tier);
+  LG_TIER=tier; if(err) err.textContent='';
+  if(tier==='josh'){ try{localStorage.setItem('hf_me','josh');}catch(e){} loginAs('josh','fixer'); return; }
+  lgShowNames(tier);
 }
 function lgTierUsers(tier){
+  if(tier==='josh') return lgTierUsers('fixer');
   if(tier==='all') return lgTierUsers('admin').concat(lgTierUsers('fixer'),lgTierUsers('reporter'));
   if(tier==='admin') return ADMIN_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
   if(tier==='fixer') return FIXER_TIER.map(id=>USERS.find(u=>u.id===id)).filter(Boolean);
@@ -1339,13 +1343,13 @@ function submitReporterJob(){
     const job={ id:makeId(), title, area, areaLabel:(PROPERTY[area]&&PROPERTY[area].label)||area||'—',
       location, workType:'', description,
       status:'not-started', priority:FS.priority==='urgent'?'urgent':'medium',
-      assignees:['catherine'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
+      assignees:['josh'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
       photos:(FS.photos||[]).slice(), voiceNote:FS.voiceNote||null, materials:[],
       notes:[{text:'Reported via HosFix'+(FS.occupancy?(' — room '+FS.occupancy):''),by:MY_USER?.name||ME,at:todayStr()}],
       createdAt:new Date().toISOString(), createdBy:ME, reportedBy:MY_USER?.name||'', source:'reporter',
       approvedBy:null, approvedAt:null, completedAt:null };
     JOBS.unshift(job); saveJobs();
-    try{ if(typeof fcmNotify==='function') fcmNotify(job.priority==='urgent'?'job_urgent':'job_new', job, []); }catch(e){}
+    try{ if(typeof fcmNotify==='function'){ const to=(job.assignees||[]).filter(a=>a!==ME); if(job.priority==='urgent') fcmNotify('job_urgent', job, to); else if(to.length) fcmNotify('job_assigned', job, to); else fcmNotify('job_new', job, []); } }catch(e){}
     VIEW='jobs'; FILTER='all';
     try{ $('bnav').querySelectorAll('.bnav').forEach(b=>b.classList.remove('on')); $('bnav').querySelector('[data-v="jobs"]')?.classList.add('on'); }catch(e){}
     render(); closeModal();
@@ -1446,13 +1450,13 @@ function submitGuestReport(){
     const job={ id:makeId(), title, area, areaLabel:(PROPERTY[area]&&PROPERTY[area].label)||area||'—',
       location, workType:'', description,
       status:'not-started', priority:FS.priority==='urgent'?'urgent':'medium',
-      assignees:['catherine'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
+      assignees:['josh'], occupancy:FS.occupancy||'', cost:0, module:'maintenance',
       photos:(FS.photos||[]).slice(), voiceNote:FS.voiceNote||null, materials:[],
       notes:[{text:'Reported via HosFix'+(FS.occupancy?(' — room '+FS.occupancy):''),by:(who&&who.name)||uid,at:todayStr()}],
       createdAt:new Date().toISOString(), createdBy:uid, reportedBy:(who&&who.name)||'', source:'reporter',
       approvedBy:null, approvedAt:null, completedAt:null };
     JOBS.unshift(job); saveJobs();
-    try{ if(typeof fcmNotify==='function') fcmNotify(job.priority==='urgent'?'job_urgent':'job_new', job, []); }catch(e){}
+    try{ if(typeof fcmNotify==='function'){ const to=(job.assignees||[]).filter(a=>a!==ME); if(job.priority==='urgent') fcmNotify('job_urgent', job, to); else if(to.length) fcmNotify('job_assigned', job, to); else fcmNotify('job_new', job, []); } }catch(e){}
     try{ if(typeof jobSyncPush==='function') jobSyncPush(); }catch(e){}
     guestReportDone((who&&who.name)||'');
   }catch(err){ toast('Error: '+err.message); console.error('submitGuestReport',err); }
@@ -1494,7 +1498,7 @@ function submitJob(){
   const needsApproval=IS_APPROVER===false&&cost>APPROVAL_THRESHOLD;
 
   // Jobs default to Catherine (manager-operative) — she allocates to an operative.
-  let assignees = (IS_SUPER && FS.assignees && FS.assignees.length) ? FS.assignees : ['catherine'];
+  let assignees = (IS_SUPER && FS.assignees && FS.assignees.length) ? FS.assignees : ['josh'];
 
   const job={
     id:makeId(),

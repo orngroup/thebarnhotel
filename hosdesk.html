@@ -152,6 +152,15 @@ body.console .wrap{max-width:1500px}
 .ej-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
 .ej-grid .fl{margin-top:0}
 @media(max-width:600px){ .ej-grid{grid-template-columns:1fr} }
+.ext-check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;border:1.5px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;font-size:13px;line-height:1.35}
+.ext-check input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--navy)}
+.ext-box{margin-top:10px;padding:12px;border-radius:11px;background:#f4f6f8;border:1px solid var(--line)}
+.ext-box .fl{margin-top:0}
+.bdg.ext{background:#ede9fe;color:#5b21b6}
+.m-sechd{font:800 12px Lato;letter-spacing:.6px;text-transform:uppercase;color:var(--navy);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.m-sechd:first-child{margin-top:0}
+.m-sechd .cnt{background:var(--bg);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--muted)}
+.em-box{width:100%;min-height:220px;font:13px/1.5 Consolas,Menlo,monospace;border:1.5px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .hub-folder{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(26,43,58,.06)}
 .hub-folder .hf-h{display:flex;align-items:center;gap:10px;font:800 15px Lato;color:var(--navy);margin-bottom:10px}
@@ -395,7 +404,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
       <div class="pane-form">
         <div class="card">
           <label class="fl">Supplier <span style="font-weight:400;text-transform:none;color:#9aa7b5">(pick or type)</span></label>
-          <input id="d-supplier" type="text" list="supplier-list" placeholder="Start typing — e.g. Brakes, DPD…">
+          <input id="d-supplier" type="text" placeholder="Supplier or courier — e.g. DPD, Brakes, Amazon">
           <label class="fl" style="margin-top:12px">Goods description</label>
           <input id="d-desc" type="text" placeholder="What was delivered">
           <label class="fl" style="margin-top:12px">Size</label>
@@ -456,8 +465,19 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
           <div class="photo-zone" id="m-photo-zone" style="border:1.5px dashed var(--line);border-radius:11px;padding:16px;text-align:center;color:var(--muted);cursor:pointer">📷 Tap to add photo(s)</div>
           <div id="m-photo-prev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
           <label class="fl" style="margin-top:12px">Reported by <span style="font-weight:400;text-transform:none;color:#9aa7b5">(optional)</span></label>
-          <input id="m-by" type="text" list="staff-list" placeholder="Who reported it (default: Front desk)">
-          <button class="btn btn-go" style="margin-top:14px;background:#c45c00" onclick="mSubmit()">🔧 Send to maintenance →</button>
+          <input id="m-by" type="text" list="staff-list" placeholder="Default: Catherine Virdee">
+          <label class="ext-check"><input type="checkbox" id="m-ext" onchange="mExtToggle()"> <span><b>External contractor needed</b> — send to Raj Kumar instead of Josh</span></label>
+          <div id="m-ext-box" class="ext-box hide">
+            <label class="fl">Trade / skill needed</label>
+            <select id="m-ext-trade">
+              <option value="">Choose…</option>
+              <option>Plumber</option><option>Electrician</option><option>Gas Safe engineer</option><option>Heating engineer</option><option>Roofer</option><option>Builder</option><option>Carpenter / joiner</option><option>Painter &amp; decorator</option><option>Glazier</option><option>Locksmith</option><option>Drainage</option><option>Fencing / groundworks</option><option>Lift engineer</option><option>Fire alarm / fire safety</option><option>Pest control</option><option>Other</option>
+            </select>
+            <label class="fl" style="margin-top:10px">Access / timing notes <span style="font-weight:400;text-transform:none;color:#9aa7b5">(optional)</span></label>
+            <input id="m-ext-access" type="text" placeholder="e.g. room vacant from Thursday; contact reception on arrival">
+            <div class="muted" style="font-size:12px;margin-top:8px">An email for Raj Kumar is drafted when you send — copy it into Outlook or open it in your email app.</div>
+          </div>
+          <button class="btn btn-go" id="m-send-btn" style="margin-top:14px;background:#c45c00" onclick="mSubmit()">🔧 Send to Josh →</button>
         </div>
       </div>
       <div class="pane-list"><div class="sechd" style="margin-top:0;display:flex;align-items:center">Maintenance issues<button type="button" id="m-toggle" onclick="mToggleAll()" style="margin-left:auto;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 11px;font:700 12px Lato;color:var(--navy);cursor:pointer">Show completed</button></div><div id="m-list"></div></div>
@@ -470,6 +490,21 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 <div class="toast" id="toast"></div>
 
 <!-- ===== Maintenance code gate (remove this block to open maintenance to all) ===== -->
+<div class="ovl" id="ovl-em" onclick="if(event.target===this)closeEmail()">
+  <div class="sheet" style="max-width:640px">
+    <div class="sheet-hd"><span style="font-size:20px">📧</span><span class="st">Email for Raj Kumar</span><button class="sheet-x" onclick="closeEmail()">✕</button></div>
+    <div class="sheet-bd">
+      <label class="fl">To</label><input id="em-to" type="text">
+      <label class="fl" style="margin-top:10px">Subject</label><input id="em-subj" type="text">
+      <label class="fl" style="margin-top:10px">Message</label><textarea id="em-body" class="em-box"></textarea>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-go" style="flex:1;min-width:180px" onclick="emailOpen()">📨 Open in email app</button>
+        <button class="btn" style="flex:1;min-width:180px;background:#fff;border:1.5px solid var(--line);color:var(--navy)" onclick="emailCopy()">📋 Copy email</button>
+      </div>
+      <div class="muted" style="font-size:12px;margin-top:10px">"Open in email app" starts a new message in whatever email program this computer uses (Outlook, Mail…). If nothing opens, use Copy and paste into a new Outlook message.</div>
+    </div>
+  </div>
+</div>
 <div class="ovl" id="ovl-edit" onclick="if(event.target===this)closeEditGate()">
   <div class="sheet" style="max-width:380px">
     <div class="sheet-hd"><span style="font-size:20px">✏️</span><span class="st">Edit mode — manager code</span><button class="sheet-x" onclick="closeEditGate()">✕</button></div>
@@ -495,7 +530,7 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
         <div><label class="fl">Type of work</label><select id="ej-wt"><option value="">Not set</option><option value="plumbing">Plumbing</option><option value="electrical">Electrical / Heating</option><option value="fences">Fences / Driveway</option><option value="decorating">Painting &amp; Decorating</option><option value="locks">Locks</option><option value="flooring">Flooring</option><option value="fire">Fire Safety</option><option value="general">Other / General</option></select></div>
         <div><label class="fl">Priority</label><select id="ej-prio"><option value="medium">Normal</option><option value="high">High</option><option value="urgent">🔴 Urgent</option></select></div>
         <div><label class="fl">Status</label><select id="ej-status"><option value="not-started">Not started</option><option value="in-progress">In progress</option><option value="complete">Complete</option></select></div>
-        <div><label class="fl">Allocated to</label><select id="ej-who"><option value="catherine">Catherine (to allocate)</option><option value="josh">Josh</option></select></div>
+        <div><label class="fl">Allocated to</label><select id="ej-who"><option value="josh">Josh</option><option value="raj">Raj Kumar (external)</option></select></div>
         <div><label class="fl">Room</label><select id="ej-occ"><option value="">—</option><option value="occupied">Occupied</option><option value="vacant">Vacant</option><option value="unknown">Not sure</option></select></div>
       </div>
       <button class="btn btn-go" style="margin-top:14px" onclick="saveEditJob()">Save changes</button>
@@ -856,7 +891,7 @@ async function hubRemove(id,title){
 const HUB_CODE='3131';
 const HUB_DOCS=[{"id": "fra", "label": "Fire Risk Assessment", "icon": "🔥", "files": [{"file": "hub/fra/fra-the-barn-hotel-1-4-2026.pdf", "title": "Fire Risk Assessment — 1 April 2026", "type": "pdf", "kb": 14329}]}, {"id": "fire-alarm", "label": "Fire Alarm", "icon": "🚨", "files": [{"file": "hub/fire-alarm/fire-alarm-service-by-terry.pdf", "title": "Fire Alarm Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 165}]}, {"id": "fire-ext", "label": "Fire Extinguishers", "icon": "🧯", "files": [{"file": "hub/fire-ext/extinguisher-service-by-terry.pdf", "title": "Fire Extinguisher Service Certificate (Syndicate Fire Protection)", "type": "pdf", "kb": 92}]}, {"id": "emergency-lighting", "label": "Emergency Lighting", "icon": "💡", "files": [{"file": "hub/emergency-lighting/emlcertificate-94878607.pdf", "title": "Emergency Lighting Certificate 94878607", "type": "pdf", "kb": 2326}]}, {"id": "electrical", "label": "Electrical (EICR)", "icon": "⚡", "files": [{"file": "hub/electrical/the-barn.pdf", "title": "Electrical Installation Condition Report", "type": "pdf", "kb": 898}, {"file": "hub/electrical/barn-hotel-play-areas-provisional-plan.pdf", "title": "Play Areas — Provisional Plan", "type": "pdf", "kb": 5}]}, {"id": "gas", "label": "Gas Safety", "icon": "🔥", "files": [{"file": "hub/gas/nd-gsr-1742-8977-11568.pdf", "title": "Gas Safety Record ND-GSR-1742-8977-11568", "type": "pdf", "kb": 101}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm.jpg", "title": "Gas Safety — photo 1 (28 Jan 2026)", "type": "image", "kb": 218}, {"file": "hub/gas/whatsapp-image-2026-01-28-at-7-19-01-pm-1.jpg", "title": "Gas Safety — photo 2 (28 Jan 2026)", "type": "image", "kb": 226}]}, {"id": "legionella", "label": "Legionella", "icon": "💧", "files": [{"file": "hub/legionella/legionella-risk-assess-the-barn-hotel-26-27.pdf", "title": "Legionella Risk Assessment 2026–27", "type": "pdf", "kb": 462}]}, {"id": "pat-test", "label": "PAT Testing", "icon": "🔌", "files": [{"file": "hub/pat-test/pat-test-report-barn-hotel-1-4-26.pdf", "title": "PAT Test Report — 1 April 2026", "type": "pdf", "kb": 356}]}];
 let HUB_UNLOCKED=false;
-function openHub(){ hubWatch(); if(HUB_UNLOCKED){ renderHub(); showSection('hub'); return; } const i=$('hg-in'); if(i) i.value=''; const e=$('hg-err'); if(e) e.textContent=''; $('ovl-hub').classList.add('on'); setTimeout(()=>{ try{ $('hg-in').focus(); }catch(e){} },60); }
+function openHub(){ hubWatch(); HUB_UNLOCKED=true; if(HUB_UNLOCKED){ renderHub(); showSection('hub'); return; } const i=$('hg-in'); if(i) i.value=''; const e=$('hg-err'); if(e) e.textContent=''; $('ovl-hub').classList.add('on'); setTimeout(()=>{ try{ $('hg-in').focus(); }catch(e){} },60); }
 function closeHubGate(){ $('ovl-hub').classList.remove('on'); }
 function checkHubCode(){ const v=($('hg-in').value||'').trim(); if(v===HUB_CODE){ HUB_UNLOCKED=true; closeHubGate(); renderHub(); showSection('hub'); } else { $('hg-err').textContent='Wrong code — try again'; $('hg-in').value=''; $('hg-in').focus(); } }
 function renderHub(){
@@ -968,12 +1003,7 @@ function stopVD(){ if(V_UNSUB){ V_UNSUB(); V_UNSUB=null; } if(D_UNSUB){ D_UNSUB(
 function fillStaffDatalist(){ const dl=$('staff-list'); if(dl) dl.innerHTML=B_STAFF.map(s=>`<option value="${esc(s.name)}">`).join(''); }
 /* Regular suppliers — pre-loaded; reception can still type anything else.
    Edit this list to match The Barn Hotel's own suppliers. */
-const SUPPLIERS = [
-  'Brakes','Bidfood','Booker','Nisbets','Matthew Clark','LWC Drinks','Coca-Cola',
-  'Johnsons Stalbridge Linen','JLA','Initial Washroom','Rentokil','Molton Brown',
-  'Amazon','DPD','DHL','UPS','FedEx','Royal Mail','Parcelforce','Evri',
-  'Screwfix','Toolstation','City Plumbing','Howdens','Lyreco','Office Depot'
-];
+const SUPPLIERS = [];   // free text — no supplier list at The Barn
 function fillSupplierDatalist(){ const dl=$('supplier-list'); if(dl) dl.innerHTML=SUPPLIERS.map(s=>`<option value="${esc(s)}">`).join(''); }
 function recTime(iso){ try{ return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
 // time for today, otherwise "5 Nov 14:05" so historical rows show which day
@@ -1084,30 +1114,74 @@ function mSubmit(){
   if(!MFS.area){ toast('Pick an area'); return; }
   if(!location){ toast('Pick the room / location'); return; }
   if(!title){ toast('Say what needs fixing'); return; }
-  const by=($('m-by').value||'').trim()||'Front desk';
+  const by=($('m-by').value||'').trim()||'Catherine Virdee';
+  const ext=!!($('m-ext')&&$('m-ext').checked);
+  const trade=ext?($('m-ext-trade').value||''):'';
+  if(ext && !trade){ toast('Choose the trade / skill needed'); $('m-ext-trade').focus(); return; }
   const now=new Date().toISOString();
   const area=MFS.area, areaLabel=(MAINT_PROP[area]||{}).label||area;
   const doc={ id:'mnt_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
-    title, area, areaLabel, location:String(location), workType:'', description:($('m-desc').value||'').trim(),
-    status:'not-started', priority:(MFS.prio==='urgent'?'urgent':'medium'), assignees:['catherine'],
+    title, area, areaLabel, location:String(location), workType:ext?mTradeToWork(trade):'', description:($('m-desc').value||'').trim(),
+    status:'not-started', priority:(MFS.prio==='urgent'?'urgent':'medium'), assignees: ext?[]:['josh'],
     occupancy:MFS.occ||'', cost:0, module:'maintenance', photos:(MFS.photos||[]).slice(), voiceNote:null, materials:[], receipts:[],
-    notes:[{text:'Logged at reception (HosDesk)'+(by?(' — reported by '+by):''), by:by, at:todayISO()}],
+    external:ext, contractorTrade:trade, accessNotes:ext?(($('m-ext-access').value||'').trim()):'', sentTo:ext?'Raj Kumar':'', emailDraftedAt:null,
+    notes:[{text:(ext?'External contractor job — for Raj Kumar ('+trade+')':'Logged at reception (HosDesk) — allocated to Josh')+(by?(' — reported by '+by):''), by:by, at:todayISO()}],
     createdAt:now, updatedAt:now, createdBy:'reception', reportedBy:by, source:'reception', approvedBy:null, approvedAt:null, completedAt:null };
   try{
-    if(db){ db.collection('barn_fix_jobs').doc(doc.id).set(doc); }
+    if(db){ db.collection('barn_fix_jobs').doc(doc.id).set(doc); if(!ext) mPushJosh(doc); }
     else { const a=JSON.parse(localStorage.getItem('barn_fix_jobs')||'[]'); a.unshift(doc); localStorage.setItem('barn_fix_jobs',JSON.stringify(a)); M_ROWS.unshift(doc); mRender(); }
   }catch(e){ console.warn('mSubmit',e); toast('Could not send — check connection'); return; }
   // reset form
   MFS={ area:'', location:'', occ:'unknown', prio:'normal', photos:[] };
   $('m-area').value=''; const rs=$('m-room'); if(rs){ rs.classList.add('hide'); rs.value=''; } const rt=$('m-loc'); if(rt){ rt.classList.add('hide'); rt.value=''; }
   $('m-title').value=''; $('m-desc').value=''; $('m-by').value=''; mSetOcc('unknown'); mSetPrio('normal'); mRenderPhotos(); mDupCheck();
+  if(ext){ $('m-ext').checked=false; mExtToggle(); $('m-ext-trade').value=''; $('m-ext-access').value=''; openEmail(doc); }
   toast('🔧 Sent to maintenance ✓');
 }
+/* ---- External contractor jobs → Raj Kumar: email draft ---- */
+const RAJ_EMAIL='';   // ← put Raj Kumar's email address here, e.g. 'raj@example.com'
+function mTradeToWork(t){ t=(t||'').toLowerCase(); if(t.includes('plumb')||t.includes('drain')) return 'plumbing'; if(t.includes('electric')||t.includes('heating')||t.includes('gas')) return 'electrical'; if(t.includes('fenc')) return 'fences'; if(t.includes('paint')) return 'decorating'; if(t.includes('lock')) return 'locks'; if(t.includes('fire')) return 'fire'; return 'general'; }
+function mExtToggle(){ const on=$('m-ext').checked; $('m-ext-box').classList.toggle('hide',!on); const b=$('m-send-btn'); if(b){ b.textContent=on?'📧 Save & draft email for Raj Kumar →':'🔧 Send to Josh →'; b.style.background=on?'#5b21b6':'#c45c00'; } }
+function emailText(j){
+  const OCC={occupied:'Occupied',vacant:'Vacant',unknown:'Not sure'};
+  const subj=`The Barn Hotel — ${j.contractorTrade||'contractor'} needed: ${j.title} (${j.location||j.areaLabel||''})${j.priority==='urgent'?' — URGENT':''}`;
+  const lines=[
+    'Hi Raj,','',
+    `We need an external ${j.contractorTrade||'contractor'} at The Barn Hotel, please.`,'',
+    `Job:        ${j.title}`,
+    `Where:      ${j.areaLabel||''}${j.location?(' — '+j.location):''}`,
+    `Trade:      ${j.contractorTrade||''}`,
+    `Priority:   ${j.priority==='urgent'?'URGENT':'Normal'}`,
+    (j.occupancy&&j.occupancy!=='unknown')?`Room:       ${OCC[j.occupancy]||j.occupancy}`:null,
+    j.description?`Details:    ${j.description}`:null,
+    j.accessNotes?`Access:     ${j.accessNotes}`:null,
+    `Reported:   ${j.reportedBy||'Catherine Virdee'}, ${new Date(j.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`,
+    `Job ref:    ${j.id}`,
+    `Link:       ${location.origin}/hosfix.html#job=${j.id}`,'',
+    'Could you arrange a contractor and let me know who is coming and when, so reception can expect them?','',
+    'Many thanks,','Catherine Virdee','The Barn Hotel, West End Road, Ruislip HA4 6JB'
+  ].filter(x=>x!==null);
+  return {subj, body:lines.join('\n')};
+}
+let _emJob=null;
+function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('ovl-em').classList.add('on'); }
+function closeEmail(){ $('ovl-em').classList.remove('on'); }
+function emailMarkDrafted(){ if(!_emJob||!db) return; const id=_emJob.id; db.collection('barn_fix_jobs').doc(id).update({emailDraftedAt:new Date().toISOString(), updatedAt:new Date().toISOString()}).catch(()=>{}); }
+function emailOpen(){ const to=encodeURIComponent($('em-to').value||''), su=encodeURIComponent($('em-subj').value||''), bo=encodeURIComponent($('em-body').value||''); emailMarkDrafted(); window.location.href=`mailto:${to}?subject=${su}&body=${bo}`; }
+async function emailCopy(){ const t=`To: ${$('em-to').value}\nSubject: ${$('em-subj').value}\n\n${$('em-body').value}`; try{ await navigator.clipboard.writeText(t); toast('Email copied — paste into Outlook'); emailMarkDrafted(); }catch(e){ $('em-body').select(); document.execCommand('copy'); toast('Email copied'); } }
+/* ---- Push to Josh's phone for jobs logged at reception (same Cloud Function HosFix uses) ---- */
+const FCM_BASE='https://europe-west1-brandonhall-7bdef.cloudfunctions.net';
+function mPushJosh(j){
+  const slim={id:j.id,title:j.title,area:j.area,areaLabel:j.areaLabel,location:j.location||'',priority:j.priority||'medium',status:j.status,createdBy:'reception'};
+  const ev=j.priority==='urgent'?'job_urgent':'job_assigned';
+  fetch(FCM_BASE+'/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:ev,job:slim,assignees:['josh'],adminIds:[],senderId:'reception'})}).catch(e=>console.warn('push',e));
+}
 function mStatusBadge(j){
+  if(j.external) return j.status==='complete'?'<span class="bdg d">✓ Done</span>':(j.emailDraftedAt?'<span class="bdg ext">📧 Sent to Raj</span>':'<span class="bdg ext">External · email to send</span>');
   if(j.status==='complete') return '<span class="bdg d">✓ Done</span>';
   if(j.status==='in-progress') return '<span class="bdg ip">In progress</span>';
   const who=(j.assignees||[]).filter(a=>a!=='catherine');
-  return who.length?'<span class="bdg p" style="background:#eef2fb;color:#1F3864">Allocated</span>':(j.priority==='urgent'?'<span class="bdg u">Urgent · new</span>':'<span class="bdg p">New</span>');
+  return who.length?'<span class="bdg p" style="background:#eef2fb;color:#1F3864">With Josh</span>':(j.priority==='urgent'?'<span class="bdg u">Urgent · new</span>':'<span class="bdg p">New</span>');
 }
 function mWho(j){ const a=(j.assignees||[]).map(id=>HFX_NAMES[id]||id); return a.length?('👤 '+esc(a.join(', '))):''; }
 function mRender(){
@@ -1121,16 +1195,19 @@ function mRender(){
   rows.sort((a,b)=>{ const o={'not-started':0,'in-progress':1,'complete':2}; const ao=(a.priority==='urgent'&&a.status!=='complete')?-1:(o[a.status]!=null?o[a.status]:0); const bo=(b.priority==='urgent'&&b.status!=='complete')?-1:(o[b.status]!=null?o[b.status]:0); return ao-bo||(b.createdAt||'').localeCompare(a.createdAt||''); });
   if(!rows.length){ $('m-list').innerHTML='<div class="muted" style="padding:22px;text-align:center">No maintenance issues'+(M_FILTER_ALL?' in this period':' open')+' ✓</div>'; return; }
   const BORD={'not-started':'#c45c00','in-progress':'#b9780a','complete':'#2E6B5E'};
-  $('m-list').innerHTML=rows.map(j=>{
+  const mCard=(j)=>{
     const col=(j.priority==='urgent'&&j.status!=='complete')?'#b3261e':(BORD[j.status]||'#c45c00');
     const open=M_OPEN===j.id;
-    return `<div class="req mj ${open?'open':''}" style="border-left-color:${col}" onclick="mToggle('${esc(j.id)}')">
+    return `<div class="req mj ${open?'open':''}" style="border-left-color:${j.external?'#5b21b6':col}" onclick="mToggle('${esc(j.id)}')">
       <div class="r1"><span class="rm">${esc(j.location||j.areaLabel||'—')}</span><span class="ty">${esc(j.title||'')}</span>${mStatusBadge(j)}<span class="chev">${open?'▲':'▼'}</span></div>
       ${(!open&&j.description)?`<div class="meta">${esc(j.description)}</div>`:''}
       <div class="meta">${esc(j.reportedBy||j.source||'')} · ${recWhen(j.createdAt)} ${mWho(j)?('· '+mWho(j)):''}</div>
       ${open?mDetail(j):''}
     </div>`;
-  }).join('');
+  };
+  const josh=rows.filter(j=>!j.external), raj=rows.filter(j=>j.external);
+  const sec=(label,icon,list,empty)=>`<div class="m-sechd">${icon} ${label}<span class="cnt">${list.length}</span></div>`+(list.length?list.map(mCard).join(''):`<div class="muted" style="padding:10px 12px;font-size:13px">${empty}</div>`);
+  $('m-list').innerHTML = sec('Maintenance — Josh','🔧',josh,'Nothing open for Josh.') + sec('External — sent to Raj Kumar','📧',raj,'No external contractor jobs.');
 }
 let M_OPEN=null;
 function mToggle(id){ M_OPEN = (M_OPEN===id)?null:id; mRender(); }
@@ -1153,7 +1230,10 @@ function mDetail(j){
       ${row('Status', stat)}
       ${row('Room', OCC[j.occupancy]||'')}
       ${row('Reported by', esc(j.reportedBy||j.createdBy||'')+(j.source?` <span class="muted">(${esc(j.source)})</span>`:''))}
-      ${row('Allocated to', mWho(j).replace('👤 ',''))}
+      ${row('Allocated to', j.external?'Raj Kumar (external contractor)':mWho(j).replace('👤 ',''))}
+      ${row('Trade needed', esc(j.contractorTrade||''))}
+      ${row('Access notes', esc(j.accessNotes||''))}
+      ${row('Email', j.external?(j.emailDraftedAt?('Drafted '+mFmt(j.emailDraftedAt)):'Not yet sent'):'')}
       ${row('Cost', (j.cost&&j.cost>0)?('£'+Number(j.cost).toFixed(2)):'')}
     </div>
     ${j.description?`<div class="md-sec"><div class="md-h">Details</div><div>${esc(j.description)}</div></div>`:''}
@@ -1168,6 +1248,7 @@ function mDetail(j){
       ${j.completionPhoto?`<a href="${esc(j.completionPhoto)}" target="_blank" rel="noopener"><img src="${esc(j.completionPhoto)}" alt=""><span>After</span></a>`:''}
     </div></div>`:(j.photosLocalOnly?'<div class="md-sec muted" style="font-size:12px">Photos are on the phone that took them (too large to share).</div>':'')}
     <div class="md-actions">
+      ${j.external?`<button type="button" class="ebtn" style="border-color:#c4b5fd;color:#5b21b6;background:#f5f3ff" onclick="openEmail(mFind('${esc(j.id)}'))">📧 Email for Raj Kumar</button>`:''}
       <button type="button" class="ebtn" onclick="withEditCode(()=>openEditJob('${esc(j.id)}'))">✏️ Edit job</button>
       ${j.status!=='complete'?`<button type="button" class="ebtn done" onclick="withEditCode(()=>mSetStatus('${esc(j.id)}','complete'))">✓ Mark complete</button>`:`<button type="button" class="ebtn" onclick="withEditCode(()=>mSetStatus('${esc(j.id)}','not-started'))">↩ Reopen</button>`}
       <button type="button" class="ebtn danger" onclick="withEditCode(()=>mArchive('${esc(j.id)}'))">🗑 Archive</button>
@@ -1176,7 +1257,7 @@ function mDetail(j){
   </div>`;
 }
 /* ---- Edit mode (code 2222) — edit / complete / archive jobs and remove deliveries from reception ---- */
-const EDIT_CODE='2222'; let EDIT_OK=false, _editNext=null;
+const EDIT_CODE=''; let EDIT_OK=true, _editNext=null;   // no separate edit code — the HosDesk login (3132) covers it
 function withEditCode(fn){ if(EDIT_OK){ fn(); return; } _editNext=fn; const i=$('ec-in'); if(i) i.value=''; const e=$('ec-err'); if(e) e.textContent=''; $('ovl-edit').classList.add('on'); setTimeout(()=>{ try{ $('ec-in').focus(); }catch(e){} },60); }
 function closeEditGate(){ $('ovl-edit').classList.remove('on'); _editNext=null; }
 function checkEditCode(){ const v=($('ec-in').value||'').trim(); if(v===EDIT_CODE){ EDIT_OK=true; $('ovl-edit').classList.remove('on'); const f=_editNext; _editNext=null; if(f) f(); } else { $('ec-err').textContent='Wrong code'; $('ec-in').value=''; $('ec-in').focus(); } }
@@ -1196,7 +1277,7 @@ function openEditJob(id){
   const area=$('ej-area'); area.innerHTML=Object.keys(MAINT_PROP).map(k=>`<option value="${esc(k)}" ${k===j.area?'selected':''}>${esc(MAINT_PROP[k].label)}</option>`).join('');
   $('ej-prio').value=(j.priority==='urgent')?'urgent':(j.priority==='high'?'high':'medium');
   $('ej-status').value=j.status||'not-started';
-  $('ej-who').value=((j.assignees||[]).includes('josh'))?'josh':'catherine';
+  $('ej-who').value=j.external?'raj':'josh';
   $('ej-occ').value=j.occupancy||'';
   $('ej-wt').value=j.workType||'';
   $('ovl-ej').classList.add('on');
@@ -1207,7 +1288,7 @@ function saveEditJob(){
   const title=($('ej-title').value||'').trim(); if(!title){ toast('Give the job a title'); return; }
   const area=$('ej-area').value; const who=$('ej-who').value;
   const patch={ title, description:($('ej-desc').value||'').trim(), location:($('ej-loc').value||'').trim(), area, areaLabel:(MAINT_PROP[area]||{}).label||area,
-    priority:$('ej-prio').value, status:$('ej-status').value, assignees: who==='josh'?['josh']:['catherine'], occupancy:$('ej-occ').value, workType:$('ej-wt').value,
+    priority:$('ej-prio').value, status:$('ej-status').value, assignees: who==='josh'?['josh']:[], external: who==='raj', sentTo: who==='raj'?'Raj Kumar':'', occupancy:$('ej-occ').value, workType:$('ej-wt').value,
     notes:mNote(j,'Edited at reception') };
   if(patch.status==='complete' && !j.completedAt) patch.completedAt=new Date().toISOString();
   if(patch.status!=='complete') patch.completedAt=null;
