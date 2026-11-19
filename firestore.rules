@@ -251,6 +251,8 @@ service cloud.firestore {
     match /barn_config/{doc}       { allow read, write: if true; }
     // BarnHUB uploaded-document index (files themselves are in Storage barn_hub/)
     match /barn_hub_docs/{doc}     { allow read, create, update: if true; allow delete: if false; }
+    // Temporary maintenance staff (reception adds them; their expiring HosFIX login reads this)
+    match /barn_temps/{doc}        { allow read, create, update: if true; allow delete: if false; }
 
     match /{document=**} {
       allow read, write: if false;
