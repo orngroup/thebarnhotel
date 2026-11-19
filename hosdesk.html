@@ -1075,6 +1075,15 @@ function tempEnd(id){
   db.collection('barn_temps').doc(id).update({status:'ended', endDate:newEnd, endedAt:new Date().toISOString(), updatedAt:new Date().toISOString()})
     .then(()=>toast('Ended ✓')).catch(()=>toast('Could not update'));
 }
+function tempDelete(id){
+  const t=TEAM_ROWS.find(x=>x.id===id); if(!t) return;
+  const code=prompt('Delete '+t.name+' from Resources?\n\nThis removes them from the list and stops their app link. Enter the delete code to confirm:');
+  if(code===null) return;
+  if(code.trim()!=='2222'){ toast('Wrong code — not deleted'); return; }
+  if(!db){ toast('Not connected'); return; }
+  db.collection('barn_temps').doc(id).update({deleted:true, status:'ended', endedAt:new Date().toISOString(), updatedAt:new Date().toISOString()})
+    .then(()=>toast('Deleted ✓')).catch(()=>toast('Could not delete'));
+}
 function renderTeam(){
   const box=$('tm-list'); if(!box) return;
   if(!TEAM_ROWS.length){ box.innerHTML='<div class="muted" style="padding:18px 4px">No temporary staff yet. Tap "Add temporary maintenance person" to create one and generate their app link.</div>'; return; }
@@ -1103,8 +1112,9 @@ function renderTeam(){
         '<button class="ebtn" onclick="openTempForm(\''+t.id+'\')">✏️ Edit</button>'+
         '<button class="ebtn" onclick="tempExtend(\''+t.id+'\')">📅 Extend</button>'+
         '<button class="ebtn danger" onclick="tempEnd(\''+t.id+'\')">⏹ End now</button>'+
+        '<button class="ebtn danger" onclick="tempDelete(\''+t.id+'\')">🗑 Delete</button>'+
       '</div>')
-      :('<div class="tm-actions"><button class="ebtn" onclick="openTempForm(\''+t.id+'\')">View / re-book</button><span class="muted" style="font-size:12px;align-self:center">Link no longer active</span></div>'))+
+      :('<div class="tm-actions"><button class="ebtn" onclick="openTempForm(\''+t.id+'\')">View / re-book</button><button class="ebtn danger" onclick="tempDelete(\''+t.id+'\')">🗑 Delete</button><span class="muted" style="font-size:12px;align-self:center">Link no longer active</span></div>'))+
     '</div>';
   };
   box.innerHTML=(live.length?('<div class="tm-sec">Current &amp; upcoming</div>'+live.map(card).join('')):'')+

@@ -754,7 +754,7 @@ function loadAddedUsers(){ try{ const added=JSON.parse(localStorage.getItem('hf_
 // ── TEMPORARY STAFF (barn_temps) — shared, expiring operative logins ──────────
 let TEMPS=[];
 const tToday=()=>new Date().toISOString().slice(0,10);
-function tempLive(t){ return !!t && t.status==='active' && tToday()>=String(t.startDate||'') && tToday()<=String(t.endDate||''); }
+function tempLive(t){ return !!t && !t.deleted && t.status==='active' && tToday()>=String(t.startDate||'') && tToday()<=String(t.endDate||''); }
 async function loadTemps(){
   try{
     fbInit(); if(!fbDb) return TEMPS;
