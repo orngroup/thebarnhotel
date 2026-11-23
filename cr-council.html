@@ -112,6 +112,8 @@ tr:last-child td{border-bottom:none}
 .rep-item.on{border-color:var(--teal);background:var(--panel2)}
 .rep-item .rt{font:900 15px Lato;color:#fff}
 .rep-item .rd{font:600 12.5px Lato;color:var(--muted);margin-top:5px}
+.rep-pdf{display:inline-block;margin-top:10px;background:rgba(63,185,192,.14);color:var(--teal2);border:1px solid rgba(63,185,192,.3);border-radius:8px;padding:6px 12px;font:800 11.5px Lato;text-decoration:none}
+.rep-pdf:hover{background:var(--teal);color:#06212a}
 .rep-view{background:var(--panel);border:1px solid var(--bd);border-radius:16px;padding:22px}
 .rep-view h2{font:900 20px Lato;margin-bottom:3px}
 .rep-view .rvs{font:600 13px Lato;color:var(--muted);margin-bottom:16px}
@@ -149,6 +151,7 @@ tr:last-child td{border-bottom:none}
         <a data-v="demographics" onclick="cView('demographics')">Demographics</a>
         <a data-v="stays" onclick="cView('stays')">Check-ins &amp; stays</a>
         <a data-v="property" onclick="cView('property')">Property</a>
+        <a data-v="performance" onclick="cView('performance')">Performance</a>
         <a data-v="reports" onclick="cView('reports')">Reports</a>
       </nav>
       <div class="who">Signed in as <b>London Borough of Ealing</b><br>Access: The Barn, Ruislip · <a onclick="cLogout()">Sign out</a></div>
@@ -156,7 +159,7 @@ tr:last-child td{border-bottom:none}
     <div class="pfbar"><span class="pl">Portfolio</span><span class="pf">All portfolios</span><span class="pf on">Ealing — The Barn</span></div>
     </div></div>
     <div class="wrap"><div id="c-body" class="sec"></div></div>
-    <div class="foot">C&amp;R Housing · The Barn, West End Road, Ruislip HA4 6JB · Figures shown are sample data for demonstration · Powered by HosPRO Social Housing</div>
+    <div class="foot"><b style="color:#cdd8e6">C&amp;R Housing</b> · The Barn, West End Road, Ruislip HA4 6JB&nbsp;&nbsp;·&nbsp;&nbsp;<b style="color:#cdd8e6">Ealing Council</b> · Perceval House, 14/16 Uxbridge Road, Ealing W5 2HL<br>Figures shown are sample data for demonstration · Powered by HosPRO Social Housing</div>
   </div>
 
 <script src="cr-data.js"></script>
@@ -201,6 +204,7 @@ function render(){ var b=$('c-body'); if(!b) return;
   else if(CUR==='demographics') b.innerHTML=vDemographics();
   else if(CUR==='stays') b.innerHTML=vStays();
   else if(CUR==='property') b.innerHTML=vProperty();
+  else if(CUR==='performance') b.innerHTML=vPerformance();
   else if(CUR==='reports'){ b.innerHTML=vReports(); repSel(REP); }
 }
 
@@ -312,18 +316,43 @@ function vProperty(){ var rooms=ROOMS().slice().sort(function(a,b){return (a.bui
 
 /* ---- reports ---- */
 var REP='occupancy';
-function vReports(){ var items=[['occupancy','Portfolio Occupancy Report','Mobilisation, readiness and occupancy status for the property.'],
-  ['compliance','Compliance &amp; Safety Report','Certificate status and forthcoming expiry dates across the property.'],
-  ['quarterly','Quarterly Report to Council','Headline occupancy, demographics and length-of-stay summary for the quarter.']];
-  var list=items.map(function(it){return '<div class="rep-item" id="rep-'+it[0]+'" onclick="repSel(\''+it[0]+'\')"><div class="rt">'+it[1]+'</div><div class="rd">'+it[2]+'</div></div>';}).join('');
-  return '<div class="eyebrow">Reporting suite</div><h1>Reports</h1><div class="lead">Occupancy, compliance and quarterly summaries shared with the London Borough of Ealing. Select a report to preview, then print or save as PDF.</div>'+
+var REPORT_FILES={occupancy:'reports/CR-01-Occupancy-Void-Report.pdf',quarterly:'reports/CR-02-Quarterly-Performance-KPI-Report.pdf',moveon:'reports/CR-03-Resident-Move-On-Analysis.pdf',support:'reports/CR-04-Support-Officer-Monthly-Report.pdf',compliance:'reports/CR-05-Compliance-Safety-Report.pdf'};
+function vReports(){ var items=[
+  ['occupancy','Monthly Occupancy &amp; Void Report','Occupancy, voids and room-turnaround against the 5-day SLA.'],
+  ['quarterly','Quarterly Performance &amp; KPI Report','KPIs vs target — move-ons, length of stay, turnaround.'],
+  ['moveon','Resident Move-On Analysis','Which household types move on fastest vs stay longest — and why.'],
+  ['support','Support Officer Monthly Report','Family meetings, outcomes, welfare &amp; safeguarding.'],
+  ['compliance','Compliance &amp; Safety Report','Certificate status and expiry dates across the property.']];
+  var list=items.map(function(it){return '<div class="rep-item" id="rep-'+it[0]+'" onclick="repSel(\''+it[0]+'\')"><div class="rt">'+it[1]+'</div><div class="rd">'+it[2]+'</div><a class="rep-pdf" href="'+REPORT_FILES[it[0]]+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 Open PDF ›</a></div>';}).join('');
+  return '<div class="eyebrow">Reporting suite</div><h1>Reports</h1><div class="lead">Occupancy, performance, move-on, support-officer and compliance reports shared with the London Borough of Ealing. Select a report to preview, open the branded PDF, or print/save.</div>'+
     '<div class="rep-grid"><div>'+list+'</div><div class="rep-view" id="rep-view"></div></div>';
+}
+function vPerformance(){ var all=RES(),hh=HH(); var st=stayStats(); var withKids=hh.filter(function(h){return h.children>0;}).length;
+  var segs=[['Single adult, no children',4.2,'#1aa260'],['Couple, no children',8.9,'#2f80d8'],['Family, pre-school children',11.6,'#3fb9c0'],['Family, school-age children',14.2,'#e8912a'],['Larger family (5+)',16.8,'#e5533d']];
+  var maxSeg=Math.max.apply(null,segs.map(function(s){return s[1];}));
+  var kpi=[['v','88%','Room turnaround within SLA','target ≥ 85%'],['flag',Math.round(st.avg/30.44*10)/10+' mo','Average length of stay','target ≤ 12 months'],['v','38','Families moved on (12m)','target 40'],['v','100%','Onboarded within 24h','target 100%'],['v','42','Family meetings (Oct)','support officer'],['flag',st.over6,'Households over 6 weeks','statutory watch']]
+    .map(function(k){return '<div class="kpi '+(k[0]==='flag'?'flag':'')+'"><div class="v">'+k[1]+'</div><div class="l">'+k[2]+'</div><div class="s">'+k[3]+'</div></div>';}).join('');
+  var segBars=segs.map(function(s){return '<div class="bar"><div class="bl">'+esc(s[0])+'</div><div class="bt"><div class="bf" style="width:'+Math.round(s[1]/maxSeg*100)+'%;background:'+s[2]+'"></div></div><div class="bn">'+s[1]+' mo</div></div>';}).join('');
+  var turn=[['Within SLA (≤5 days)',14,'#1aa260'],['Over SLA',2,'#e5533d']];
+  var so=[['Family meetings held',42],['New families onboarded',6],['Welfare referrals',9],['Safeguarding escalations',2]];
+  return '<div class="eyebrow">Performance &amp; KPIs</div><h1>Performance dashboard</h1><div class="lead">Live KPI view built from the monthly and quarterly reports — delivery against the Service Agreement targets.</div>'+
+    '<div class="kpis">'+kpi+'</div>'+
+    '<div class="grid2"><div class="card"><h3>⏳ Average length of stay by household type <span class="mu">move-on analysis</span></h3>'+segBars+'<div style="font:600 11.5px Lato;color:#90a4bf;margin-top:8px">Families with school-age children stay ~3× longer than single adults — schooling and 4-bed+ supply are the main drivers.</div></div>'+
+    '<div class="card"><h3>🚪 Room turnaround (this month)</h3>'+shDonutP(turn,'16','rooms')+'<div style="font:600 11.5px Lato;color:#90a4bf;margin-top:8px">14 of 16 rooms returned to use within the 5-working-day SLA.</div></div></div>'+
+    '<div class="grid2" style="margin-top:16px"><div class="card"><h3>👥 Support Officer activity (October)</h3><table><tbody>'+so.map(function(x){return '<tr><td>'+x[0]+'</td><td style="text-align:right;font-weight:900">'+x[1]+'</td></tr>';}).join('')+'</tbody></table></div>'+
+    '<div class="card"><h3>🏠 Household composition</h3><table><tbody><tr><td>Households with children</td><td style="text-align:right;font-weight:900">'+withKids+'</td></tr><tr><td>Single / no children</td><td style="text-align:right;font-weight:900">'+(hh.length-withKids)+'</td></tr><tr><td>Total residents</td><td style="text-align:right;font-weight:900">'+all.length+'</td></tr><tr><td>Children (under 18)</td><td style="text-align:right;font-weight:900">'+all.filter(function(r){return r.child;}).length+'</td></tr></tbody></table></div></div>'+
+    '<div style="margin-top:16px"><a class="rep-pdf" style="font-size:13px;padding:10px 16px" href="'+REPORT_FILES.quarterly+'" target="_blank" rel="noopener">📄 Open the full Quarterly Performance &amp; KPI Report (PDF) ›</a></div>';
+}
+function shDonutP(parts,center,label){ var total=parts.reduce(function(s,p){return s+p[1];},0)||0; var R=52,C=2*Math.PI*R; var off=0;
+  var segs=parts.map(function(p){var dash=p[1]/total*C;var s='<circle cx="75" cy="75" r="'+R+'" fill="none" stroke="'+p[2]+'" stroke-width="20" stroke-dasharray="'+dash.toFixed(2)+' '+(C-dash).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 75 75)"/>';off+=dash;return s;}).join('');
+  var leg=parts.map(function(p){return '<div class="bar" style="margin-bottom:6px"><span style="width:10px;height:10px;border-radius:3px;background:'+p[2]+';display:inline-block;margin-right:8px"></span><span style="font:700 12.5px Lato;color:#eaf0f7;flex:1">'+esc(p[0])+'</span><b style="font:900 13px Lato;color:#fff">'+p[1]+'</b></div>';}).join('');
+  return '<div class="donut-wrap" style="display:flex;align-items:center;gap:18px"><div class="donut" style="position:relative;width:150px;height:150px"><svg viewBox="0 0 150 150" width="150" height="150">'+segs+'</svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:900 24px Lato;color:#fff">'+center+'</div><div style="font:700 10px Lato;color:#90a4bf;text-transform:uppercase">'+label+'</div></div></div><div style="flex:1">'+leg+'</div></div>';
 }
 function repSel(which){ REP=which; [].forEach.call(document.querySelectorAll('.rep-item'),function(el){el.classList.toggle('on',el.id==='rep-'+which);});
   var v=$('rep-view'); if(!v) return; v.innerHTML=repBody(which); }
 function repBody(which){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.length-1]||{}; var st=stayStats(); var kids=all.filter(function(r){return r.child;}).length;
   var head='<div style="display:flex;align-items:flex-start"><div style="flex:1">';
-  var printBtn='</div><button class="btn-print" onclick="window.print()">🖨 Print / Save PDF</button></div>';
+  var printBtn='</div><div style="display:flex;gap:8px">'+(REPORT_FILES[which]?'<a class="btn-print" style="text-decoration:none;display:inline-flex;align-items:center" href="'+REPORT_FILES[which]+'" target="_blank" rel="noopener">📄 Open PDF</a>':'')+'<button class="btn-print" onclick="window.print()">🖨 Print</button></div></div>';
   if(which==='occupancy'){ var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(ROOMS(),function(r){return r.building;});
     return head+'<h2>Portfolio Occupancy Report</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · as at '+dec(last.d)+'</div>'+printBtn+
       '<div class="minis"><div class="mini"><div class="v">'+(last.av||'—')+'</div><div class="l">Rooms available</div></div><div class="mini"><div class="v">'+(last.oc||'—')+'</div><div class="l">Rooms occupied</div></div><div class="mini"><div class="v">'+(last.p!=null?last.p.toFixed(1)+'%':'—')+'</div><div class="l">Occupancy</div></div><div class="mini"><div class="v">'+(last.g||'—')+'</div><div class="l">Residents in house</div></div></div>'+
@@ -335,6 +364,16 @@ function repBody(which){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.len
       '<div class="minis"><div class="mini"><div class="v">'+cv+'/'+COMPLIANCE.length+'</div><div class="l">Certificates valid</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='due';}).length+'</div><div class="l">Renewal due</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='await';}).length+'</div><div class="l">Awaiting</div></div></div>'+
       '<table><thead><tr><th>Certificate</th><th>Type</th><th>Issued</th><th>Expires</th><th>Status</th><th>Document</th></tr></thead><tbody>'+COMPLIANCE.map(function(c){return '<tr><td>'+c.item+(c.note?'<div style="font:700 11px Lato;color:#f0bd6a;margin-top:2px">⚠ '+c.note+'</div>':'')+'</td><td>'+(c.type||'')+'</td><td>'+(c.issued||'')+'</td><td>'+(c.expires||'')+'</td><td>'+compPill(c.status)+'</td><td><a href="'+c.file+'" target="_blank" rel="noopener">View ›</a></td></tr>';}).join('')+'</tbody></table>'+
       '<div class="note">Whole-facility compliance documents, shared with the London Borough of Ealing. Certificates are attached and viewable. No resident personal data is included in this report.</div>';
+  }
+  if(which==='moveon'){ var segs=[['Single adult, no children','4.2','Highest'],['Couple, no children','8.9','Medium'],['Family, pre-school children','11.6','Lower'],['Family, school-age children','14.2','Lowest'],['Larger family (5+)','16.8','Lowest']];
+    return head+'<h2>Resident Move-On Analysis</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · rolling 12 months</div>'+printBtn+
+      '<table><thead><tr><th>Household type</th><th>Avg stay (months)</th><th>Move-on likelihood</th></tr></thead><tbody>'+segs.map(function(s){return '<tr><td>'+s[0]+'</td><td>'+s[1]+'</td><td>'+(s[2]==='Highest'||s[2]==='Medium'?'<span class="pill p-ok">'+s[2]+'</span>':'<span class="pill p-long">'+s[2]+'</span>')+'</td></tr>';}).join('')+'</tbody></table>'+
+      '<div class="note">Indicative, AI-assisted analysis on sample data. Families with school-age children stay ~3× longer than single adults; onward supply of 4-bed+ homes is the binding constraint for larger families. Open the full PDF for drivers and recommendations.</div>';
+  }
+  if(which==='support'){ var so=[['Family meetings held','42'],['New families onboarded','6'],['Welfare referrals made','9'],['Safeguarding concerns escalated','2']];
+    return head+'<h2>Support Officer Monthly Report</h2><div class="rvs">The Barn, Ruislip · Support Officer: Grace Mensah · October 2026</div>'+printBtn+
+      '<div class="minis">'+so.map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>'+
+      '<div class="note">Regular welfare check-ins across all four buildings. Themes: school places, ESOL access, GP registration and benefits. Two households are now move-on ready. Open the full PDF for meeting-level outcomes and recommendations.</div>';
   }
   // quarterly
   var eth=grp(all,function(r){return r.ethnicity;}), gender=grp(all,function(r){return r.gender;});

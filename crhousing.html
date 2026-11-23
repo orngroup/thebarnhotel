@@ -748,7 +748,7 @@ body.role-ops .mgmt-only{display:none!important}
     <div class="sb-logo"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:152px;max-width:100%;height:auto;display:block" onerror="this.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"><div class="l2" style="margin-top:10px">HosPRO · The Barn</div></div>
     <nav class="sb-nav">
       <div class="sb-cap">Main</div>
-      <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Location Overview</button>
       <div class="sb-cap mgmt-only">Social Housing</div>
       <button class="sb-i mgmt-only" id="nav-residents" onclick="openResidents();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Residents<span class="cnt" id="bc-res-n">0</span></button>
       <button class="sb-i mgmt-only" id="nav-occupancy" onclick="openOccupancy();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg>Occupancy</button>
@@ -766,8 +766,6 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="sb-i" id="nav-plant" onclick="openPlant();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V20a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H24"/></svg>Plant &amp; Equipment<span class="cnt" id="bc-plant-n">0</span></button>
       <button class="sb-i" id="nav-contractors" onclick="openContractors();sbClose()"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Contractors<span class="cnt" id="bc-con-n">0</span></button>
       <button class="sb-i" id="nav-hs" onclick="openHs();sbClose()"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Health &amp; Safety<span class="cnt" id="bc-hs-n">0</span></button>
-      <div class="sb-cap">Insights</div>
-      <button class="sb-i mgmt-only" id="nav-mgmt" onclick="openMgmt();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></svg>Management<span class="cnt" id="bc-mgmt-n">0</span></button>
       <div class="sb-cap">Help</div>
       <button class="sb-i" id="nav-faq" onclick="openFaq();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/></svg>FAQ &amp; Training</button>
     </nav>
@@ -873,7 +871,7 @@ body.role-ops .mgmt-only{display:none!important}
 
     <!-- HOME: welcome + three big kiosk cards (tap one to open it full-page) + stats -->
     <div id="hd-home">
-      <div class="dash-head"><div><div class="dash-h1">Dashboard</div><div class="dash-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
+      <div class="dash-head"><div><div class="dash-h1">Location Overview</div><div class="dash-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
       <div class="mgmt-only"><div class="ov-group">🏠 Social Housing</div><div class="ov-grid" id="sh-dash"></div></div>
       <div id="dash-charts" class="mgmt-only"></div>
       <div class="ov-group">⚙️ Operations</div>
