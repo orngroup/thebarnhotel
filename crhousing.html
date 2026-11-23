@@ -2681,10 +2681,27 @@ async function hsUpload(){ const err=$('hs-err'); err.textContent=''; const titl
   btn.disabled=false; btn.textContent=orig; }
 function hsDel(id){ if(!db) return; if(!confirm('Remove this document?')) return; db.collection('barn_hs_docs').doc(id).update({hidden:true}); }
 function hsIcon(t){ t=t||''; return t.includes('pdf')?'📄':t.includes('image')?'🖼️':'📎'; }
+const CR_DOCS=[
+ {name:'Electrical Installation Condition Report (EICR)',type:'Electrical',provider:'PTECH Group',issued:'08 Jun 2026',expires:'08 Jun 2031',status:'valid',file:'compliance/eicr.pdf'},
+ {name:'Fire Risk Assessment (FRA)',type:'Fire',provider:'Serviced by Terry',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/fire-risk-assessment.pdf'},
+ {name:'Emergency Lighting Certificate',type:'Fire',provider:'Serviced by Terry',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/emergency-lighting.pdf'},
+ {name:'PAT Testing Report',type:'Electrical',provider:'Serviced by Terry',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/pat-test.pdf'},
+ {name:'Legionella Risk Assessment',type:'Water',provider:'Serviced by Terry',issued:'01 Apr 2026',expires:'01 Apr 2028',status:'valid',file:'compliance/legionella.pdf'},
+ {name:'Fire Extinguisher Service',type:'Fire',provider:'Serviced by Terry',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/fire-extinguishers.pdf'},
+ {name:'Gas Installation Safety (Non-Domestic)',type:'Gas',provider:'Gas Safe reg.',issued:'25 Mar 2025',expires:'25 Mar 2026',status:'overdue',file:'compliance/gas-safety.pdf'},
+ {name:'Fire Alarm Service (BS5839)',type:'Fire',provider:'Syndicate Fire',issued:'06 Jan 2025',expires:'—',status:'overdue',file:'compliance/fire-alarm.pdf',note:'Replacement advised — system obsolete'}
+];
+function crDocChip(s){ return s==='valid'?'<span class="rv" style="background:#e6f6ee;color:#1aa260">Valid</span>':s==='due'?'<span class="rv" style="background:#fdf0e1;color:#c47d16">Action</span>':'<span class="rv" style="background:#fdecea;color:#e5533d">Overdue</span>'; }
+function crMatrix(withView){ const nV=CR_DOCS.filter(d=>d.status==='valid').length, nA=CR_DOCS.length-nV;
+  return `<div class="c2h" style="margin:2px 0 12px">📋 Compliance matrix — The Barn 26/27 <span class="rep" style="cursor:default;color:#8a94a0">${nV} current · ${nA} need action</span></div>`+
+  `<table class="rs-table"><thead><tr><th>Certificate</th><th>Type</th><th>Issued</th><th>Expires</th><th>Status</th>${withView?'<th>Document</th>':''}</tr></thead><tbody>`+
+  CR_DOCS.map(d=>`<tr><td>${esc(d.name)}${d.note?('<div style="font:700 11px Lato;color:#c47d16;margin-top:2px">⚠ '+esc(d.note)+'</div>'):''}<div style="font:600 11px Lato;color:#9aa6b8;margin-top:2px">${esc(d.provider)}</div></td><td>${esc(d.type)}</td><td>${esc(d.issued)}</td><td>${esc(d.expires)}</td><td>${crDocChip(d.status)}</td>${withView?`<td><a href="${d.file}" target="_blank" rel="noopener" style="color:#128a8f;font-weight:800;text-decoration:none">View ›</a></td>`:''}</tr>`).join('')+`</tbody></table>`;
+}
 function renderHs(){ const box=$('hs-list'); if(!box) return;
-  if(!HS_ROWS.length){ box.innerHTML='<div class="ck-empty">No H&S documents yet. Upload your first above.</div>'; return; }
-  const groups={}; HS_ROWS.forEach(r=>{ const c=r.category||'Other'; (groups[c]=groups[c]||[]).push(r); });
-  box.innerHTML=Object.keys(groups).map(cat=>`<div class="hs-group"><div class="hs-cat">${esc(cat)}</div>`+groups[cat].map(r=>`<a class="hs-doc" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="ic">${hsIcon(r.type)}</span><div style="min-width:0"><div class="nm">${esc(r.title)}</div><div class="mt">${esc(r.name||'')}${r.uploadedAt?(' · added '+ukDate(String(r.uploadedAt).slice(0,10))):''}</div></div>${r.review?`<span class="rv">Review ${esc(ukDate(r.review))}</span>`:''}<button class="del" style="position:static;margin-left:10px" onclick="event.preventDefault();hsDel('${r.id}')">🗑</button></a>`).join('')+'</div>').join(''); }
+  let html=`<div style="margin-bottom:22px">${crMatrix(true)}</div>`;
+  if(HS_ROWS.length){ const groups={}; HS_ROWS.forEach(r=>{ const c=r.category||'Other'; (groups[c]=groups[c]||[]).push(r); });
+    html+=Object.keys(groups).map(cat=>`<div class="hs-group"><div class="hs-cat">${esc(cat)}</div>`+groups[cat].map(r=>`<a class="hs-doc" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="ic">${hsIcon(r.type)}</span><div style="min-width:0"><div class="nm">${esc(r.title)}</div><div class="mt">${esc(r.name||'')}${r.uploadedAt?(' · added '+ukDate(String(r.uploadedAt).slice(0,10))):''}</div></div>${r.review?`<span class="rv">Review ${esc(ukDate(r.review))}</span>`:''}<button class="del" style="position:static;margin-left:10px" onclick="event.preventDefault();hsDel('${r.id}')">🗑</button></a>`).join('')+'</div>').join(''); }
+  box.innerHTML=html; }
 
 /* ---- FAQ & Training (static) ---- */
 function faqToggle(i){ const el=document.querySelectorAll('#faq-list .faq-item')[i]; if(el) el.classList.toggle('open'); }

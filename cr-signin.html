@@ -62,7 +62,7 @@ input:focus,select:focus{outline:none;border-color:var(--teal)}
 </style>
 </head>
 <body>
-  <div class="brand"><div class="l1">C&amp;R <b>Housing</b></div><div class="l2">The Barn · Ruislip</div></div>
+  <div class="brand"><span style="background:#fff;border-radius:11px;padding:10px 14px;display:inline-block;line-height:0"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:180px;max-width:70vw;height:auto;display:block" onerror="this.parentNode.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"></span><div class="l2" style="margin-top:10px">The Barn · Ruislip</div></div>
   <div class="clk" id="clk">--:--<small id="clk-d"></small></div>
 
   <div class="card" id="form-card">
@@ -111,12 +111,18 @@ var MODES={
   resident:{ pill:'👤 Resident check-in', pillClass:'', title:'Resident check-in', sub:'Welcome to The Barn. Please register your arrival with us.',
     coll:'cr_residents', photoLabel:'Your photo', photoReq:true,
     fields:'<div class="row2"><div><label>First name</label><input id="first" autocomplete="given-name" placeholder="First"></div><div><label>Last name</label><input id="last" autocomplete="family-name" placeholder="Last"></div></div>'
-      +'<div class="row2 fieldgap"><div><label>Room / unit</label><input id="room" placeholder="e.g. GB.12"></div><div><label>Household size</label><input id="party" type="number" min="1" inputmode="numeric" placeholder="e.g. 3"></div></div>'
-      +'<div class="fieldgap"><label>Nationality</label><input id="nat" placeholder="e.g. Somali"></div>'
-      +'<div class="fieldgap"><label>Mobile number</label><input id="phone" type="tel" inputmode="tel" placeholder="07…"></div>',
+      +'<div class="row2 fieldgap"><div><label>Date of birth</label><input id="dob" type="date"></div><div><label>Gender</label><select id="gender"><option value="">Select…</option><option>Female</option><option>Male</option><option>Prefer not to say</option></select></div></div>'
+      +'<div class="row2 fieldgap"><div><label>Nationality</label><input id="nat" placeholder="e.g. Somali"></div><div><label>Main language</label><input id="lang" placeholder="e.g. Arabic"></div></div>'
+      +'<div class="fieldgap"><label>Ethnicity</label><select id="eth"><option value="">Select…</option><option>African</option><option>Caribbean</option><option>Black other</option><option>White British</option><option>White other</option><option>Arab</option><option>Indian</option><option>Pakistani</option><option>Asian other</option><option>Mixed</option><option>Other</option><option>Prefer not to say</option></select></div>'
+      +'<div class="row2 fieldgap"><div><label>Room / unit</label><input id="room" placeholder="e.g. GB.12"></div><div><label>People in household</label><input id="party" type="number" min="1" inputmode="numeric" placeholder="e.g. 3"></div></div>'
+      +'<div class="fieldgap"><label>Of which, children under 18</label><input id="kids" type="number" min="0" inputmode="numeric" placeholder="e.g. 2"></div>'
+      +'<div class="row2 fieldgap"><div><label>Mobile number</label><input id="phone" type="tel" inputmode="tel" placeholder="07…"></div><div><label>Email (optional)</label><input id="email" type="email" inputmode="email" placeholder="you@email.com"></div></div>'
+      +'<div class="row2 fieldgap"><div><label>Placing council</label><select id="council"><option value="">Select…</option><option>Ealing</option><option>Hillingdon</option><option>Harrow</option><option>Brent</option><option>Hounslow</option><option>Other</option></select></div><div><label>Case / ref no.</label><input id="ref" placeholder="If known"></div></div>'
+      +'<div class="row2 fieldgap"><div><label>Emergency contact</label><input id="emname" placeholder="Name"></div><div><label>Their number</label><input id="emphone" type="tel" inputmode="tel" placeholder="07…"></div></div>'
+      +'<div class="fieldgap"><label>Any support or access needs (optional)</label><input id="support" placeholder="e.g. ground-floor room"></div>',
     consent:'I confirm the details above are correct and consent to C&amp;R Housing holding them for the purpose of my accommodation.',
     buttons:'single', inLabel:'✅ Check in', inSub:'Register arrival',
-    collect:function(){ var o={first:v('first'),last:v('last'),room:v('room'),party:v('party'),nat:v('nat'),phone:v('phone')};
+    collect:function(){ var o={first:v('first'),last:v('last'),dob:v('dob'),gender:v('gender'),nat:v('nat'),lang:v('lang'),eth:v('eth'),room:v('room'),party:v('party'),kids:v('kids'),phone:v('phone'),email:v('email'),council:v('council'),ref:v('ref'),emname:v('emname'),emphone:v('emphone'),support:v('support')};
       if(!o.first||!o.last){return 'Please enter your first and last name.';}
       if(!o.room){return 'Please enter your room or unit.';}
       return o; },

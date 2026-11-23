@@ -176,14 +176,14 @@ function buildings(){return [...new Set(ROOMS().map(r=>r.building))];}
 var CKI=[];
 
 var COMPLIANCE=[
- {item:'Electrical Installation Condition Report (EICR)',status:'valid',detail:'Satisfactory · next due 8 Jun 2031'},
- {item:'Fire Risk Assessment (FRA)',status:'valid',detail:'Assessed 1 Apr 2026 · next 1 Apr 2027'},
- {item:'Emergency lighting',status:'valid',detail:'Certified 2026/27'},
- {item:'Portable appliance testing (PAT)',status:'valid',detail:'Tested 1 Apr 2026'},
- {item:'Legionella risk assessment',status:'valid',detail:'Assessed 2026/27'},
- {item:'Fire extinguishers',status:'valid',detail:'Serviced 2026/27'},
- {item:'Gas Installation Safety (Non-Domestic)',status:'due',detail:'Last inspected 25 Mar 2025 · renewal due'},
- {item:'Fire alarm &amp; detection (BS5839)',status:'due',detail:'Serviced 2026/27 · replacement advised (system obsolete)'}
+ {item:'Electrical Installation Condition Report (EICR)',type:'Electrical',issued:'08 Jun 2026',expires:'08 Jun 2031',status:'valid',file:'compliance/eicr.pdf'},
+ {item:'Fire Risk Assessment (FRA)',type:'Fire',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/fire-risk-assessment.pdf'},
+ {item:'Emergency lighting',type:'Fire',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/emergency-lighting.pdf'},
+ {item:'Portable appliance testing (PAT)',type:'Electrical',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/pat-test.pdf'},
+ {item:'Legionella risk assessment',type:'Water',issued:'01 Apr 2026',expires:'01 Apr 2028',status:'valid',file:'compliance/legionella.pdf'},
+ {item:'Fire extinguishers',type:'Fire',issued:'01 Apr 2026',expires:'01 Apr 2027',status:'valid',file:'compliance/fire-extinguishers.pdf'},
+ {item:'Gas Installation Safety (Non-Domestic)',type:'Gas',issued:'25 Mar 2025',expires:'25 Mar 2026',status:'due',file:'compliance/gas-safety.pdf'},
+ {item:'Fire alarm &amp; detection (BS5839)',type:'Fire',issued:'06 Jan 2025',expires:'—',status:'due',file:'compliance/fire-alarm.pdf',note:'Replacement advised — system obsolete'}
 ];
 function compPill(s){return s==='valid'?'<span class="pill p-valid">Valid</span>':s==='due'?'<span class="pill p-due">Renewal due</span>':'<span class="pill p-await">Awaiting</span>';}
 
@@ -333,8 +333,8 @@ function repBody(which){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.len
   if(which==='compliance'){ var cv=COMPLIANCE.filter(function(c){return c.status==='valid';}).length;
     return head+'<h2>Compliance &amp; Safety Report</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · as at '+dec(last.d)+'</div>'+printBtn+
       '<div class="minis"><div class="mini"><div class="v">'+cv+'/'+COMPLIANCE.length+'</div><div class="l">Certificates valid</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='due';}).length+'</div><div class="l">Renewal due</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='await';}).length+'</div><div class="l">Awaiting</div></div></div>'+
-      '<table><thead><tr><th>Item</th><th>Status</th><th>Detail</th></tr></thead><tbody>'+COMPLIANCE.map(function(c){return '<tr><td>'+c.item+'</td><td>'+compPill(c.status)+'</td><td style="color:#90a4bf">'+c.detail+'</td></tr>';}).join('')+'</tbody></table>'+
-      '<div class="note">Whole-facility documents. A breakdown by building is being prepared. No resident personal data is included in this report.</div>';
+      '<table><thead><tr><th>Certificate</th><th>Type</th><th>Issued</th><th>Expires</th><th>Status</th><th>Document</th></tr></thead><tbody>'+COMPLIANCE.map(function(c){return '<tr><td>'+c.item+(c.note?'<div style="font:700 11px Lato;color:#f0bd6a;margin-top:2px">⚠ '+c.note+'</div>':'')+'</td><td>'+(c.type||'')+'</td><td>'+(c.issued||'')+'</td><td>'+(c.expires||'')+'</td><td>'+compPill(c.status)+'</td><td><a href="'+c.file+'" target="_blank" rel="noopener">View ›</a></td></tr>';}).join('')+'</tbody></table>'+
+      '<div class="note">Whole-facility compliance documents, shared with the London Borough of Ealing. Certificates are attached and viewable. No resident personal data is included in this report.</div>';
   }
   // quarterly
   var eth=grp(all,function(r){return r.ethnicity;}), gender=grp(all,function(r){return r.gender;});
