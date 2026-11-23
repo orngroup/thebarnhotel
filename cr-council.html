@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C&amp;R Housing — Council Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e1a2b;--panel:#15243a;--panel2:#1a2c45;--bd:rgba(255,255,255,.09);--ink:#eaf0f7;--muted:#90a4bf;--teal:#3fb9c0;--teal2:#5bc4c9;--green:#39b981;--amber:#e0a33a;--red:#e2685c}
+html,body{font-family:'Lato',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100%}
+body{min-height:100vh}
+a{color:var(--teal2);text-decoration:none}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.mark{width:40px;height:40px;border-radius:50%;background:conic-gradient(from 210deg,#2a9da4,#1d6b8f,#2a9da4);display:grid;place-items:center;flex:0 0 40px;position:relative}
+.mark::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2.5px solid #fff;border-right-color:transparent;transform:rotate(25deg)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .lt{font:900 19px Lato;letter-spacing:.5px;color:#fff;line-height:1}
+.logo .lt b{color:var(--teal2)}
+.logo .ls{font:700 8.5px Lato;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+/* ===== Login ===== */
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.lg-card{background:var(--panel);border:1px solid var(--bd);border-radius:20px;padding:34px 30px;width:100%;max-width:420px;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.lg-card .logo{justify-content:center;margin-bottom:20px}
+.lg-h{font:900 22px Lato;text-align:center;margin-bottom:4px}
+.lg-s{font:600 13px Lato;color:var(--muted);text-align:center;margin-bottom:22px}
+.lg-card label{display:block;font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 7px}
+.lg-card input{width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;background:#0d1826;color:var(--ink);font:700 16px Lato;letter-spacing:2px;text-align:center}
+.lg-card input:focus{outline:none;border-color:var(--teal)}
+.lg-btn{width:100%;margin-top:16px;padding:15px;border:none;border-radius:12px;background:var(--teal);color:#06212a;font:900 15px Lato;cursor:pointer}
+.lg-btn:hover{background:var(--teal2)}
+.lg-hint{font:600 12px Lato;color:var(--muted);text-align:center;margin-top:16px}
+.lg-hint b{color:var(--teal2);letter-spacing:1px}
+.lg-err{color:var(--red);font:700 13px Lato;text-align:center;margin-top:10px;min-height:16px}
+/* ===== Portal ===== */
+#portal{display:none}
+.top{border-bottom:1px solid var(--bd);background:rgba(13,22,36,.6);position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
+.top .row{display:flex;align-items:center;gap:26px;height:74px}
+.nav{display:flex;gap:22px;margin-left:10px}
+.nav a{font:800 14px Lato;color:var(--muted);cursor:pointer;padding:6px 0;border-bottom:2px solid transparent}
+.nav a.on,.nav a:hover{color:#fff;border-bottom-color:var(--teal)}
+.who{margin-left:auto;text-align:right;font:600 12px Lato;color:var(--muted)}
+.who b{color:var(--ink)}
+.pfbar{display:flex;align-items:center;gap:12px;padding:16px 0 2px}
+.pfbar .pl{font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.pf{padding:9px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--panel);color:var(--muted);font:800 13px Lato;cursor:default}
+.pf.on{background:var(--teal);color:#06212a;border-color:var(--teal)}
+.sec{padding:26px 0 60px}
+.eyebrow{font:800 11px Lato;letter-spacing:2px;text-transform:uppercase;color:var(--teal2)}
+h1{font:900 30px Lato;margin:4px 0 4px}
+.lead{font:600 14px Lato;color:var(--muted);margin-bottom:22px;max-width:760px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px 16px;border-top:3px solid var(--teal)}
+.kpi .v{font:900 28px Lato;color:#fff}
+.kpi .l{font:700 12px Lato;color:var(--muted);margin-top:3px}
+.kpi .s{font:600 11px Lato;color:#6f84a0;margin-top:2px}
+.kpi.flag{border-top-color:var(--amber)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:16px;padding:18px 18px}
+.card h3{font:900 15px Lato;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h3 .mu{font:700 12px Lato;color:var(--muted);margin-left:auto}
+/* chart */
+.chart{position:relative;height:200px;margin-left:30px}
+.chart .yax{position:absolute;left:-30px;top:0;bottom:22px;width:26px}
+.chart .yax span{position:absolute;right:0;transform:translateY(-50%);font:700 10px Lato;color:#6f84a0}
+.plot{position:absolute;left:0;right:0;top:0;bottom:22px}
+.svg{width:100%;height:100%;display:block}
+.gl{stroke:rgba(255,255,255,.07)}
+.ln{fill:none;stroke-width:2}
+.xax{position:absolute;left:0;right:0;bottom:0;height:18px}
+.xax span{position:absolute;transform:translateX(-50%);font:700 10px Lato;color:#6f84a0;white-space:nowrap}
+/* bars */
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar .bl{flex:0 0 150px;font:700 12.5px Lato;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .bt{flex:1;height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden}
+.bar .bf{height:100%;background:var(--teal);border-radius:7px}
+.bar .bn{flex:0 0 72px;text-align:right;font:900 12.5px Lato;color:#fff}
+.bar .bn small{font:700 11px Lato;color:var(--muted);margin-left:4px}
+/* table */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font:800 10.5px Lato;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--bd)}
+td{font:700 13px Lato;color:var(--ink);padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font:800 11px Lato}
+.p-valid{background:rgba(57,185,129,.16);color:#54d39d}
+.p-due{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-await{background:rgba(226,104,92,.14);color:#ef8e84}
+.p-ok{background:rgba(57,185,129,.16);color:#54d39d}
+.p-long{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-vlong{background:rgba(226,104,92,.16);color:#ef8e84}
+.av{width:34px;height:34px;border-radius:9px;background:rgba(63,185,192,.16);display:grid;place-items:center;font:900 13px Lato;color:var(--teal2);flex:0 0 34px;object-fit:cover}
+.feed-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.feed-row:last-child{border-bottom:none}
+.feed-row .t{font:800 13.5px Lato;color:#fff}
+.feed-row .m{font:600 12px Lato;color:var(--muted)}
+.comp-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.comp-row:last-child{border-bottom:none}
+.comp-row .ci{font:700 13px Lato;color:var(--ink);flex:1}
+.comp-row .cd{font:600 12px Lato;color:var(--muted);flex:0 0 220px;text-align:right}
+.rep-grid{display:grid;grid-template-columns:320px 1fr;gap:18px}
+@media(max-width:900px){.rep-grid{grid-template-columns:1fr}}
+.rep-item{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px;cursor:pointer;margin-bottom:12px}
+.rep-item.on{border-color:var(--teal);background:var(--panel2)}
+.rep-item .rt{font:900 15px Lato;color:#fff}
+.rep-item .rd{font:600 12.5px Lato;color:var(--muted);margin-top:5px}
+.rep-view{background:var(--panel);border:1px solid var(--bd);border-radius:16px;padding:22px}
+.rep-view h2{font:900 20px Lato;margin-bottom:3px}
+.rep-view .rvs{font:600 13px Lato;color:var(--muted);margin-bottom:16px}
+.minis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.mini{background:var(--panel2);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;min-width:120px}
+.mini .v{font:900 22px Lato;color:#fff}.mini .l{font:700 11px Lato;color:var(--muted);margin-top:2px}
+.btn-print{background:var(--teal);color:#06212a;border:none;border-radius:10px;padding:10px 16px;font:900 13px Lato;cursor:pointer}
+.note{font:600 12px Lato;color:#6f84a0;border-top:1px solid var(--bd);padding-top:12px;margin-top:14px;line-height:1.5}
+.foot{border-top:1px solid var(--bd);padding:20px 0;color:#6f84a0;font:600 12px Lato;text-align:center}
+.hide{display:none!important}
+@media print{ body{background:#fff;color:#111} .top,.pfbar,.rep-grid>div:first-child,.foot{display:none!important} .rep-view{border:none;background:#fff;color:#111} .rep-view h2,.mini .v{color:#111} *{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="lg-card">
+      <div class="logo"><div class="mark"></div><div><div class="lt">C&amp;R <b>Housing</b></div><div class="ls">Practical · Proactive · Solutions</div></div></div>
+      <div class="lg-h">Council Portal</div>
+      <div class="lg-s">London Borough of Ealing · The Barn, Ruislip</div>
+      <label>Access code</label>
+      <input id="c-code" type="text" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')cLogin()">
+      <button class="lg-btn" onclick="cLogin()">Sign in to portal</button>
+      <div class="lg-err" id="c-err"></div>
+      <div class="lg-hint">Demo access code: <b>EALING</b></div>
+    </div>
+  </div>
+
+  <!-- PORTAL -->
+  <div id="portal">
+    <div class="top"><div class="wrap"><div class="row">
+      <div class="logo"><div class="mark"></div><div><div class="lt">C&amp;R <b>Housing</b></div><div class="ls">Council Portal</div></div></div>
+      <nav class="nav">
+        <a class="on" data-v="overview" onclick="cView('overview')">Overview</a>
+        <a data-v="demographics" onclick="cView('demographics')">Demographics</a>
+        <a data-v="stays" onclick="cView('stays')">Check-ins &amp; stays</a>
+        <a data-v="property" onclick="cView('property')">Property</a>
+        <a data-v="reports" onclick="cView('reports')">Reports</a>
+      </nav>
+      <div class="who">Signed in as <b>London Borough of Ealing</b><br>Access: The Barn, Ruislip · <a onclick="cLogout()">Sign out</a></div>
+    </div>
+    <div class="pfbar"><span class="pl">Portfolio</span><span class="pf">All portfolios</span><span class="pf on">Ealing — The Barn</span></div>
+    </div></div>
+    <div class="wrap"><div id="c-body" class="sec"></div></div>
+    <div class="foot">C&amp;R Housing · The Barn, West End Road, Ruislip HA4 6JB · Figures shown are sample data for demonstration · Powered by HosPRO Social Housing</div>
+  </div>
+
+<script src="cr-data.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="barn-config.js"></script>
+<script>
+var db=null;
+try{ if(typeof firebase!=='undefined' && typeof firebaseConfig!=='undefined'){ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); } }catch(e){ console.warn('fb',e); }
+var $=function(id){return document.getElementById(id);};
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function OCC(){return window.CR_OCC||[];} function RES(){return window.CR_RES||[];} function HH(){return window.CR_HH||[];} function ROOMS(){return window.CR_ROOMS||[];}
+function dec(iso){try{return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(e){return iso;}}
+function losText(d){ if(d>=365) return (d/365).toFixed(1)+' yr'; if(d>=30) return Math.round(d/30)+' mo'; return d+' d'; }
+function grp(a,f){const m={};a.forEach(x=>{const k=f(x);if(k==null||k==='')return;m[k]=(m[k]||0)+1;});return m;}
+function buildings(){return [...new Set(ROOMS().map(r=>r.building))];}
+var CKI=[];
+
+var COMPLIANCE=[
+ {item:'Gas safety certificate (CP12)',status:'valid',detail:'Valid until 14 Jan 2027'},
+ {item:'Electrical Installation Condition Report (EICR)',status:'due',detail:'Renewal due in 8 days'},
+ {item:'Portable appliance testing (PAT)',status:'valid',detail:'Valid until 3 Jun 2027'},
+ {item:'Fire risk assessment',status:'await',detail:'Awaiting updated document'},
+ {item:'Fire strategy',status:'valid',detail:'Reviewed Sep 2026 · no fixed renewal'},
+ {item:'Fire alarm &amp; detection test',status:'await',detail:'Next test being scheduled'},
+ {item:'Emergency lighting test',status:'valid',detail:'Valid until 12 Feb 2027'},
+ {item:'HMO licence',status:'valid',detail:'Valid until 30 Sep 2028'},
+ {item:'Legionella risk assessment',status:'valid',detail:'Valid until 20 Apr 2027'},
+ {item:'Furniture &amp; furnishings compliance',status:'await',detail:'Room inventory in progress'}
+];
+function compPill(s){return s==='valid'?'<span class="pill p-valid">Valid</span>':s==='due'?'<span class="pill p-due">Renewal due</span>':'<span class="pill p-await">Awaiting</span>';}
+
+/* ---- login ---- */
+function cLogin(){ var v=($('c-code').value||'').trim().toUpperCase(); if(v==='EALING'||v==='EAL2026'){ $('login').style.display='none'; $('portal').style.display='block'; startCouncil(); } else { $('c-err').textContent='Incorrect access code.'; } }
+function cLogout(){ $('portal').style.display='none'; $('login').style.display='flex'; $('c-code').value=''; $('c-err').textContent=''; }
+function startCouncil(){ if(db){ try{ db.collection('cr_residents').onSnapshot(function(s){ CKI=s.docs.map(function(d){var o=d.data();o.id=d.id;return o;}).filter(function(r){return r&&!r.deleted;}).sort(function(a,b){return String(b.at||'').localeCompare(String(a.at||''));}); if(CUR==='overview'||CUR==='stays') render(); }, function(e){console.warn(e);}); }catch(e){} }
+  cView('overview'); }
+
+/* ---- view switch ---- */
+var CUR='overview';
+function cView(v){ CUR=v; [].forEach.call(document.querySelectorAll('.nav a'),function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function render(){ var b=$('c-body'); if(!b) return;
+  if(CUR==='overview') b.innerHTML=vOverview();
+  else if(CUR==='demographics') b.innerHTML=vDemographics();
+  else if(CUR==='stays') b.innerHTML=vStays();
+  else if(CUR==='property') b.innerHTML=vProperty();
+  else if(CUR==='reports'){ b.innerHTML=vReports(); repSel(REP); }
+}
+
+/* ---- charts / bars ---- */
+function lineChart(series,color){ var n=series.length; if(!n) return ''; var vals=series.map(function(s){return s.v;});
+  var max=Math.max.apply(null,vals.concat([1])), min=Math.min.apply(null,vals.concat([0]));
+  var X=function(i){return n<=1?50:(i/(n-1)*100);}, Y=function(v){return (1-(v-min)/((max-min)||1))*100;};
+  var poly=series.map(function(s,i){return X(i).toFixed(2)+','+Y(s.v).toFixed(2);}).join(' ');
+  var grid=[0,.5,1].map(function(f){return '<line x1="0" y1="'+(f*100)+'" x2="100" y2="'+(f*100)+'" class="gl" vector-effect="non-scaling-stroke"/>';}).join('');
+  var yax=[max,(max+min)/2,min].map(function(v){return '<span style="top:'+Y(v).toFixed(1)+'%">'+Math.round(v)+'</span>';}).join('');
+  var step=Math.max(1,Math.ceil(n/8)), xl='';
+  for(var i=0;i<n;i+=step){ var d=new Date(series[i].d); var lbl=d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}); var pos=i===0?'left:0;transform:none':'left:'+X(i).toFixed(1)+'%'; xl+='<span style="'+pos+'">'+lbl+'</span>'; }
+  return '<div class="chart"><div class="yax">'+yax+'</div><div class="plot"><svg class="svg" viewBox="0 0 100 100" preserveAspectRatio="none">'+
+    '<polygon points="0,100 '+poly+' 100,100" style="fill:rgba(63,185,192,.10)"/>'+grid+
+    '<polyline points="'+poly+'" class="ln" style="stroke:'+(color||'#3fb9c0')+'" vector-effect="non-scaling-stroke"/></svg><div class="xax">'+xl+'</div></div></div>';
+}
+function bars(obj,order){ var keys=order||Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}); var total=keys.reduce(function(s,k){return s+obj[k];},0)||1; var max=Math.max.apply(null,[1].concat(keys.map(function(k){return obj[k];})));
+  return keys.map(function(k){return '<div class="bar"><div class="bl" title="'+esc(k)+'">'+esc(k)+'</div><div class="bt"><div class="bf" style="width:'+Math.round(obj[k]/max*100)+'%"></div></div><div class="bn">'+obj[k]+'<small>'+Math.round(obj[k]/total*100)+'%</small></div></div>';}).join('');
+}
+
+/* ---- stays helpers ---- */
+function stayStats(){ var hh=HH(); var los=hh.map(function(h){return h.los;}); var avg=los.reduce(function(s,x){return s+x;},0)/(los.length||1);
+  var sorted=los.slice().sort(function(a,b){return a-b;}); var med=sorted[Math.floor(sorted.length/2)]||0;
+  var over6=hh.filter(function(h){return h.los>42;}).length; var over1y=hh.filter(function(h){return h.los>365;}).length;
+  var longest=Math.max.apply(null,los.concat([0]));
+  return {avg:avg,med:med,over6:over6,over1y:over1y,longest:longest}; }
+function losBand(d){ var y=d/365; return y<0.5?'Under 6 months':y<1?'6–12 months':y<2?'1–2 years':y<5?'2–5 years':'5+ years'; }
+
+/* ---- views ---- */
+function vOverview(){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.length-1]||{}; var kids=all.filter(function(r){return r.child;}).length;
+  var st=stayStats(); var nats=grp(all,function(r){return r.nationality;});
+  var cv=COMPLIANCE.filter(function(c){return c.status==='valid';}).length, ca=COMPLIANCE.filter(function(c){return c.status!=='valid';}).length;
+  var kpi=[
+    ['v',all.length,'Residents in house',(all.length-kids)+' adults · '+kids+' children'],
+    ['v',hh.length,'Households',hh.filter(function(h){return h.children>0;}).length+' with children'],
+    ['v',(last.p!=null?last.p.toFixed(0)+'%':'—'),'Occupancy',(last.oc||'—')+' of '+(last.av||'—')+' rooms'],
+    ['v',losText(Math.round(st.avg)),'Average length of stay',Math.round(st.avg)+' days'],
+    ['flag',st.over6,'Households over 6 weeks',st.over1y+' over 1 year'],
+    ['v',Object.keys(nats).length,'Nationalities','recorded']
+  ].map(function(k){return '<div class="kpi '+(k[0]==='flag'?'flag':'')+'"><div class="v">'+k[1]+'</div><div class="l">'+k[2]+'</div><div class="s">'+k[3]+'</div></div>';}).join('');
+  var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(ROOMS(),function(r){return r.building;});
+  var bb=buildings().map(function(bn){return [bn+' ('+(occByB[bn]||0)+'/'+(roomsByB[bn]||0)+')',occByB[bn]||0];});
+  var bbObj={}; bb.forEach(function(x){bbObj[x[0]]=x[1];});
+  var compMini=COMPLIANCE.slice(0,5).map(function(c){return '<div class="comp-row"><div class="ci">'+c.item+'</div><div class="cd">'+compPill(c.status)+'</div></div>';}).join('');
+  return '<div class="eyebrow">Portfolio overview</div><h1>The Barn, Ruislip</h1><div class="lead">Live temporary-accommodation summary for the London Borough of Ealing. Occupancy is from the daily report; resident demographics are sample data for the demo.</div>'+
+    '<div class="kpis">'+kpi+'</div>'+
+    '<div class="grid2"><div class="card"><h3>📈 Occupancy — last 12 months</h3>'+lineChart(occ.map(function(x){return {d:x.d,v:x.p};}))+'</div>'+
+    '<div class="card"><h3>🏠 Occupancy by building</h3>'+bars(bbObj,Object.keys(bbObj))+'</div></div>'+
+    '<div class="grid2" style="margin-top:16px"><div class="card"><h3>🛡️ Compliance &amp; safety <span class="mu">'+cv+' valid · '+ca+' to action</span></h3>'+compMini+'<div style="margin-top:12px"><a onclick="cView(\'reports\')">View full compliance report ›</a></div></div>'+
+    '<div class="card"><h3>🆕 Recent check-ins <span class="mu">live</span></h3>'+feedHtml(6)+'</div></div>';
+}
+function feedHtml(n){ var rows=CKI.filter(function(r){return r.type!=='out';}).slice(0,n);
+  if(!rows.length) return '<div style="color:#6f84a0;font:600 13px Lato;padding:14px 0">No self check-ins yet. Residents check in by scanning the QR code on arrival.</div>';
+  return rows.map(function(r){ var nm=r.name||((r.first||'')+' '+(r.last||'')); return '<div class="feed-row"><div class="av">'+esc((r.first||r.name||'?').charAt(0))+'</div><div style="flex:1"><div class="t">'+esc(nm)+'</div><div class="m">'+esc(r.room||'—')+(r.nat?(' · '+esc(r.nat)):'')+(r.party?(' · household of '+esc(r.party)):'')+'</div></div><div class="m">'+ckTime(r.at)+'</div></div>'; }).join('');
+}
+function ckTime(iso){ try{ var d=new Date(iso); var t=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); var today=new Date().toDateString()===d.toDateString(); return today?('Today '+t):d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }catch(e){return '';} }
+
+function vDemographics(){ var all=RES(), hh=HH(); var adults=all.filter(function(r){return !r.child;}), kids=all.filter(function(r){return r.child;});
+  var eth=grp(all,function(r){return r.ethnicity;}), nat=grp(all,function(r){return r.nationality;}), gender=grp(all,function(r){return r.gender;});
+  var ageA=grp(adults,function(r){return r.ageBand;}), ageC=grp(kids,function(r){return r.ageBand;});
+  var los=grp(hh,function(h){return losBand(h.los);});
+  var topNat={}; Object.keys(nat).sort(function(a,b){return nat[b]-nat[a];}).slice(0,10).forEach(function(k){topNat[k]=nat[k];});
+  var AO=['18-24','25-34','35-44','45-54','55-64','65-74'].filter(function(k){return ageA[k];});
+  var CO=['0-2','3-5','6-8','9-11','12-14','15-17'].filter(function(k){return ageC[k];});
+  var LO=['Under 6 months','6–12 months','1–2 years','2–5 years','5+ years'].filter(function(k){return los[k];});
+  return '<div class="eyebrow">Resident demographics</div><h1>Who we are housing</h1><div class="lead">The demographic breakdown the council requires for its temporary-accommodation returns. Sample data for the demo.</div>'+
+    '<div class="grid2"><div class="card"><h3>🌍 Ethnicity</h3>'+bars(eth)+'</div><div class="card"><h3>🏳️ Top nationalities</h3>'+bars(topNat)+'</div></div>'+
+    '<div class="grid2" style="margin-top:16px"><div class="card"><h3>👤 Gender</h3>'+bars(gender)+'</div><div class="card"><h3>⏳ Length of stay (households)</h3>'+bars(los,LO)+'</div></div>'+
+    '<div class="grid2" style="margin-top:16px"><div class="card"><h3>🎂 Age of adults</h3>'+bars(ageA,AO)+'</div><div class="card"><h3>🧒 Age of children</h3>'+bars(ageC,CO)+'</div></div>';
+}
+
+function vStays(){ var hh=HH().slice().sort(function(a,b){return b.los-a.los;}); var st=stayStats();
+  var minis=[['Average stay',losText(Math.round(st.avg))],['Median stay',losText(Math.round(st.med))],['Longest stay',losText(st.longest)],['Over 6 weeks',st.over6+' households'],['Over 1 year',st.over1y+' households']]
+    .map(function(m){return '<div class="mini"><div class="v">'+m[1]+'</div><div class="l">'+m[0]+'</div></div>';}).join('');
+  var rows=hh.map(function(h){ var band=h.los>365?'<span class="pill p-vlong">Over 1 year</span>':h.los>42?'<span class="pill p-long">Over 6 weeks</span>':'<span class="pill p-ok">Within 6 weeks</span>';
+    return '<tr><td>'+esc(h.code)+'</td><td>'+esc(h.lead)+'</td><td>'+esc(h.room)+'</td><td>'+esc(h.building)+'</td><td>'+h.adults+' + '+(h.children||0)+'</td><td>'+dec(h.checkIn)+'</td><td>'+losText(h.los)+'</td><td>'+band+'</td></tr>'; }).join('');
+  return '<div class="eyebrow">Check-ins &amp; length of stay</div><h1>Actual time in accommodation</h1><div class="lead">Live resident check-ins and how long each household has actually been placed — the figures the council tracks against the statutory limits.</div>'+
+    '<div class="minis">'+minis+'</div>'+
+    '<div class="grid2"><div class="card"><h3>🆕 Recent check-ins <span class="mu">live from QR</span></h3>'+feedHtml(8)+'</div>'+
+    '<div class="card"><h3>⚠️ Longest current stays</h3><table><thead><tr><th>HH</th><th>Lead</th><th>Room</th><th>Stay</th></tr></thead><tbody>'+
+      hh.slice(0,8).map(function(h){return '<tr><td>'+esc(h.code)+'</td><td>'+esc(h.lead)+'</td><td>'+esc(h.room)+'</td><td>'+losText(h.los)+'</td></tr>';}).join('')+'</tbody></table></div></div>'+
+    '<div class="card" style="margin-top:16px"><h3>🏠 All households — actual stay</h3><table><thead><tr><th>HH</th><th>Lead contact</th><th>Room</th><th>Building</th><th>Household</th><th>Placed</th><th>Stay</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function vProperty(){ var rooms=ROOMS().slice().sort(function(a,b){return (a.building+a.room).localeCompare(b.building+b.room);}); var hh=HH();
+  var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(ROOMS(),function(r){return r.building;});
+  var cap=rooms.reduce(function(s,r){return s+(r.cap||0);},0);
+  var minis=[['Suites',rooms.length],['Total capacity',cap+' (est.)'],['Buildings',buildings().length],['Occupied',hh.length+' rooms']]
+    .map(function(m){return '<div class="mini"><div class="v">'+m[1]+'</div><div class="l">'+m[0]+'</div></div>';}).join('');
+  var bRows=buildings().map(function(bn){var r=roomsByB[bn]||0,oc=occByB[bn]||0;return '<tr><td>'+esc(bn)+'</td><td>'+r+'</td><td>'+oc+'</td><td>'+(r?Math.round(oc/r*100):0)+'%</td></tr>';}).join('');
+  var invRows=rooms.map(function(r){ var occ=hh.some(function(h){return h.room===r.room;}); return '<tr><td>'+esc(r.building)+'</td><td>'+esc(r.room)+'</td><td>'+esc(r.floor||'—')+'</td><td>'+(r.cap||'—')+'</td><td>'+(occ?'<span class="pill p-valid">Occupied</span>':'<span class="pill p-due">Available</span>')+'</td></tr>'; }).join('');
+  return '<div class="eyebrow">Property detail</div><h1>The Barn, Ruislip</h1><div class="lead">Family welcome centre · leased in full to the London Borough of Ealing. Room schedule from the Base Associates layout (proposed, 59 suites).</div>'+
+    '<div class="minis">'+minis+'</div>'+
+    '<div class="card"><h3>🏘️ Occupancy by building</h3><table><thead><tr><th>Building</th><th>Rooms</th><th>Occupied</th><th>Occupancy</th></tr></thead><tbody>'+bRows+'</tbody></table></div>'+
+    '<div class="card" style="margin-top:16px"><h3>🛏️ Room inventory <span class="mu">'+rooms.length+' suites</span></h3><table><thead><tr><th>Building</th><th>Room</th><th>Floor</th><th>Capacity (est.)</th><th>Status</th></tr></thead><tbody>'+invRows+'</tbody></table></div>';
+}
+
+/* ---- reports ---- */
+var REP='occupancy';
+function vReports(){ var items=[['occupancy','Portfolio Occupancy Report','Mobilisation, readiness and occupancy status for the property.'],
+  ['compliance','Compliance &amp; Safety Report','Certificate status and forthcoming expiry dates across the property.'],
+  ['quarterly','Quarterly Report to Council','Headline occupancy, demographics and length-of-stay summary for the quarter.']];
+  var list=items.map(function(it){return '<div class="rep-item" id="rep-'+it[0]+'" onclick="repSel(\''+it[0]+'\')"><div class="rt">'+it[1]+'</div><div class="rd">'+it[2]+'</div></div>';}).join('');
+  return '<div class="eyebrow">Reporting suite</div><h1>Reports</h1><div class="lead">Occupancy, compliance and quarterly summaries shared with the London Borough of Ealing. Select a report to preview, then print or save as PDF.</div>'+
+    '<div class="rep-grid"><div>'+list+'</div><div class="rep-view" id="rep-view"></div></div>';
+}
+function repSel(which){ REP=which; [].forEach.call(document.querySelectorAll('.rep-item'),function(el){el.classList.toggle('on',el.id==='rep-'+which);});
+  var v=$('rep-view'); if(!v) return; v.innerHTML=repBody(which); }
+function repBody(which){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.length-1]||{}; var st=stayStats(); var kids=all.filter(function(r){return r.child;}).length;
+  var head='<div style="display:flex;align-items:flex-start"><div style="flex:1">';
+  var printBtn='</div><button class="btn-print" onclick="window.print()">🖨 Print / Save PDF</button></div>';
+  if(which==='occupancy'){ var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(ROOMS(),function(r){return r.building;});
+    return head+'<h2>Portfolio Occupancy Report</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · as at '+dec(last.d)+'</div>'+printBtn+
+      '<div class="minis"><div class="mini"><div class="v">'+(last.av||'—')+'</div><div class="l">Rooms available</div></div><div class="mini"><div class="v">'+(last.oc||'—')+'</div><div class="l">Rooms occupied</div></div><div class="mini"><div class="v">'+(last.p!=null?last.p.toFixed(1)+'%':'—')+'</div><div class="l">Occupancy</div></div><div class="mini"><div class="v">'+(last.g||'—')+'</div><div class="l">Residents in house</div></div></div>'+
+      '<table><thead><tr><th>Building</th><th>Rooms</th><th>Occupied</th><th>Households</th><th>Occupancy</th></tr></thead><tbody>'+buildings().map(function(bn){var r=roomsByB[bn]||0,oc=occByB[bn]||0;return '<tr><td>'+esc(bn)+'</td><td>'+r+'</td><td>'+oc+'</td><td>'+oc+'</td><td>'+(r?Math.round(oc/r*100):0)+'%</td></tr>';}).join('')+'</tbody></table>'+
+      '<div class="note">All suites meet HMO licensing standards. Capacity figures are illustrative pending the confirmed room schedule. Generated automatically by HosPRO Social Housing from live occupancy data.</div>';
+  }
+  if(which==='compliance'){ var cv=COMPLIANCE.filter(function(c){return c.status==='valid';}).length;
+    return head+'<h2>Compliance &amp; Safety Report</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · as at '+dec(last.d)+'</div>'+printBtn+
+      '<div class="minis"><div class="mini"><div class="v">'+cv+'/'+COMPLIANCE.length+'</div><div class="l">Certificates valid</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='due';}).length+'</div><div class="l">Renewal due</div></div><div class="mini"><div class="v">'+COMPLIANCE.filter(function(c){return c.status==='await';}).length+'</div><div class="l">Awaiting</div></div></div>'+
+      '<table><thead><tr><th>Item</th><th>Status</th><th>Detail</th></tr></thead><tbody>'+COMPLIANCE.map(function(c){return '<tr><td>'+c.item+'</td><td>'+compPill(c.status)+'</td><td style="color:#90a4bf">'+c.detail+'</td></tr>';}).join('')+'</tbody></table>'+
+      '<div class="note">Whole-facility documents. A breakdown by building is being prepared. No resident personal data is included in this report.</div>';
+  }
+  // quarterly
+  var eth=grp(all,function(r){return r.ethnicity;}), gender=grp(all,function(r){return r.gender;});
+  return head+'<h2>Quarterly Report to Council</h2><div class="rvs">The Barn, Ruislip · for the London Borough of Ealing · Q'+(Math.floor(new Date().getMonth()/3)+1)+' '+new Date().getFullYear()+'</div>'+printBtn+
+    '<div class="minis"><div class="mini"><div class="v">'+hh.length+'</div><div class="l">Households</div></div><div class="mini"><div class="v">'+all.length+'</div><div class="l">Residents</div></div><div class="mini"><div class="v">'+kids+'</div><div class="l">Children</div></div><div class="mini"><div class="v">'+losText(Math.round(st.avg))+'</div><div class="l">Avg stay</div></div><div class="mini"><div class="v">'+st.over6+'</div><div class="l">Over 6 weeks</div></div></div>'+
+    '<div class="grid2"><div><h3 style="font:900 14px Lato;margin:6px 0 10px">Ethnicity</h3>'+bars(eth)+'</div><div><h3 style="font:900 14px Lato;margin:6px 0 10px">Gender</h3>'+bars(gender)+'</div></div>'+
+    '<div class="note">Summary prepared for the London Borough of Ealing. Occupancy from live data; demographics recorded at check-in. Sample data shown for demonstration.</div>';
+}
+</script>
+</body>
+</html>

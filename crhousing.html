@@ -428,6 +428,9 @@ body.console .wrap{max-width:none;margin:0 0 0 238px;padding:98px 30px 46px}
 .tb-search input{width:240px;height:42px;padding:0 12px 0 36px;border:1px solid #e4e9f1;border-radius:11px;font:600 13px Lato;color:#334;background:#f6f8fc}
 .tb-search input:focus{outline:none;border-color:#128a8f;background:#fff}
 .tb-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:#9aa7b8;fill:none;stroke-width:2}
+.tb-council{display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 15px;border-radius:11px;background:#16264c;color:#fff;font:800 13px Lato;text-decoration:none;border:1px solid #16264c;white-space:nowrap}
+.tb-council:hover{background:#1f3570}
+.tb-council svg{stroke:#4fc3c8}
 .tb-ic{width:42px;height:42px;border-radius:11px;border:1px solid #e4e9f1;background:#fff;display:grid;place-items:center;cursor:pointer;color:#55627c;position:relative}
 .tb-ic:hover{background:#f6f8fc}
 .tb-ic svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9}
@@ -699,6 +702,7 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="sb-toggle" onclick="sbToggle()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <div><div class="tb-date" id="tb-date">—</div><div class="tb-hi">Welcome back · The Barn Hotel</div></div>
       <div class="tb-sp"></div>
+      <a class="tb-council" href="cr-council.html" target="_blank" rel="noopener" title="Open the council portal (read-only)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>Council Login</a>
       <div class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Search jobs…" oninput="topSearch(this.value)"></div>
       <button class="tb-ic" onclick="openMgmt()" title="Reports"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-5"/></svg></button>
       <button class="tb-ic" title="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
@@ -2264,16 +2268,32 @@ function renderResidents(){ const box=$('res-body'); if(!box) return;
   }
   const arrivals=(CKI_ROWS||[]).filter(r=>r.type!=='out');
   const arrHtml=arrivals.length?`<div class="card2" style="margin-bottom:16px;border-left:4px solid #128a8f"><div class="c2h">🆕 Recent self check-ins <span class="rs-chip" style="background:#e3f2f2;color:#128a8f">${arrivals.length}</span></div>`
-    +arrivals.slice(0,12).map(r=>`<div class="dm-row">${signAvatar(r,'rs-av')}<div style="flex:1"><div class="dm-t">${esc(r.name)}</div><div class="dm-m">${esc(r.room||'—')}${r.nat?(' · '+esc(r.nat)):''}${r.party?(' · party of '+esc(r.party)):''} · ${ckDayTime(r.at)}</div></div><span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Checked in</span></div>`).join('')
+    +arrivals.slice(0,12).map(r=>`<div class="dm-row" onclick="ckiOpen('${r.id}')">${signAvatar(r,'rs-av')}<div style="flex:1"><div class="dm-t">${esc(r.name)}</div><div class="dm-m">${esc(r.room||'—')}${r.nat?(' · '+esc(r.nat)):''}${r.party?(' · party of '+esc(r.party)):''} · ${ckDayTime(r.at)}</div></div><span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Checked in ›</span></div>`).join('')
     +`</div>`:'';
   box.innerHTML=`<div class="sec-sub" style="margin:-6px 0 14px">Everyone currently in residence at The Barn · sample demographic data for the demo.</div>${arrHtml}${kpis}${tools}${table}`;
 }
 function resStatusChip(){ return `<span class="rs-chip" style="background:#e6f6ee;color:#1aa260">In residence</span>`; }
-function resOpen(id){ const r=crRes().find(x=>x.id===id); if(!r) return; const t=$('dm-title'),b=$('dm-body'),m=$('jobsModal'); if(!m) return;
-  t.textContent=r.first+' '+r.last;
-  b.innerHTML=`<div style="padding:8px 6px"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px"><div class="rs-av" style="width:52px;height:52px;font-size:20px">${esc((r.first[0]||'?')+(r.last[0]||''))}</div><div><div style="font:900 18px Lato;color:#15233f">${esc(r.first+' '+r.last)}</div><div style="font:600 13px Lato;color:#6b7a90">Household ${esc(r.hh)} · ${esc(r.role)}</div></div></div>
-    ${[['Room',r.room+' · '+r.building],['Gender',r.gender],['Age',r.age+' ('+r.ageBand+')'],['Date of birth',crDec(r.dob)],['Nationality',r.nationality],['Ethnicity',r.ethnicity],['Check-in',crDec(r.checkIn)],['Length of stay',losText(r.los)+' ('+r.los+' days)'],['Status',r.status]].map(x=>`<div style="display:flex;padding:9px 0;border-bottom:1px solid #f0f3f7"><div style="flex:0 0 150px;font:700 12.5px Lato;color:#8a94a0;text-transform:uppercase;letter-spacing:.3px">${x[0]}</div><div style="font:700 14px Lato;color:#25324a">${esc(String(x[1]))}</div></div>`).join('')}</div>`;
+function pRow(label,val){ if(val==null||val===''||val==='— ·') val='—'; return `<div style="display:flex;padding:9px 0;border-bottom:1px solid #f0f3f7"><div style="flex:0 0 160px;font:700 12px Lato;color:#8a94a0;text-transform:uppercase;letter-spacing:.3px">${esc(label)}</div><div style="font:700 14px Lato;color:#25324a">${esc(String(val))}</div></div>`; }
+function pGroup(title,rows){ const r=rows.filter(x=>x); if(!r.length) return ''; return `<div style="margin-top:16px"><div style="font:900 11.5px Lato;color:#128a8f;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">${esc(title)}</div>${r.map(x=>pRow(x[0],x[1])).join('')}</div>`; }
+function openProfile(name,sub,initials,badge,groups){ const t=$('dm-title'),b=$('dm-body'),m=$('jobsModal'); if(!m) return; t.textContent=name;
+  b.innerHTML=`<div style="padding:4px 6px 8px"><div style="display:flex;gap:14px;align-items:center;margin-bottom:4px"><div class="rs-av" style="width:52px;height:52px;font-size:20px">${esc(initials)}</div><div style="min-width:0"><div style="font:900 18px Lato;color:#15233f">${esc(name)}</div><div style="font:600 13px Lato;color:#6b7a90">${esc(sub)}</div>${badge?('<span class="rs-chip" style="background:#e6f6ee;color:#1aa260;margin-top:4px;display:inline-block">'+esc(badge)+'</span>'):''}</div></div>${groups.map(g=>pGroup(g[0],g[1])).join('')}</div>`;
   m.classList.add('on'); }
+function resOpen(id){ const r=crRes().find(x=>x.id===id); if(!r) return;
+  openProfile(r.first+' '+r.last, 'Household '+r.hh+' · '+r.role+' · '+r.room+', '+r.building, (r.first[0]||'?')+(r.last[0]||''), r.status, [
+    ['Personal',[['Gender',r.gender],['Date of birth',crDec(r.dob)+' ('+r.age+' yrs)'],['Nationality',r.nationality],['Ethnicity',r.ethnicity],['Main language',r.language],['English level',r.englishLevel]]],
+    ['Contact',[['Mobile',r.phone],['Email',r.email],['Emergency contact',(r.emergencyName||'')+(r.emergencyPhone?(' · '+r.emergencyPhone):'')]]],
+    ['Placement',[['Room',r.room+' · '+r.building],['Placing council',r.council],['Case reference',r.ref],['Key worker',r.keyWorker],['Benefit status',r.benefit],['Checked in',crDec(r.checkIn)],['Length of stay',losText(r.los)+' ('+r.los+' days)'],['Status',r.status]]],
+    ['Support needs',[['Recorded needs',r.supportNeeds]]]
+  ]); }
+function ckiOpen(id){ const r=(CKI_ROWS||[]).find(x=>x.id===id); if(!r) return;
+  const nm=r.name||(((r.first||'')+' '+(r.last||'')).trim())||'Resident';
+  openProfile(nm, 'Self check-in · '+ckDayTime(r.at), ((r.first||r.name||'?').charAt(0)||'?'), 'Checked in', [
+    ['Personal',[['Gender',r.gender],['Date of birth',r.dob?crDec(r.dob):''],['Nationality',r.nat],['Ethnicity',r.eth],['Main language',r.lang]]],
+    ['Contact',[['Mobile',r.phone],['Email',r.email],['Emergency contact',(r.emname||'')+(r.emphone?(' · '+r.emphone):'')]]],
+    ['Placement',[['Room',r.room],['Placing council',r.council],['Case reference',r.ref],['Checked in',ckDayTime(r.at)]]],
+    ['Household',[['People in household',r.party],['Children under 18',r.kids]]],
+    ['Support needs',[['Recorded needs',r.support]]]
+  ]); }
 function hhOpen(code){ const h=crHH().find(x=>x.code===code); if(!h) return; const members=crRes().filter(r=>r.hh===code);
   const t=$('dm-title'),b=$('dm-body'),m=$('jobsModal'); if(!m) return; t.textContent='Household '+code+' · '+h.room;
   b.innerHTML=`<div style="padding:6px"><div style="font:600 13px Lato;color:#6b7a90;margin-bottom:12px">${esc(h.building)} · ${esc(h.room)} · ${h.adults} adult${h.adults===1?'':'s'}${h.children?(' · '+h.children+' child'+(h.children===1?'':'ren')):''} · in since ${crDec(h.checkIn)} (${losText(h.los)})</div>`+
