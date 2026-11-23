@@ -360,8 +360,32 @@ body.console::before{content:'';position:fixed;inset:0;z-index:-1;background:lin
 .bigcard .bc-ic{width:66px;height:66px;border-radius:20px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);display:grid;place-items:center;margin-bottom:4px}
 .bigcard .bc-ic svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ovl{position:fixed;inset:0;background:rgba(16,26,36,.55);z-index:140;display:none;align-items:center;justify-content:center;padding:18px}
-#login{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,rgba(13,27,42,.80),rgba(13,27,42,.70)),var(--hero) center/cover no-repeat,#0d1b2a}
+#login{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(1100px 560px at 18% 12%,rgba(31,163,168,.28),transparent),linear-gradient(135deg,#0e1a35,#16264c 55%,#123e49)}
 #login.hide{display:none}
+.lgx{display:flex;width:100%;max-width:840px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.lgx-brand{flex:1;background:linear-gradient(165deg,#17294f,#0e1a35);color:#fff;padding:42px 36px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.lgx-brand::after{content:"";position:absolute;right:-80px;bottom:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(31,163,168,.35),transparent 70%)}
+.lgx-logo{display:flex;align-items:center;gap:13px;position:relative;z-index:1}
+.lgx-mark{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#2fb7bd,#128a8f);display:grid;place-items:center;font:900 24px Lato;color:#fff;box-shadow:0 8px 20px rgba(18,138,143,.4)}
+.lgx-l1{font:900 25px Lato;letter-spacing:.3px}.lgx-l1 b{color:#4fc3c8}
+.lgx-l2{font:700 10px Lato;letter-spacing:2.5px;text-transform:uppercase;color:#9fb0d0;margin-top:3px}
+.lgx-tag{font:700 19px Lato;line-height:1.45;margin:30px 0 24px;color:#eaf0f8;position:relative;z-index:1}
+.lgx-pts{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.lgx-pts li{font:600 13.5px Lato;color:#c0cde3;display:flex;gap:9px;align-items:center}
+.lgx-pts li b{color:#4fc3c8;font-weight:900}
+.lgx-foot{margin-top:auto;font:600 11.5px Lato;color:#8294b6;padding-top:26px;position:relative;z-index:1}
+.lgx-form{flex:0 0 350px;padding:42px 36px;display:flex;flex-direction:column}
+.lgx-welcome{font:900 25px Lato;color:#15233f}
+.lgx-sub{font:600 13px Lato;color:#8a94a0;margin-bottom:20px}
+.lgx-form label{font:800 10.5px Lato;color:#8a94a0;text-transform:uppercase;letter-spacing:.6px;margin:13px 0 6px;display:block}
+.lgx-ro{background:#f4f7fb;border:1px solid #e3e8ef;border-radius:10px;padding:12px 14px;font:800 14px Lato;color:#25324a;display:flex;align-items:center;gap:8px}
+.lgx-form input{width:100%;padding:13px 15px;border:1.6px solid #dde3ec;border-radius:10px;font:800 17px Lato;letter-spacing:5px;color:#15233f;outline:none;background:#fff}
+.lgx-form input:focus{border-color:#128a8f;box-shadow:0 0 0 3px rgba(18,138,143,.12)}
+.lgx-btn{margin-top:20px;background:#128a8f;color:#fff;border:none;border-radius:11px;padding:14px;font:900 15px Lato;cursor:pointer;transition:.15s}
+.lgx-btn:hover{background:#0f797e}
+.lgx-hint{font:600 12px Lato;color:#9aa6b8;text-align:center;margin-top:16px}.lgx-hint b{color:#128a8f;letter-spacing:1px}
+.lgx .lg-err{color:#e5533d;font:700 12px Lato;min-height:16px;margin-top:8px;text-align:center}
+@media(max-width:730px){.lgx{flex-direction:column;max-width:420px}.lgx-brand{padding:30px}.lgx-brand .lgx-pts{display:none}.lgx-form{flex:1}}
 .lg-card{background:rgba(255,255,255,.97);border-radius:22px;padding:34px 30px 28px;width:100%;max-width:400px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .lg-card .lg-nm{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.05}
 .lg-card .lg-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:4px 0 22px}
@@ -666,15 +690,24 @@ body.role-ops .mgmt-only{display:none!important}
 <body>
 <!-- ===== LOGIN — shown on every load until the code is entered (remembered for this browser session) ===== -->
 <div id="login">
-  <div class="lg-card">
-    <div class="lg-nm">The Barn Hotel</div>
-    <div class="lg-sub">Ruislip · HosDesk</div>
-    <div class="lg-app">🖥️ Reception console</div>
-    <div class="lg-hint">Enter the staff code to continue.</div>
-    <input id="lg-in" type="tel" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()">
-    <div class="lg-err" id="lg-err"></div>
-    <button class="btn btn-go" style="max-width:240px;margin:0 auto" onclick="checkLogin()">Open HosDesk</button>
-    <div class="lg-foot">The Barn Hotel · West End Road, Ruislip HA4 6JB</div>
+  <div class="lgx">
+    <div class="lgx-brand">
+      <div class="lgx-logo"><div class="lgx-mark">H</div><div><div class="lgx-l1">Hos<b>PRO</b></div><div class="lgx-l2">Social Housing</div></div></div>
+      <div class="lgx-tag">One platform to manage homes, people and performance.</div>
+      <ul class="lgx-pts"><li><b>✓</b> Resident &amp; occupancy management</li><li><b>✓</b> Compliance &amp; safety tracking</li><li><b>✓</b> Council reporting &amp; demographics</li><li><b>✓</b> QR check-in — residents, visitors &amp; contractors</li></ul>
+      <div class="lgx-foot">The Barn · West End Road, Ruislip HA4 6JB</div>
+    </div>
+    <div class="lgx-form">
+      <div class="lgx-welcome">Welcome back</div>
+      <div class="lgx-sub">Sign in to your management console</div>
+      <label>Customer</label><div class="lgx-ro">🏢 C&amp;R Housing</div>
+      <label>Location</label><div class="lgx-ro">📍 The Barn Hotel · Ruislip</div>
+      <label>Access password</label>
+      <input id="lg-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()">
+      <div class="lg-err" id="lg-err"></div>
+      <button class="lgx-btn" onclick="checkLogin()">Sign in →</button>
+      <div class="lgx-hint">Management <b>2222</b> · Operations <b>3132</b></div>
+    </div>
   </div>
 </div>
 <div class="top">
@@ -821,6 +854,7 @@ body.role-ops .mgmt-only{display:none!important}
     <div id="hd-home">
       <div class="dash-head"><div><div class="dash-h1">Dashboard</div><div class="dash-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
       <div class="mgmt-only"><div class="ov-group">🏠 Social Housing</div><div class="ov-grid" id="sh-dash"></div></div>
+      <div id="dash-charts" class="mgmt-only"></div>
       <div class="ov-group">⚙️ Operations</div>
       <div class="ov-grid" id="ops-dash"></div>
     </div>
@@ -2210,6 +2244,21 @@ function renderDash(){
     ovCard('🏗️',booked,'Contractors booked','Appointments set',"showSection('maintenance')")+
     ovCard('📊',totalJobs,'Management analytics','Full job reporting',"openMgmt()");
   try{ renderShDash(); }catch(e){ console.warn('shDash',e); }
+  try{ renderDashCharts(); }catch(e){ console.warn('dashCharts',e); }
+}
+const PIE_COLORS=['#128a8f','#1fa3a8','#2f80d8','#9b59b6','#e8912a','#1aa260','#e5533d','#8b94a3'];
+function renderDashCharts(){ const box=$('dash-charts'); if(!box) return;
+  const all=crRes(), hh=crHH(), occ=crOcc(); if(!all.length){ box.innerHTML=''; return; }
+  const eth=grp(all,r=>r.ethnicity); const topEth={}; Object.keys(eth).sort((a,b)=>eth[b]-eth[a]).slice(0,6).forEach(k=>topEth[k]=eth[k]);
+  const ethParts=Object.keys(topEth).map((k,i)=>({label:k,n:topEth[k],color:PIE_COLORS[i%PIE_COLORS.length]}));
+  const comp=CR_COMPLIANCE, cv=comp.filter(c=>c.status==='valid').length;
+  const compParts=[{label:'Valid',n:cv,color:'#1aa260'},{label:'Renewal due',n:comp.filter(c=>c.status==='due').length,color:'#e8912a'},{label:'Awaiting',n:comp.filter(c=>c.status==='await').length,color:'#e5533d'}];
+  const gender=grp(all,r=>r.gender); const genderParts=Object.keys(gender).map((k,i)=>({label:k,n:gender[k],color:['#2f80d8','#e5679a','#8b94a3'][i%3]}));
+  box.innerHTML=`<div class="ov-group">📊 At a glance</div>
+    <div class="dash-row"><div class="card2"><div class="c2h">📈 Occupancy over the last 12 months<span class="rep" onclick="openOccupancy()">Details ›</span></div>${occLineChart(occ.map(x=>({d:x.d,v:x.p})))}</div>
+      <div class="card2"><div class="c2h">🌍 Resident ethnicity<span class="rep" onclick="openDemographics()">More ›</span></div>${shDonut(ethParts,all.length,'residents')}</div></div>
+    <div class="dash-row2"><div class="card2"><div class="c2h">🛡️ Compliance status<span class="rep" onclick="openCouncil()">Reports ›</span></div>${shDonut(compParts,cv+'/'+comp.length,'valid')}</div>
+      <div class="card2"><div class="c2h">👤 Gender split<span class="rep" onclick="openDemographics()">More ›</span></div>${shDonut(genderParts,all.length,'residents')}</div></div>`;
 }
 const CR_COMPLIANCE=[{item:'Gas safety (CP12)',status:'valid',detail:'Valid until 14 Jan 2027'},{item:'EICR',status:'due',detail:'Renewal due in 8 days'},{item:'PAT testing',status:'valid',detail:'Valid until 3 Jun 2027'},{item:'Fire risk assessment',status:'await',detail:'Awaiting document'},{item:'Fire strategy',status:'valid',detail:'Reviewed Sep 2026'},{item:'Fire alarm & detection',status:'await',detail:'Test being scheduled'},{item:'Emergency lighting',status:'valid',detail:'Valid until 12 Feb 2027'},{item:'HMO licence',status:'valid',detail:'Valid until 30 Sep 2028'},{item:'Legionella',status:'valid',detail:'Valid until 20 Apr 2027'},{item:'Furniture & furnishings',status:'await',detail:'Inventory in progress'}];
 function shDonut(parts,center,label){ const total=parts.reduce((s,p)=>s+p.n,0)||0; const R=52,C=2*Math.PI*R; let off=0;
