@@ -430,24 +430,44 @@ body.console::before{display:none!important}
 body.console .top{display:none!important}
 body.console .wrap{max-width:none;margin:0 0 0 238px;padding:98px 30px 46px}
 
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:238px;background:linear-gradient(185deg,#16264c 0%,#0e1a35 100%);color:#fff;display:flex;flex-direction:column;z-index:60}
-.sb-logo{padding:24px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sb-logo .l1{font:900 21px Lato;letter-spacing:.3px;line-height:1}
-.sb-logo .l1 b{color:#4fc3c8}
-.sb-logo .l2{font:700 10.5px Lato;color:#8ea2c8;letter-spacing:1.4px;text-transform:uppercase;margin-top:5px}
-.sb-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
-.sb-cap{font:800 10px Lato;color:#6b7fa6;letter-spacing:1.2px;text-transform:uppercase;padding:10px 14px 6px}
-.sb-i{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:11px;color:#c0cce3;font:700 14.5px Lato;cursor:pointer;background:none;border:none;text-align:left;width:100%;transition:background .12s,color .12s}
-.sb-i svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
-.sb-i:hover{background:rgba(255,255,255,.07);color:#fff}
-.sb-i.active{background:linear-gradient(90deg,#128a8f,#0f797e);color:#fff;box-shadow:0 7px 18px rgba(18,138,143,.38)}
-.sb-i .cnt{margin-left:auto;background:rgba(255,255,255,.16);color:#fff;font:800 11px Lato;min-width:22px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center}
-.sb-i.active .cnt{background:rgba(255,255,255,.25)}
-.sb-foot{padding:12px 14px 18px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:9px}
-.sb-fire{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:11px;background:rgba(229,90,78,.15);color:#ffb0a7;font:800 13px Lato;border:1px solid rgba(229,90,78,.28);cursor:pointer}
-.sb-fire:hover{background:rgba(229,90,78,.26);color:#fff}
-.sb-conn{font:700 11px Lato;color:#8ea2c8;letter-spacing:.3px;padding:2px 4px}
-.sb-conn.ok{color:#5fd396}.sb-conn.bad{color:#ff9a8f}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:244px;background:#ffffff;border-right:1px solid #e6ebf2;color:#2a3850;display:flex;flex-direction:column;z-index:60}
+.sb-logo{padding:20px 18px 15px;border-bottom:1px solid #eef1f6}
+.sb-logo .l1{font:900 21px Lato;letter-spacing:.3px;line-height:1;color:#16264c}
+.sb-logo .l1 b{color:#128a8f}
+.sb-logo .l2{font:700 10px Lato;color:#9aa6b8;letter-spacing:1.4px;text-transform:uppercase;margin-top:7px}
+.sb-nav{flex:1;padding:12px 11px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sb-cap{font:800 10px Lato;color:#aab4c2;letter-spacing:1.2px;text-transform:uppercase;padding:13px 10px 6px}
+.sb-i{display:flex;align-items:center;gap:12px;padding:7px 12px 7px 7px;border-radius:11px;color:#45526a;font:700 14px Lato;cursor:pointer;background:none;border:none;text-align:left;width:100%;transition:background .12s,color .12s}
+.sb-i svg{width:18px;height:18px;padding:8px;background:#eef2f7;border-radius:9px;box-sizing:content-box;stroke:#5b6b85;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;transition:.12s}
+.sb-i:hover{background:#f4f7fb;color:#16264c}
+.sb-i.active{background:#eaf5f5;color:#0f6b70;font-weight:800}
+.sb-i.active svg{background:linear-gradient(135deg,#1fa3a8,#128a8f)!important;stroke:#fff!important;box-shadow:0 5px 12px rgba(18,138,143,.4)}
+.sb-i .cnt{margin-left:auto;background:#eef2f7;color:#6b7a90;font:800 11px Lato;min-width:22px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center}
+.sb-i.active .cnt{background:#128a8f;color:#fff}
+/* coloured icon tabs */
+#nav-dashboard svg{background:#e3f2f2;stroke:#128a8f}
+#nav-residents svg{background:#e9f2fc;stroke:#2f80d8}
+#nav-occupancy svg{background:#e6f6ee;stroke:#1aa260}
+#nav-demographics svg{background:#f4ecfa;stroke:#9b59b6}
+#nav-council svg{background:#fdf0e1;stroke:#e8912a}
+#nav-signin svg{background:#e3f2f2;stroke:#128a8f}
+#nav-qr svg{background:#eceff4;stroke:#16264c}
+#nav-deliveries svg{background:#e9f2fc;stroke:#2f80d8}
+#nav-maintenance svg{background:#fdf0e1;stroke:#e8912a}
+#nav-team svg{background:#e6f6ee;stroke:#1aa260}
+#nav-clock svg{background:#f4ecfa;stroke:#9b59b6}
+#nav-hub svg{background:#e9f2fc;stroke:#2f80d8}
+#nav-stock svg{background:#e6f6ee;stroke:#1aa260}
+#nav-plant svg{background:#fdf0e1;stroke:#e8912a}
+#nav-contractors svg{background:#f4ecfa;stroke:#9b59b6}
+#nav-hs svg{background:#e3f2f2;stroke:#128a8f}
+#nav-faq svg{background:#eceff4;stroke:#55627c}
+#nav-mgmt svg{background:#e9f2fc;stroke:#2f80d8}
+.sb-foot{padding:12px 14px 18px;border-top:1px solid #eef1f6;display:flex;flex-direction:column;gap:9px}
+.sb-fire{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:11px;background:#fdecea;color:#d6462f;font:800 13px Lato;border:1px solid #f6d2cc;cursor:pointer}
+.sb-fire:hover{background:#f9dcd6;color:#b5341f}
+.sb-conn{font:700 11px Lato;color:#9aa6b8;letter-spacing:.3px;padding:2px 4px}
+.sb-conn.ok{color:#1aa260}.sb-conn.bad{color:#e5533d}
 
 .topbar{position:fixed;top:0;left:238px;right:0;height:74px;background:#fff;border-bottom:1px solid #e7ecf3;display:flex;align-items:center;gap:14px;padding:0 28px;z-index:55}
 .tb-date{font:900 20px Lato;color:#15233f;line-height:1.05}
@@ -641,7 +661,7 @@ body.console .hd-back.hide{display:none!important}
 .dm-m{font:600 12px Lato;color:#94a0b2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* ---- role gating + Social Housing ---- */
 body.role-ops .mgmt-only{display:none!important}
-.sb-role{display:inline-flex;align-items:center;gap:6px;font:800 10.5px Lato;color:#9fe0e3;background:rgba(18,138,143,.22);border:1px solid rgba(18,138,143,.4);padding:4px 10px;border-radius:999px;letter-spacing:.3px}
+.sb-role{display:inline-flex;align-items:center;gap:6px;font:800 10.5px Lato;color:#0f6b70;background:#e3f2f2;border:1px solid #bfe3e3;padding:4px 10px;border-radius:999px;letter-spacing:.3px;cursor:pointer}
 .rs-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #dde3ec;border-radius:8px;overflow:hidden;box-shadow:none}
 .rs-table th{background:#f4f7fb;font:800 11px Lato;color:#6b7a90;text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:11px 13px;cursor:pointer;white-space:nowrap;border-bottom:1px solid #dde3ec;border-right:1px solid #eef1f5}
 .rs-table td{padding:10px 13px;border-top:1px solid #eef1f5;border-right:1px solid #f2f5f9;font:600 13px Lato;color:#25324a;white-space:nowrap}.rs-table th:last-child,.rs-table td:last-child{border-right:none}
@@ -725,7 +745,7 @@ body.role-ops .mgmt-only{display:none!important}
 
 <div class="app" id="app">
   <aside class="sidebar" id="sidebar">
-    <div class="sb-logo"><span style="background:#fff;border-radius:9px;padding:8px 10px;display:inline-block;line-height:0"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:140px;height:auto;display:block" onerror="this.parentNode.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"></span><div class="l2" style="margin-top:11px">HosPRO · The Barn</div></div>
+    <div class="sb-logo"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:152px;max-width:100%;height:auto;display:block" onerror="this.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"><div class="l2" style="margin-top:10px">HosPRO · The Barn</div></div>
     <nav class="sb-nav">
       <div class="sb-cap">Main</div>
       <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
