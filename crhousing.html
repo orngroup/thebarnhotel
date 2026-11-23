@@ -239,7 +239,7 @@ body.console .wrap{max-width:1500px}
 #pane-team.on{grid-template-columns:1fr}
 #pane-mgmt.on{grid-template-columns:1fr}
 #pane-clock.on{grid-template-columns:1fr}
-#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on,#pane-qr.on{grid-template-columns:1fr}
+#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-aria.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on,#pane-qr.on{grid-template-columns:1fr}
 .req.mj{cursor:pointer}
 .req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
 .req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
@@ -446,6 +446,7 @@ body.console .wrap{max-width:none;margin:0 0 0 238px;padding:98px 30px 46px}
 .sb-i.active .cnt{background:#128a8f;color:#fff}
 /* coloured icon tabs */
 #nav-dashboard svg{background:#e3f2f2;stroke:#128a8f}
+#nav-aria svg{background:#efe6fb;stroke:#7c3aed}
 #nav-residents svg{background:#e9f2fc;stroke:#2f80d8}
 #nav-occupancy svg{background:#e6f6ee;stroke:#1aa260}
 #nav-demographics svg{background:#f4ecfa;stroke:#9b59b6}
@@ -516,7 +517,23 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .sh-head .st2{font:600 13px Lato;color:#6b7a90;margin-top:1px}
 .sh-head .cta{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font:800 13px Lato;color:#fff;background:#16264c;padding:9px 15px;border-radius:10px;text-decoration:none}
 .sh-head .cta:hover{background:#1f3570}
-.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:1000px){.qr-grid{grid-template-columns:1fr}}.qr-card{text-align:center}.qr-h{display:flex;align-items:center;gap:11px;text-align:left;margin-bottom:14px}.qr-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex:0 0 40px}.qr-t{font:900 16px Lato;color:#15233f}.qr-s{font:600 11.5px Lato;color:#9aa6b8}.qr-img{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:14px;display:inline-block}.qr-img img{width:190px;height:190px;display:block;image-rendering:pixelated}.qr-url{font:700 11px Lato;color:#6b7a90;margin:12px 0;word-break:break-all}.qr-open{display:inline-flex;align-items:center;gap:7px;color:#fff;font:800 13px Lato;padding:11px 18px;border-radius:10px;text-decoration:none}.qr-desc{font:600 12.5px Lato;color:#8a94a0;margin-top:14px;line-height:1.5}.ov-group{font:900 12.5px Lato;color:#45526a;text-transform:uppercase;letter-spacing:.7px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:1000px){.qr-grid{grid-template-columns:1fr}}.qr-card{text-align:center}.qr-h{display:flex;align-items:center;gap:11px;text-align:left;margin-bottom:14px}.qr-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex:0 0 40px}.qr-t{font:900 16px Lato;color:#15233f}.qr-s{font:600 11.5px Lato;color:#9aa6b8}.qr-img{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:14px;display:inline-block}.qr-img img{width:190px;height:190px;display:block;image-rendering:pixelated}.qr-url{font:700 11px Lato;color:#6b7a90;margin:12px 0;word-break:break-all}.qr-open{display:inline-flex;align-items:center;gap:7px;color:#fff;font:800 13px Lato;padding:11px 18px;border-radius:10px;text-decoration:none}.qr-desc{font:600 12.5px Lato;color:#8a94a0;margin-top:14px;line-height:1.5}.aria-head{display:flex;align-items:center;gap:14px;margin:-4px 0 14px}
+.aria-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#2f80d8);display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:0 8px 20px rgba(124,58,237,.3);flex:0 0 48px}
+.aria-t{font:900 22px Lato;color:#15233f}.aria-t b{color:#7c3aed}
+.aria-d{font:600 13px Lato;color:#6b7a90;margin-top:2px;max-width:640px}
+.aria-srch{max-width:420px;margin-bottom:16px}
+.aria-answer{background:linear-gradient(135deg,#faf7ff,#f1f6fc);border:1px solid #e6ddfb;border-radius:16px;padding:22px;margin-bottom:22px;min-height:120px}
+.aria-qlabel{font:800 14px Lato;color:#7c3aed;margin-bottom:12px}
+.aria-big{font:900 46px Lato;color:#15233f;line-height:1}
+.aria-subn{font:700 14px Lato;color:#6b7a90;margin-top:6px}
+.aria-empty{font:700 15px Lato;color:#aab4c2;text-align:center;padding:22px}
+.aria-barsbox{max-width:580px}
+.aria-cat{font:800 11px Lato;color:#9aa6b8;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px}
+.aria-qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px}
+.aria-qbtn{text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:11px;padding:12px 14px;font:700 13.5px Lato;color:#2a3850;cursor:pointer;transition:.12s}
+.aria-qbtn:hover{border-color:#7c3aed;color:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.1)}
+.aria-qbtn.on{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.ov-group{font:900 12.5px Lato;color:#45526a;text-transform:uppercase;letter-spacing:.7px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
 .ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
 @media(max-width:1200px){.ov-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.ov-grid{grid-template-columns:1fr}}
@@ -750,6 +767,7 @@ body.role-ops .mgmt-only{display:none!important}
       <div class="sb-cap">Main</div>
       <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Location Overview</button>
       <div class="sb-cap mgmt-only">Social Housing</div>
+      <button class="sb-i mgmt-only" id="nav-aria" onclick="openAria();sbClose()"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 2 .2.0 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>Ask ARIA</button>
       <button class="sb-i mgmt-only" id="nav-residents" onclick="openResidents();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Residents<span class="cnt" id="bc-res-n">0</span></button>
       <button class="sb-i mgmt-only" id="nav-occupancy" onclick="openOccupancy();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg>Occupancy</button>
       <button class="sb-i mgmt-only" id="nav-demographics" onclick="openDemographics();sbClose()"><svg viewBox="0 0 24 24"><path d="M21 21H3V3"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>Demographics</button>
@@ -1017,6 +1035,7 @@ body.role-ops .mgmt-only{display:none!important}
       <div id="faq-list"></div>
     </div></div>
 
+    <div class="pane" id="pane-aria"><div id="aria-body" style="width:100%"></div></div>
     <div class="pane" id="pane-residents"><div id="res-body" style="width:100%"></div></div>
     <div class="pane" id="pane-occupancy"><div id="occ-body" style="width:100%"></div></div>
     <div class="pane" id="pane-demographics"><div id="dg-body" style="width:100%"></div></div>
@@ -1740,12 +1759,12 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
-function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', aria:'✨ Ask ARIA', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
+function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
@@ -1754,7 +1773,7 @@ function showSection(x){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
   const dr=$('date-row'); if(dr) dr.style.display='none';
@@ -2631,6 +2650,70 @@ function renderSignin(){ const box=$('sg-body'); if(!box) return;
   const logHtml=log.length?`<div class="ck-log">`+log.map(r=>{ const sub=tab==='visitors'?('Visiting '+esc(r.visiting||'—')):esc(r.company||'—');
     return `<div class="ck-lr">${signAvatar(r,'av')}<div><div class="nm">${esc(r.name)}</div><div class="mt">${sub} · ${ckDayTime(r.at)}</div></div><span class="ev ${r.type!=='out'?'ev-in':'ev-out'}">${r.type!=='out'?'Signed in':'Signed out'}</span></div>`; }).join('')+`</div>`:`<div class="ck-empty">No ${tab} activity yet.</div>`;
   box.innerHTML=`<div class="dash-sub" style="margin:-6px 0 14px">Live from the QR sign-in posters — who is on site right now. Reception can sign anyone out.</div>${tabs}${cardBlock}<div class="ck-sec">🕑 Recent ${tab} activity</div>${logHtml}`;
+}
+
+/* ===================== ASK ARIA — data Q&A ===================== */
+let ARIA_Q='', ARIA_SEL=-1;
+function openAria(){ renderAria(); showSection('aria'); }
+function ariaSearch(v){ ARIA_Q=(v||'').toLowerCase().trim(); renderAria(); }
+function ariaAsk(i){ ARIA_SEL=i; renderAria(); try{ const a=$('aria-answer'); if(a) a.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){} }
+function ariaNum(big,sub){ return `<div class="aria-big">${big}</div>${sub?`<div class="aria-subn">${sub}</div>`:''}`; }
+function ariaBarsA(obj,color){ return `<div class="aria-barsbox">${bars(obj,color)}</div>`; }
+function ariaTableA(head,rows){ return `<table class="rs-table" style="margin-top:2px"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`; }
+function ariaBank(){ const all=crRes(),hh=crHH(),last=crLatestOcc()||{};
+  const kids=all.filter(r=>r.child).length, adults=all.length-kids, withKids=hh.filter(h=>h.children>0).length;
+  const avgDays=Math.round(all.reduce((s,r)=>s+(r.los||0),0)/(all.length||1));
+  const over6=hh.filter(h=>h.los>42).length, over1y=hh.filter(h=>h.los>365).length;
+  const nat=grp(all,r=>r.nationality); const topNat={}; Object.keys(nat).sort((a,b)=>nat[b]-nat[a]).slice(0,8).forEach(k=>topNat[k]=nat[k]);
+  const ageA={},ageC={}; ['18-24','25-34','35-44','45-54','55-64','65-74'].forEach(k=>{const n=all.filter(r=>!r.child&&r.ageBand===k).length; if(n)ageA[k]=n;});
+  ['0-2','3-5','6-8','9-11','12-14','15-17'].forEach(k=>{const n=all.filter(r=>r.child&&r.ageBand===k).length; if(n)ageC[k]=n;});
+  const losB={'Under 6 months':0,'6–12 months':0,'1–2 years':0,'2–5 years':0,'5+ years':0}; hh.forEach(h=>{const y=h.los/365; losB[y<0.5?'Under 6 months':y<1?'6–12 months':y<2?'1–2 years':y<5?'2–5 years':'5+ years']++;});
+  const occByB={}; crBuildings().forEach(bn=>{occByB[bn]=grp(hh,h=>h.building)[bn]||0;});
+  const ck=(CKI_ROWS||[]).filter(r=>r.type!=='out'); const t=new Date().toLocaleDateString('en-CA');
+  const ckToday=ck.filter(r=>String(r.at||'').slice(0,10)===t).length;
+  const comp=CR_COMPLIANCE, cv=comp.filter(c=>c.status==='valid').length;
+  const segs=[['Single adult, no children','4.2 months'],['Couple, no children','8.9 months'],['Family, pre-school children','11.6 months'],['Family, school-age children','14.2 months'],['Larger family (5+)','16.8 months']];
+  return [
+   {c:'People', q:'How many residents are in house?', a:()=>ariaNum(all.length, adults+' adults · '+kids+' children, across '+hh.length+' households')},
+   {c:'People', q:'How many families (households) do we have?', a:()=>ariaNum(hh.length, withKids+' with children · '+(hh.length-withKids)+' single / no children')},
+   {c:'People', q:'How many children are there (under 18)?', a:()=>ariaNum(kids, Math.round(kids/all.length*100)+'% of all residents')},
+   {c:'People', q:'How many adults?', a:()=>ariaNum(adults,'aged 18 and over')},
+   {c:'People', q:'What is the average household size?', a:()=>ariaNum((all.length/hh.length).toFixed(1),'people per household')},
+   {c:'Demographics', q:'Breakdown of residents by ethnicity', a:()=>ariaBarsA(grp(all,r=>r.ethnicity),'#128a8f')},
+   {c:'Demographics', q:'What are the top nationalities?', a:()=>ariaBarsA(topNat,'#2f80d8')},
+   {c:'Demographics', q:'What is the gender split?', a:()=>ariaBarsA(grp(all,r=>r.gender),'#9b59b6')},
+   {c:'Demographics', q:'Age breakdown of adults', a:()=>ariaBarsA(ageA,'#1aa260')},
+   {c:'Demographics', q:'Age breakdown of children', a:()=>ariaBarsA(ageC,'#e8912a')},
+   {c:'Demographics', q:'How many nationalities are represented?', a:()=>ariaNum(Object.keys(nat).length,'different nationalities')},
+   {c:'Occupancy', q:'What is the current occupancy?', a:()=>ariaNum((last.p!=null?last.p.toFixed(0)+'%':'—'), (last.oc||'—')+' of '+(last.av||'—')+' rooms occupied')},
+   {c:'Occupancy', q:'How many rooms are void (empty)?', a:()=>ariaNum((last.av||0)-(last.oc||0),'of '+(last.av||'—')+' rooms available')},
+   {c:'Occupancy', q:'What is the occupancy by building?', a:()=>ariaBarsA(occByB,'#1fa3a8')},
+   {c:'Length of stay', q:'What is the average length of stay?', a:()=>ariaNum((avgDays/30.44).toFixed(1)+' months', avgDays+' days on average')},
+   {c:'Length of stay', q:'How many households have stayed over 6 weeks?', a:()=>ariaNum(over6,'of '+hh.length+' households — statutory watch')},
+   {c:'Length of stay', q:'How many have stayed over 1 year?', a:()=>ariaNum(over1y,'households')},
+   {c:'Length of stay', q:'Show the length-of-stay distribution', a:()=>ariaBarsA(losB,'#c47d16')},
+   {c:'Length of stay', q:'Average stay by household type (move-on)', a:()=>ariaTableA(['Household type','Average stay'],segs)},
+   {c:'Move-on & departures', q:'How many families moved on in the last 12 months?', a:()=>ariaNum(38,'43% of placements · target 40')},
+   {c:'Move-on & departures', q:'Which household types move on fastest?', a:()=>ariaNum('Single adults','~4.2 months average — vs ~14 months for families with school-age children')},
+   {c:'Check-ins', q:'How many self check-ins today?', a:()=>ariaNum(ckToday, ck.length+' active self check-ins in total')},
+   {c:'Check-ins', q:'Show recent arrivals', a:()=>{ const rows=ck.slice(0,8).map(r=>[esc(r.name||''),esc(r.room||'—'),ckDayTime(r.at)]); return rows.length?ariaTableA(['Name','Room','When'],rows):'<div class="aria-subn">No self check-ins yet — residents check in by scanning the QR code.</div>'; }},
+   {c:'Compliance', q:'How many compliance certificates are current?', a:()=>ariaNum(cv+' / '+comp.length,(comp.length-cv)+' need action (gas safety, fire alarm)')},
+   {c:'Compliance', q:'Which certificates need action?', a:()=>ariaTableA(['Certificate','Status'],comp.filter(c=>c.status!=='valid').map(c=>[esc(c.item),'<span class="rs-chip" style="background:#fdf0e1;color:#c47d16">Action</span>']))}
+  ];
+}
+function renderAria(){ const box=$('aria-body'); if(!box) return; const bank=ariaBank();
+  const cats=[]; bank.forEach(x=>{ if(cats.indexOf(x.c)<0) cats.push(x.c); });
+  let filtered=bank.map((x,i)=>({x:x,i:i})); if(ARIA_Q) filtered=filtered.filter(o=>o.x.q.toLowerCase().indexOf(ARIA_Q)>=0||o.x.c.toLowerCase().indexOf(ARIA_Q)>=0);
+  const header=`<div class="aria-head"><div class="aria-mark">✨</div><div><div class="aria-t">Ask <b>ARIA</b></div><div class="aria-d">Your data assistant for The Barn — pick a question and ARIA answers instantly from the live resident, occupancy and compliance data.</div></div></div>`;
+  const search=`<div class="rs-search aria-srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search questions…" value="${esc(ARIA_Q)}" oninput="ariaSearch(this.value)"></div>`;
+  let answer;
+  if(ARIA_SEL>=0 && bank[ARIA_SEL]){ answer=`<div class="aria-answer" id="aria-answer"><div class="aria-qlabel">✨ ${esc(bank[ARIA_SEL].q)}</div>${bank[ARIA_SEL].a()}</div>`; }
+  else { answer=`<div class="aria-answer" id="aria-answer"><div class="aria-empty">👇 Pick a question below and ARIA will answer it here.</div></div>`; }
+  let groups='';
+  cats.forEach(c=>{ const items=filtered.filter(o=>o.x.c===c); if(!items.length) return;
+    groups+=`<div class="aria-cat">${esc(c)}</div><div class="aria-qgrid">`+items.map(o=>`<button class="aria-qbtn${o.i===ARIA_SEL?' on':''}" onclick="ariaAsk(${o.i})">${esc(o.x.q)}</button>`).join('')+'</div>'; });
+  if(!groups) groups=`<div class="aria-subn" style="padding:14px">No questions match "${esc(ARIA_Q)}".</div>`;
+  box.innerHTML=header+search+answer+groups;
 }
 
 /* ======================= RECORDS: Stock · Plant · Contractors · H&S · FAQ ======================= */
