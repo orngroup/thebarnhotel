@@ -239,7 +239,7 @@ body.console .wrap{max-width:1500px}
 #pane-team.on{grid-template-columns:1fr}
 #pane-mgmt.on{grid-template-columns:1fr}
 #pane-clock.on{grid-template-columns:1fr}
-#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on{grid-template-columns:1fr}
+#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on,#pane-qr.on{grid-template-columns:1fr}
 .req.mj{cursor:pointer}
 .req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
 .req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
@@ -466,6 +466,26 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .kpi .kv{font:900 30px Lato;color:#15233f;line-height:1}
 .kpi .kl{font:700 12.5px Lato;color:#4a576e;margin-top:7px}
 .kpi .ks{font:600 11.5px Lato;color:#9aa6b8;margin-top:2px}
+.sh-ops-label{font:800 12.5px Lato;color:#6b7a90;text-transform:uppercase;letter-spacing:.6px;margin:30px 0 -2px;padding-top:22px;border-top:1px solid #e3e8ef}
+.sh-head{display:flex;align-items:center;gap:14px;margin:2px 0 14px}
+.sh-head .st1{font:900 21px Lato;color:#15233f}
+.sh-head .st2{font:600 13px Lato;color:#6b7a90;margin-top:1px}
+.sh-head .cta{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font:800 13px Lato;color:#fff;background:#16264c;padding:9px 15px;border-radius:10px;text-decoration:none}
+.sh-head .cta:hover{background:#1f3570}
+.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:1000px){.qr-grid{grid-template-columns:1fr}}.qr-card{text-align:center}.qr-h{display:flex;align-items:center;gap:11px;text-align:left;margin-bottom:14px}.qr-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;flex:0 0 40px}.qr-t{font:900 16px Lato;color:#15233f}.qr-s{font:600 11.5px Lato;color:#9aa6b8}.qr-img{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:14px;display:inline-block}.qr-img img{width:190px;height:190px;display:block;image-rendering:pixelated}.qr-url{font:700 11px Lato;color:#6b7a90;margin:12px 0;word-break:break-all}.qr-open{display:inline-flex;align-items:center;gap:7px;color:#fff;font:800 13px Lato;padding:11px 18px;border-radius:10px;text-decoration:none}.qr-desc{font:600 12.5px Lato;color:#8a94a0;margin-top:14px;line-height:1.5}.ov-group{font:900 12.5px Lato;color:#45526a;text-transform:uppercase;letter-spacing:.7px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+@media(max-width:1200px){.ov-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.ov-grid{grid-template-columns:1fr}}
+.ov-card{background:#fff;border:1px solid #dde3ec;border-radius:12px;padding:18px;cursor:pointer;position:relative;transition:transform .14s,box-shadow .14s,border-color .14s}
+.ov-card:hover{border-color:#128a8f;box-shadow:0 8px 20px rgba(16,24,40,.09);transform:translateY(-2px)}
+.ov-card .ic{width:42px;height:42px;border-radius:12px;background:#eef2f7;display:grid;place-items:center;font-size:21px;margin-bottom:12px}
+.ov-card .v{font:900 27px Lato;color:#15233f;line-height:1}
+.ov-card .l{font:800 13.5px Lato;color:#2a3850;margin-top:7px}
+.ov-card .s{font:600 12px Lato;color:#8a94a0;margin-top:2px}
+.ov-card .go{position:absolute;top:15px;right:17px;color:#c3ccd8;font:900 18px Lato;transition:.14s}
+.ov-card:hover .go{color:#128a8f;transform:translateX(2px)}
+.ov-council{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font:800 13px Lato;color:#fff;background:#16264c;padding:9px 15px;border-radius:10px;text-decoration:none}
+.ov-council:hover{background:#1f3570}
 .dash-row{display:grid;grid-template-columns:1.9fr 1fr;gap:18px;margin-top:18px}
 .dash-row2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
 @media(max-width:1050px){.dash-row,.dash-row2{grid-template-columns:1fr}}
@@ -685,6 +705,7 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="sb-i" id="nav-team" onclick="openTeam();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Resources<span class="cnt" id="bc-team-n">0</span></button>
       <button class="sb-i" id="nav-clock" onclick="openClock();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Staff on site<span class="cnt" id="bc-clock-n">0</span></button>
       <button class="sb-i" id="nav-signin" onclick="openSignin();sbClose()"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>Site sign-in<span class="cnt" id="bc-sign-n">0</span></button>
+      <button class="sb-i" id="nav-qr" onclick="openQR();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M20 14v4M17 20h4M20 20v1"/></svg>QR Codes</button>
       <div class="sb-cap">Records</div>
       <button class="sb-i" id="nav-hub" onclick="openHub();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg>BarnHUB<span class="cnt" id="bc-hub-n">8</span></button>
       <button class="sb-i" id="nav-stock" onclick="openStock();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M3 9v6l9 5 9-5V9"/></svg>Stock<span class="cnt" id="bc-stock-n">0</span></button>
@@ -698,7 +719,7 @@ body.role-ops .mgmt-only{display:none!important}
     </nav>
     <div class="sb-foot">
       <button class="sb-fire" onclick="openFire()"><span>🔥</span>Fire &amp; Emergency</button>
-      <div style="display:flex;align-items:center;gap:8px"><span class="sb-role" id="role-badge">Operations</span><span class="sb-conn" id="conn">● connecting…</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="sb-role" id="role-badge" onclick="crSwitchRole()" style="cursor:pointer" title="Switch role / sign out — click to re-enter a code">Operations</span><span class="sb-conn" id="conn">● connecting…</span></div>
     </div>
   </aside>
 
@@ -798,22 +819,10 @@ body.role-ops .mgmt-only{display:none!important}
 
     <!-- HOME: welcome + three big kiosk cards (tap one to open it full-page) + stats -->
     <div id="hd-home">
-      <div class="dash-head"><div><div class="dash-h1">Dashboard</div><div class="dash-sub">Operational overview · The Barn Hotel</div></div></div>
-      <div class="dash-kpis" id="dash-kpis"></div>
-
-      <div class="dash-row">
-        <div class="card2"><div class="c2h">📈 Jobs over time <span class="mg-leg2"><span><i class="lg"></i>Logged</span><span><i class="cp"></i>Completed</span></span><span class="rep" onclick="openMgmt()">Report ›</span></div><div id="dash-chart"></div></div>
-        <div class="card2"><div class="c2h">🧭 Jobs by status</div><div id="dash-donut"></div></div>
-      </div>
-
-      <div class="dash-row2">
-        <div class="card2" id="book-box">
-          <div class="c2h">🏗️ Contractors booked in <span class="cnt" id="book-n" style="margin-left:6px;background:#e3f2f2;color:#128a8f;padding:2px 9px;border-radius:999px;font:800 12px Lato">0</span><span class="rep" onclick="showSection('maintenance')">All jobs ›</span></div>
-          <table class="book-t"><thead><tr><th>Date</th><th>Job</th><th>Skill</th><th>Contractor</th><th>Status</th></tr></thead><tbody id="book-body"></tbody></table>
-          <div id="book-empty" class="muted" style="padding:10px 4px;font-size:13px">No contractor appointments booked yet — add a date on an external job's card and it appears here.</div>
-        </div>
-        <div class="card2"><div class="c2h">🕑 Recent jobs<span class="rep" onclick="showSection('maintenance')">View all ›</span></div><div id="dash-recent"></div></div>
-      </div>
+      <div class="dash-head"><div><div class="dash-h1">Dashboard</div><div class="dash-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
+      <div class="mgmt-only"><div class="ov-group">🏠 Social Housing</div><div class="ov-grid" id="sh-dash"></div></div>
+      <div class="ov-group">⚙️ Operations</div>
+      <div class="ov-grid" id="ops-dash"></div>
     </div>
 
     <!-- SECTION header bar (shown when a card is open) -->
@@ -960,6 +969,7 @@ body.role-ops .mgmt-only{display:none!important}
     <div class="pane" id="pane-demographics"><div id="dg-body" style="width:100%"></div></div>
     <div class="pane" id="pane-council"><div id="council-body" style="width:100%"></div></div>
     <div class="pane" id="pane-signin"><div id="sg-body" style="width:100%"></div></div>
+    <div class="pane" id="pane-qr"><div id="qr-body" style="width:100%"></div></div>
 
     <div class="pane" id="pane-maintenance">
       <div class="pane-form">
@@ -1610,6 +1620,7 @@ let CR_ROLE='ops';
 function loginOk(){ try{ return !!sessionStorage.getItem('cr_role'); }catch(e){ return false; } }
 function applyRole(){ try{ CR_ROLE=sessionStorage.getItem('cr_role')||'ops'; }catch(e){ CR_ROLE='ops'; } document.body.classList.toggle('role-ops',CR_ROLE!=='mgmt'); document.body.classList.toggle('role-mgmt',CR_ROLE==='mgmt'); const rb=$('role-badge'); if(rb) rb.textContent=CR_ROLE==='mgmt'?'Management':'Operations'; }
 function checkLogin(){ const v=($('lg-in').value||'').trim(); const role=LOGIN_CODES[v]; if(role){ try{ sessionStorage.setItem('cr_role',role); }catch(e){} CR_ROLE=role; $('login').classList.add('hide'); startBoard(); } else { $('lg-err').textContent='Wrong code — please try again'; $('lg-in').value=''; $('lg-in').focus(); } }
+function crSwitchRole(){ try{ sessionStorage.removeItem('cr_role'); }catch(e){} location.reload(); }
 
 /* ---- BarnHUB — compliance documents (built-in files live in /hub/<folder>/; uploads go to Firebase Storage barn_hub/ + Firestore barn_hub_docs) ---- */
 let HUB_CLOUD=[], HUB_UNSUB=null;
@@ -1676,12 +1687,12 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors'};
-function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
+function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
@@ -1690,7 +1701,7 @@ function showSection(x){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
   const dr=$('date-row'); if(dr) dr.style.display='none';
@@ -2172,6 +2183,7 @@ function dashLineChart(rows){
   return `<div class="mg-chart"><div class="mg-yax">${yax}</div><div class="mg-plot"><svg class="mg-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="0,100 ${poly(lg)} 100,100" class="mg-area"/>${grid}<polyline points="${poly(lg)}" class="mg-ln lg" vector-effect="non-scaling-stroke"/><polyline points="${poly(cp)}" class="mg-ln cp" vector-effect="non-scaling-stroke"/></svg><div class="mg-xax">${xax}</div></div></div>`;
 }
 function dashKpi(cls,icon,val,label,sub,click){ return `<div class="kpi ${cls}${click?' clk':''}"${click?` onclick="${click}"`:''}><div class="ki">${icon}</div><div class="kv">${val}</div><div class="kl">${label}</div><div class="ks">${sub}</div></div>`; }
+function ovCard(icon,val,label,sub,click){ return `<div class="ov-card" onclick="${click}"><span class="go">›</span><div class="ic">${icon}</div><div class="v">${val}</div><div class="l">${label}</div><div class="s">${sub}</div></div>`; }
 function renderDashRecent(){
   const box=$('dash-recent'); if(!box) return;
   let rows=(MG_ROWS&&MG_ROWS.length?MG_ROWS:(M_ROWS||[])).slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
@@ -2181,7 +2193,7 @@ function renderDashRecent(){
   box.innerHTML=rows.map(j=>{ const b=mgStatusChip(j); return `<div class="drec" style="cursor:pointer" onclick="dmOpen('${j.id}')"><div class="ri">${j.external?'🏗️':'🔧'}</div><div style="min-width:0"><div class="rn">${esc(j.title||j.location||'Job')}</div><div class="rm">${esc(j.location||j.areaLabel||'')} · ${mFmt(j.createdAt)}</div></div><span class="rb" style="${b.css}">${b.t}</span></div>`; }).join('');
 }
 function renderDash(){
-  if(!$('dash-kpis')) return;
+  const box=$('ops-dash'); if(!box) return;
   const jobs=(MG_ROWS&&MG_ROWS.length?MG_ROWS:(M_ROWS||[]));
   const openJobs=(M_ROWS||[]).filter(j=>j.status!=='complete'&&j.status!=='cancelled').length;
   const completed=jobs.filter(j=>j.status==='complete').length;
@@ -2190,27 +2202,44 @@ function renderDash(){
   const temps=(typeof activeTemps==='function')?activeTemps().length:0;
   const booked=(M_ROWS||[]).filter(j=>j.external&&j.appointmentDate&&j.status!=='complete'&&j.extStatus!=='done'&&j.extStatus!=='declined').length;
   const totalJobs=jobs.length;
-  const I={wrench:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
-    check:'<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
-    box:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',
-    people:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
-    truck:'<svg viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>',
-    stack:'<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></svg>'};
-  $('dash-kpis').innerHTML=
-    dashKpi('k1',I.wrench,openJobs,'Open jobs','Awaiting / in progress',"dashDrill('open')")+
-    dashKpi('k2',I.check,completed,'Completed','All time',"dashDrill('done')")+
-    dashKpi('k3',I.box,delToday,'Deliveries today','Logged at reception',"showSection('deliveries')")+
-    dashKpi('k4',I.people,temps,'Active temps','On site now',"openTeam()")+
-    dashKpi('k5',I.truck,booked,'Contractors booked','Appointments set',"dashDrill('booked')")+
-    dashKpi('k6',I.stack,totalJobs,'Total jobs','All time',"dashDrill('total')");
-  const st=[{label:'Not started',n:jobs.filter(j=>(j.status||'not-started')==='not-started').length,color:'#e8912a'},
-    {label:'In progress',n:jobs.filter(j=>j.status==='in-progress').length,color:'#2f80d8'},
-    {label:'Completed',n:jobs.filter(j=>j.status==='complete').length,color:'#1aa260'},
-    {label:'Ended / cleared',n:jobs.filter(j=>j.status==='cancelled').length,color:'#8b94a3'}];
-  if($('dash-donut')) $('dash-donut').innerHTML=dashDonut(st,'dashStatusDrill');
-  if($('dash-chart')) $('dash-chart').innerHTML=dashLineChart(jobs);
-  renderDashRecent();
-  try{ renderBookings(); }catch(e){}
+  box.innerHTML=
+    ovCard('🔧',openJobs,'Open jobs','Awaiting / in progress',"showSection('maintenance')")+
+    ovCard('✅',completed,'Completed','All-time jobs done',"showSection('maintenance')")+
+    ovCard('📦',delToday,'Deliveries today','Logged at reception',"showSection('deliveries')")+
+    ovCard('👷',temps,'Active temps','On site now',"openTeam()")+
+    ovCard('🏗️',booked,'Contractors booked','Appointments set',"showSection('maintenance')")+
+    ovCard('📊',totalJobs,'Management analytics','Full job reporting',"openMgmt()");
+  try{ renderShDash(); }catch(e){ console.warn('shDash',e); }
+}
+const CR_COMPLIANCE=[{item:'Gas safety (CP12)',status:'valid',detail:'Valid until 14 Jan 2027'},{item:'EICR',status:'due',detail:'Renewal due in 8 days'},{item:'PAT testing',status:'valid',detail:'Valid until 3 Jun 2027'},{item:'Fire risk assessment',status:'await',detail:'Awaiting document'},{item:'Fire strategy',status:'valid',detail:'Reviewed Sep 2026'},{item:'Fire alarm & detection',status:'await',detail:'Test being scheduled'},{item:'Emergency lighting',status:'valid',detail:'Valid until 12 Feb 2027'},{item:'HMO licence',status:'valid',detail:'Valid until 30 Sep 2028'},{item:'Legionella',status:'valid',detail:'Valid until 20 Apr 2027'},{item:'Furniture & furnishings',status:'await',detail:'Inventory in progress'}];
+function shDonut(parts,center,label){ const total=parts.reduce((s,p)=>s+p.n,0)||0; const R=52,C=2*Math.PI*R; let off=0;
+  const segs=total?parts.filter(p=>p.n>0).map(p=>{const dash=p.n/total*C;const s=`<circle cx="75" cy="75" r="${R}" fill="none" stroke="${p.color}" stroke-width="20" stroke-dasharray="${dash.toFixed(2)} ${(C-dash).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 75 75)"/>`;off+=dash;return s;}).join(''):`<circle cx="75" cy="75" r="${R}" fill="none" stroke="#eef1f5" stroke-width="20"/>`;
+  const leg=parts.map(p=>`<div class="dr"><i style="background:${p.color}"></i>${esc(p.label)}<b>${p.n}</b><small>${total?Math.round(p.n/total*100):0}%</small></div>`).join('');
+  return `<div class="donut-wrap"><div class="donut"><svg viewBox="0 0 150 150" width="150" height="150">${segs}</svg><div class="dc"><div class="dv">${center}</div><div class="dl">${label||''}</div></div></div><div class="donut-leg">${leg}</div></div>`;
+}
+function shFeed(n){ const rows=(CKI_ROWS||[]).filter(r=>r.type!=='out').slice(0,n);
+  if(!rows.length) return `<div class="muted" style="padding:14px 4px;font:600 13px Lato;color:#8a94a0">No self check-ins yet. Residents check in by scanning the QR code on arrival.</div>`;
+  return rows.map(r=>`<div class="dm-row" onclick="ckiOpen('${r.id}')">${signAvatar(r,'rs-av')}<div style="flex:1"><div class="dm-t">${esc(r.name||'')}</div><div class="dm-m">${esc(r.room||'—')}${r.nat?(' · '+esc(r.nat)):''} · ${ckDayTime(r.at)}</div></div><span class="rs-chip" style="background:#e6f6ee;color:#1aa260">In ›</span></div>`).join('');
+}
+function renderShDash(){ const box=$('sh-dash'); if(!box) return;
+  const all=crRes(), hh=crHH(); const last=crLatestOcc()||{};
+  if(!all.length){ box.innerHTML=''; return; }
+  const kids=all.filter(r=>r.child).length;
+  const avgStay=Math.round(all.reduce((s,r)=>s+(r.los||0),0)/(all.length||1));
+  const over6=hh.filter(h=>h.los>42).length;
+  const comp=CR_COMPLIANCE, cv=comp.filter(c=>c.status==='valid').length;
+  const nats=Object.keys(grp(all,r=>r.nationality)).length;
+  let onSiteN=0; try{ onSiteN=onSite(VIS_ROWS).length+onSite(CON2_ROWS).length; }catch(e){}
+  const arrivals=(CKI_ROWS||[]).filter(r=>r.type!=='out').length;
+  box.innerHTML=
+    ovCard('👥',all.length,'Residents in house',(all.length-kids)+' adults · '+kids+' children',"openResidents()")+
+    ovCard('🏠',hh.length,'Households',hh.filter(h=>h.children>0).length+' with children',"openResidents()")+
+    ovCard('📈',(last.p!=null?Math.round(last.p)+'%':'—'),'Occupancy',(last.oc||'—')+' of '+(last.av||'—')+' rooms',"openOccupancy()")+
+    ovCard('📊',nats,'Demographics','Ethnicity · age · nationality',"openDemographics()")+
+    ovCard('🛡️',cv+'/'+comp.length,'Compliance',(comp.length-cv)+' to action',"openCouncil()")+
+    ovCard('⏳',avgStay+'d','Avg length of stay',over6+' over 6 weeks',"openCouncil()")+
+    ovCard('🚪',onSiteN,'On site now','Visitors & contractors',"openSignin()")+
+    ovCard('🆕',arrivals,'Recent check-ins','Self check-in via QR',"openResidents()");
 }
 
 /* ===================== SOCIAL HOUSING (C&R Housing · The Barn) ===================== */
@@ -2488,6 +2517,12 @@ function renderClock(){
     <div class="ck-sec">🕑 Recent clock activity</div>${logHtml}`;
 }
 
+const QR_DATA={"resident": "data:image/png;base64,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", "visitor": "data:image/png;base64,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", "contractor": "data:image/png;base64,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"};
+const QR_MODES=[{mode:'resident',icon:'\ud83d\udc64',title:'Resident check-in',color:'#128a8f',desc:'New residents register their arrival \u2014 name, room, household, nationality, photo.'},{mode:'visitor',icon:'\ud83d\udeaa',title:'Visitor sign-in',color:'#2f54eb',desc:'Visitors sign in on arrival and out when they leave.'},{mode:'contractor',icon:'\ud83e\uddba',title:'Contractor sign-in',color:'#c47d16',desc:'Contractors sign in, confirm the H&S induction, and sign out.'}];
+function openQR(){ renderQR(); showSection('qr'); }
+function renderQR(){ const box=$('qr-body'); if(!box) return; const base='cr-signin.html?mode=';
+  box.innerHTML='<div class="sec-sub" style="margin:-6px 0 16px">Print these as posters, or scan them straight off the screen with a phone to test each form. Each code opens the matching self-service page \u2014 or click <b>Open &amp; test form</b> to try it here.</div><div class="qr-grid">'+QR_MODES.map(function(m){return '<div class="card2 qr-card" style="border-top:4px solid '+m.color+'"><div class="qr-h"><span class="qr-ic" style="background:'+m.color+'1a;color:'+m.color+'">'+m.icon+'</span><div><div class="qr-t">'+m.title+'</div><div class="qr-s">mode='+m.mode+'</div></div></div><div class="qr-img"><img src="'+QR_DATA[m.mode]+'" alt="'+m.title+' QR"></div><div class="qr-url">thebarnhotel.hospro.co.uk/cr-signin.html?mode='+m.mode+'</div><div><a class="qr-open" href="'+base+m.mode+'" target="_blank" rel="noopener" style="background:'+m.color+'">\u25b6 Open &amp; test form</a></div><div class="qr-desc">'+m.desc+'</div></div>';}).join('')+'</div>';
+}
 /* ===================== SITE SIGN-IN: Visitors & Contractors + Resident arrivals (live from QR) ===================== */
 let VIS_UNSUB=null, VIS_ROWS=[], CON2_UNSUB=null, CON2_ROWS=[], CKI_UNSUB=null, CKI_ROWS=[], SIGN_TAB='visitors', SIGN_TICK=null;
 function signWatch(){ if(!db) return;
