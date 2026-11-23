@@ -170,9 +170,14 @@ body.console .wrap{max-width:1500px}
 .mg-ln.lg{stroke:#2b2b63}
 .mg-ln.cp{stroke:#C9A978}
 .mg-area{fill:rgba(43,43,99,.06);stroke:none}
-.mg-gl{stroke:#eef1f5}
+.mg-gl{stroke:#e7ebf1}.mg-vl{stroke:#f0f3f7}
 .mg-xax{position:relative;height:14px;margin-top:4px}
 .mg-xax span{position:absolute;font:600 9px Lato;color:#8a94a0;white-space:nowrap}
+.occ-hit{position:absolute;left:0;right:0;top:0;height:132px;cursor:crosshair;z-index:3}
+.occ-guide{position:absolute;top:0;height:132px;width:1px;background:#128a8f;opacity:.4;display:none;pointer-events:none;z-index:2}
+.occ-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#128a8f;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translate(-50%,-50%);display:none;pointer-events:none;z-index:4}
+.occ-tip{position:absolute;top:-2px;background:#15233f;color:#fff;font:700 10.5px Lato;padding:5px 9px;border-radius:7px;white-space:nowrap;display:none;pointer-events:none;z-index:5;transform:translateX(-50%);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.occ-tip b{font:900 13px Lato;display:block}
 .mg-hit{position:absolute;left:0;top:0;right:0;height:132px;cursor:crosshair}
 .mg-guide{position:absolute;top:0;height:132px;width:1px;background:#b4bcca;display:none;pointer-events:none}
 .mg-tip{position:absolute;top:2px;z-index:6;background:#15233f;color:#fff;border-radius:10px;padding:9px 12px;pointer-events:none;display:none;min-width:134px;box-shadow:0 10px 28px rgba(0,0,0,.24)}
@@ -452,7 +457,7 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .dash-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
 @media(max-width:1300px){.dash-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:640px){.dash-kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:#fff;border:1px solid #e9edf3;border-radius:16px;padding:18px 18px;box-shadow:0 1px 3px rgba(16,24,40,.05);position:relative;overflow:hidden}
+.kpi{background:#fff;border:1px solid #dde3ec;border-radius:10px;padding:16px 16px;box-shadow:none;position:relative;overflow:hidden}
 .kpi::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#128a8f}
 .kpi.k2::after{background:#1aa260}.kpi.k3::after{background:#e8912a}.kpi.k4::after{background:#9b59b6}.kpi.k5::after{background:#2f80d8}.kpi.k6::after{background:#15233f}
 .kpi .ki{width:38px;height:38px;border-radius:11px;background:#e3f2f2;display:grid;place-items:center;color:#128a8f;margin-bottom:12px}
@@ -464,7 +469,7 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .dash-row{display:grid;grid-template-columns:1.9fr 1fr;gap:18px;margin-top:18px}
 .dash-row2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
 @media(max-width:1050px){.dash-row,.dash-row2{grid-template-columns:1fr}}
-.card2{background:#fff;border:1px solid #e9edf3;border-radius:16px;padding:18px 20px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+.card2{background:#fff;border:1px solid #dde3ec;border-radius:10px;padding:18px 20px;box-shadow:none}
 .c2h{display:flex;align-items:center;gap:8px;font:800 15px Lato;color:#15233f;margin-bottom:14px}
 .c2h .rep{margin-left:auto;font:700 12.5px Lato;color:#128a8f;cursor:pointer;display:inline-flex;align-items:center;gap:3px}
 /* donut */
@@ -593,9 +598,9 @@ body.console .hd-back.hide{display:none!important}
 /* ---- role gating + Social Housing ---- */
 body.role-ops .mgmt-only{display:none!important}
 .sb-role{display:inline-flex;align-items:center;gap:6px;font:800 10.5px Lato;color:#9fe0e3;background:rgba(18,138,143,.22);border:1px solid rgba(18,138,143,.4);padding:4px 10px;border-radius:999px;letter-spacing:.3px}
-.rs-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e9edf3;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.05)}
-.rs-table th{background:#f6f8fc;font:800 11px Lato;color:#6b7a90;text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:11px 13px;cursor:pointer;white-space:nowrap}
-.rs-table td{padding:10px 13px;border-top:1px solid #f0f3f7;font:600 13px Lato;color:#25324a;white-space:nowrap}
+.rs-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #dde3ec;border-radius:8px;overflow:hidden;box-shadow:none}
+.rs-table th{background:#f4f7fb;font:800 11px Lato;color:#6b7a90;text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:11px 13px;cursor:pointer;white-space:nowrap;border-bottom:1px solid #dde3ec;border-right:1px solid #eef1f5}
+.rs-table td{padding:10px 13px;border-top:1px solid #eef1f5;border-right:1px solid #f2f5f9;font:600 13px Lato;color:#25324a;white-space:nowrap}.rs-table th:last-child,.rs-table td:last-child{border-right:none}
 .rs-table tr.clk{cursor:pointer}.rs-table tbody tr:hover{background:#f6fafa}
 .rs-av{width:30px;height:30px;border-radius:8px;background:#e3f2f2;color:#128a8f;display:inline-grid;place-items:center;font:900 12px Lato;vertical-align:middle;margin-right:8px}
 .rs-chip{display:inline-block;font:800 10px Lato;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.3px}
@@ -609,8 +614,8 @@ body.role-ops .mgmt-only{display:none!important}
 @media(max-width:900px){.dg-grid{grid-template-columns:1fr}}
 .dg-bar{display:flex;align-items:center;gap:10px;margin:7px 0}
 .dg-bl{flex:0 0 42%;font:600 12.5px Lato;color:#394655;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dg-bt{flex:1;height:14px;background:#eef1f5;border-radius:7px;overflow:hidden}
-.dg-bf{height:100%;background:linear-gradient(90deg,#1fa3a8,#128a8f);border-radius:7px;min-width:2px}
+.dg-bt{flex:1;height:13px;background:#eef1f5;border-radius:3px;overflow:hidden}
+.dg-bf{height:100%;background:linear-gradient(90deg,#1fa3a8,#128a8f);border-radius:3px;min-width:2px}
 .dg-bn{flex:0 0 66px;text-align:right;font:800 12.5px Lato;color:#1a2b3a}
 .dg-bn small{font-weight:600;color:#9aa7b5;margin-left:4px}
 /* council report */
@@ -2305,13 +2310,24 @@ function openOccupancy(){ renderOccupancy(); showSection('occupancy'); }
 function occLineChart(series,label,color){ const n=series.length; if(!n) return ''; const vals=series.map(s=>s.v);
   const max=Math.max(...vals,1), min=Math.min(...vals,0);
   const X=i=>n<=1?50:(i/(n-1)*100), Y=v=>(1-(v-min)/((max-min)||1))*100;
+  window.OCC_CDATA={series:series,min:min,max:max,n:n,color:color||'#128a8f'};
   const poly=series.map((s,i)=>X(i).toFixed(2)+','+Y(s.v).toFixed(2)).join(' ');
-  const grid=[0,.5,1].map(fr=>`<line x1="0" y1="${(fr*100).toFixed(1)}" x2="100" y2="${(fr*100).toFixed(1)}" class="mg-gl" vector-effect="non-scaling-stroke"/>`).join('');
+  const hgrid=[0,.25,.5,.75,1].map(fr=>`<line x1="0" y1="${(fr*100).toFixed(1)}" x2="100" y2="${(fr*100).toFixed(1)}" class="mg-gl" vector-effect="non-scaling-stroke"/>`).join('');
   const yax=[max,(max+min)/2,min].map(v=>`<span style="top:${Y(v).toFixed(1)}%">${Math.round(v)}</span>`).join('');
-  const step=Math.max(1,Math.ceil(n/8)); let xl='';
-  for(let i=0;i<n;i+=step){ const d=series[i].d; const dt=new Date(d); const lbl=dt.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}); const pos=i===0?'left:0;transform:none':'left:'+X(i).toFixed(1)+'%;transform:translateX(-50%)'; xl+=`<span style="${pos}">${lbl}</span>`; }
-  return `<div class="mg-chart"><div class="mg-yax">${yax}</div><div class="mg-plot"><svg class="mg-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="0,100 ${poly} 100,100" class="mg-area" style="fill:rgba(18,138,143,.08)"/>${grid}<polyline points="${poly}" class="mg-ln" style="stroke:${color||'#128a8f'}" vector-effect="non-scaling-stroke"/></svg><div class="mg-xax">${xl}</div></div></div>`;
+  const step=Math.max(1,Math.ceil(n/8)); let xl='', vgrid='';
+  for(let i=0;i<n;i+=step){ const gx=X(i).toFixed(2); vgrid+=`<line x1="${gx}" y1="0" x2="${gx}" y2="100" class="mg-vl" vector-effect="non-scaling-stroke"/>`;
+    const dt=new Date(series[i].d); const lbl=dt.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}); const pos=i===0?'left:0;transform:none':'left:'+X(i).toFixed(1)+'%;transform:translateX(-50%)'; xl+=`<span style="${pos}">${lbl}</span>`; }
+  return `<div class="mg-chart"><div class="mg-yax">${yax}</div><div class="mg-plot"><svg class="mg-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="0,100 ${poly} 100,100" class="mg-area" style="fill:rgba(18,138,143,.08)"/>${hgrid}${vgrid}<polyline points="${poly}" class="mg-ln" style="stroke:${color||'#128a8f'}" vector-effect="non-scaling-stroke"/></svg><div class="occ-guide" id="occ-guide"></div><div class="occ-dot" id="occ-dot"></div><div class="occ-hit" onmousemove="occHover(event)" onmouseleave="occHoverOut()"></div><div class="occ-tip" id="occ-tip"></div><div class="mg-xax">${xl}</div></div></div>`;
 }
+function occHover(ev){ const data=window.OCC_CDATA; if(!data||!data.n) return; const plot=ev.currentTarget.parentNode; const rect=plot.getBoundingClientRect();
+  const frac=Math.min(1,Math.max(0,(ev.clientX-rect.left)/rect.width)); const i=Math.round(frac*(data.n-1)); const s=data.series[i]; if(!s) return;
+  const xPct=data.n<=1?50:(i/(data.n-1)*100); const yPct=(1-(s.v-data.min)/((data.max-data.min)||1))*100;
+  const g=$('occ-guide'), dot=$('occ-dot'), tip=$('occ-tip');
+  if(g){ g.style.left=xPct+'%'; g.style.display='block'; }
+  if(dot){ dot.style.left=xPct+'%'; dot.style.top=yPct+'%'; dot.style.background=data.color; dot.style.display='block'; }
+  if(tip){ const dt=new Date(s.d); tip.innerHTML='<b>'+(Math.round(s.v*10)/10)+'%</b>'+dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); tip.style.left=Math.min(93,Math.max(7,xPct))+'%'; tip.style.display='block'; }
+}
+function occHoverOut(){ ['occ-guide','occ-dot','occ-tip'].forEach(function(id){ const e=$(id); if(e) e.style.display='none'; }); }
 function renderOccupancy(){ const box=$('occ-body'); if(!box) return; const o=crOcc(); const last=crLatestOcc();
   const last30=o.slice(-30), avg30=last30.length?(last30.reduce((s,x)=>s+x.p,0)/last30.length):0;
   const peak=o.reduce((m,x)=>x.p>m.p?x:m,o[0]||{p:0});
