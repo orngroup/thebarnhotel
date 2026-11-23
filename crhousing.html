@@ -698,6 +698,7 @@ body.role-ops .mgmt-only{display:none!important}
       <div class="lgx-foot">The Barn · West End Road, Ruislip HA4 6JB</div>
     </div>
     <div class="lgx-form">
+      <img src="cr-logo.png" alt="C&amp;R Housing" style="width:160px;height:auto;margin-bottom:18px" onerror="this.style.display='none'">
       <div class="lgx-welcome">Welcome back</div>
       <div class="lgx-sub">Sign in to your management console</div>
       <label>Customer</label><div class="lgx-ro">🏢 C&amp;R Housing</div>
@@ -724,7 +725,7 @@ body.role-ops .mgmt-only{display:none!important}
 
 <div class="app" id="app">
   <aside class="sidebar" id="sidebar">
-    <div class="sb-logo"><div class="l1">C&amp;R <b>Housing</b></div><div class="l2">HosPRO · The Barn</div></div>
+    <div class="sb-logo"><span style="background:#fff;border-radius:9px;padding:8px 10px;display:inline-block;line-height:0"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:140px;height:auto;display:block" onerror="this.parentNode.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"></span><div class="l2" style="margin-top:11px">HosPRO · The Barn</div></div>
     <nav class="sb-nav">
       <div class="sb-cap">Main</div>
       <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
@@ -2260,7 +2261,7 @@ function renderDashCharts(){ const box=$('dash-charts'); if(!box) return;
     <div class="dash-row2"><div class="card2"><div class="c2h">🛡️ Compliance status<span class="rep" onclick="openCouncil()">Reports ›</span></div>${shDonut(compParts,cv+'/'+comp.length,'valid')}</div>
       <div class="card2"><div class="c2h">👤 Gender split<span class="rep" onclick="openDemographics()">More ›</span></div>${shDonut(genderParts,all.length,'residents')}</div></div>`;
 }
-const CR_COMPLIANCE=[{item:'Gas safety (CP12)',status:'valid',detail:'Valid until 14 Jan 2027'},{item:'EICR',status:'due',detail:'Renewal due in 8 days'},{item:'PAT testing',status:'valid',detail:'Valid until 3 Jun 2027'},{item:'Fire risk assessment',status:'await',detail:'Awaiting document'},{item:'Fire strategy',status:'valid',detail:'Reviewed Sep 2026'},{item:'Fire alarm & detection',status:'await',detail:'Test being scheduled'},{item:'Emergency lighting',status:'valid',detail:'Valid until 12 Feb 2027'},{item:'HMO licence',status:'valid',detail:'Valid until 30 Sep 2028'},{item:'Legionella',status:'valid',detail:'Valid until 20 Apr 2027'},{item:'Furniture & furnishings',status:'await',detail:'Inventory in progress'}];
+const CR_COMPLIANCE=[{item:'Electrical (EICR)',status:'valid',detail:'Satisfactory · next due 8 Jun 2031',doc:'EICR-20260702-GACD'},{item:'Fire Risk Assessment',status:'valid',detail:'Assessed 1 Apr 2026 · next 1 Apr 2027'},{item:'Emergency Lighting',status:'valid',detail:'Certified 2026/27'},{item:'PAT Testing',status:'valid',detail:'Tested 1 Apr 2026'},{item:'Legionella Risk Assessment',status:'valid',detail:'Assessed 2026/27'},{item:'Fire Extinguishers',status:'valid',detail:'Serviced 2026/27'},{item:'Gas Safety (Non-Domestic)',status:'due',detail:'Last 25 Mar 2025 · renewal due',doc:'ND-GSR-1742-8977-11568'},{item:'Fire Alarm (BS5839)',status:'due',detail:'Serviced 2026/27 · replacement advised (system obsolete)'}];
 function shDonut(parts,center,label){ const total=parts.reduce((s,p)=>s+p.n,0)||0; const R=52,C=2*Math.PI*R; let off=0;
   const segs=total?parts.filter(p=>p.n>0).map(p=>{const dash=p.n/total*C;const s=`<circle cx="75" cy="75" r="${R}" fill="none" stroke="${p.color}" stroke-width="20" stroke-dasharray="${dash.toFixed(2)} ${(C-dash).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 75 75)"/>`;off+=dash;return s;}).join(''):`<circle cx="75" cy="75" r="${R}" fill="none" stroke="#eef1f5" stroke-width="20"/>`;
   const leg=parts.map(p=>`<div class="dr"><i style="background:${p.color}"></i>${esc(p.label)}<b>${p.n}</b><small>${total?Math.round(p.n/total*100):0}%</small></div>`).join('');

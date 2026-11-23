@@ -129,7 +129,7 @@ tr:last-child td{border-bottom:none}
   <!-- LOGIN -->
   <div id="login">
     <div class="lg-card">
-      <div class="logo"><div class="mark"></div><div><div class="lt">C&amp;R <b>Housing</b></div><div class="ls">Practical · Proactive · Solutions</div></div></div>
+      <div class="logo" style="justify-content:center;margin-bottom:6px"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:210px;max-width:100%;height:auto" onerror="this.outerHTML='&lt;div class=\'mark\'&gt;&lt;/div&gt;'"></div>
       <div class="lg-h">Council Portal</div>
       <div class="lg-s">London Borough of Ealing · The Barn, Ruislip</div>
       <label>Access code</label>
@@ -143,7 +143,7 @@ tr:last-child td{border-bottom:none}
   <!-- PORTAL -->
   <div id="portal">
     <div class="top"><div class="wrap"><div class="row">
-      <div class="logo"><div class="mark"></div><div><div class="lt">C&amp;R <b>Housing</b></div><div class="ls">Council Portal</div></div></div>
+      <div class="logo"><span style="background:#fff;border-radius:8px;padding:6px 8px;display:inline-block;line-height:0"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:104px;height:auto;display:block" onerror="this.style.display='none'"></span><div class="ls" style="margin-left:2px;align-self:center">Council Portal</div></div>
       <nav class="nav">
         <a class="on" data-v="overview" onclick="cView('overview')">Overview</a>
         <a data-v="demographics" onclick="cView('demographics')">Demographics</a>
@@ -176,16 +176,14 @@ function buildings(){return [...new Set(ROOMS().map(r=>r.building))];}
 var CKI=[];
 
 var COMPLIANCE=[
- {item:'Gas safety certificate (CP12)',status:'valid',detail:'Valid until 14 Jan 2027'},
- {item:'Electrical Installation Condition Report (EICR)',status:'due',detail:'Renewal due in 8 days'},
- {item:'Portable appliance testing (PAT)',status:'valid',detail:'Valid until 3 Jun 2027'},
- {item:'Fire risk assessment',status:'await',detail:'Awaiting updated document'},
- {item:'Fire strategy',status:'valid',detail:'Reviewed Sep 2026 · no fixed renewal'},
- {item:'Fire alarm &amp; detection test',status:'await',detail:'Next test being scheduled'},
- {item:'Emergency lighting test',status:'valid',detail:'Valid until 12 Feb 2027'},
- {item:'HMO licence',status:'valid',detail:'Valid until 30 Sep 2028'},
- {item:'Legionella risk assessment',status:'valid',detail:'Valid until 20 Apr 2027'},
- {item:'Furniture &amp; furnishings compliance',status:'await',detail:'Room inventory in progress'}
+ {item:'Electrical Installation Condition Report (EICR)',status:'valid',detail:'Satisfactory · next due 8 Jun 2031'},
+ {item:'Fire Risk Assessment (FRA)',status:'valid',detail:'Assessed 1 Apr 2026 · next 1 Apr 2027'},
+ {item:'Emergency lighting',status:'valid',detail:'Certified 2026/27'},
+ {item:'Portable appliance testing (PAT)',status:'valid',detail:'Tested 1 Apr 2026'},
+ {item:'Legionella risk assessment',status:'valid',detail:'Assessed 2026/27'},
+ {item:'Fire extinguishers',status:'valid',detail:'Serviced 2026/27'},
+ {item:'Gas Installation Safety (Non-Domestic)',status:'due',detail:'Last inspected 25 Mar 2025 · renewal due'},
+ {item:'Fire alarm &amp; detection (BS5839)',status:'due',detail:'Serviced 2026/27 · replacement advised (system obsolete)'}
 ];
 function compPill(s){return s==='valid'?'<span class="pill p-valid">Valid</span>':s==='due'?'<span class="pill p-due">Renewal due</span>':'<span class="pill p-await">Awaiting</span>';}
 
