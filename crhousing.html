@@ -234,7 +234,7 @@ body.console .wrap{max-width:1500px}
 #pane-team.on{grid-template-columns:1fr}
 #pane-mgmt.on{grid-template-columns:1fr}
 #pane-clock.on{grid-template-columns:1fr}
-#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on{grid-template-columns:1fr}
+#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on{grid-template-columns:1fr}
 .req.mj{cursor:pointer}
 .req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
 .req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
@@ -676,6 +676,7 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="sb-i" id="nav-maintenance" onclick="showSection('maintenance');sbClose()"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Maintenance<span class="cnt" id="bc-mnt-n">0</span></button>
       <button class="sb-i" id="nav-team" onclick="openTeam();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Resources<span class="cnt" id="bc-team-n">0</span></button>
       <button class="sb-i" id="nav-clock" onclick="openClock();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Staff on site<span class="cnt" id="bc-clock-n">0</span></button>
+      <button class="sb-i" id="nav-signin" onclick="openSignin();sbClose()"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>Site sign-in<span class="cnt" id="bc-sign-n">0</span></button>
       <div class="sb-cap">Records</div>
       <button class="sb-i" id="nav-hub" onclick="openHub();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg>BarnHUB<span class="cnt" id="bc-hub-n">8</span></button>
       <button class="sb-i" id="nav-stock" onclick="openStock();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M3 9v6l9 5 9-5V9"/></svg>Stock<span class="cnt" id="bc-stock-n">0</span></button>
@@ -949,6 +950,7 @@ body.role-ops .mgmt-only{display:none!important}
     <div class="pane" id="pane-occupancy"><div id="occ-body" style="width:100%"></div></div>
     <div class="pane" id="pane-demographics"><div id="dg-body" style="width:100%"></div></div>
     <div class="pane" id="pane-council"><div id="council-body" style="width:100%"></div></div>
+    <div class="pane" id="pane-signin"><div id="sg-body" style="width:100%"></div></div>
 
     <div class="pane" id="pane-maintenance">
       <div class="pane-form">
@@ -1424,6 +1426,8 @@ async function startBoard(){
     try{ plantWatch(); }catch(e){ console.warn('plantWatch',e); }
     try{ conWatch(); conSeed(); }catch(e){ console.warn('conWatch',e); }
     try{ hsWatch(); }catch(e){ console.warn('hsWatch',e); }
+    try{ signWatch(); }catch(e){ console.warn('signWatch',e); }
+    try{ ckiWatch(); }catch(e){ console.warn('ckiWatch',e); }
   } else {
     B_ROWS=JSON.parse(localStorage.getItem('barn_requests')||'[]'); bRender();
     D_ROWS=JSON.parse(localStorage.getItem('barn_deliveries')||'[]'); renderDeliveries();
@@ -1663,12 +1667,12 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports'};
-function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors'};
+function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
@@ -1677,7 +1681,7 @@ function showSection(x){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','residents','occupancy','demographics','council','signin'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
   const dr=$('date-row'); if(dr) dr.style.display='none';
@@ -2215,7 +2219,7 @@ function bars(obj,color,order){ const keys=order||Object.keys(obj).sort((a,b)=>o
 
 /* ---- Residents ---- */
 let RES_Q='',RES_FB='',RES_FG='',RES_VIEW='households';
-function openResidents(){ renderResidents(); showSection('residents'); }
+function openResidents(){ try{ckiWatch();}catch(e){} renderResidents(); showSection('residents'); }
 function resSetView(v){ RES_VIEW=v; renderResidents(); }
 function resSearch(v){ RES_Q=(v||'').trim().toLowerCase(); renderResidents(); }
 function resSetFB(v){ RES_FB=v; renderResidents(); }
@@ -2258,7 +2262,11 @@ function renderResidents(){ const box=$('res-body'); if(!box) return;
       rows.map(r=>`<tr class="clk" onclick="resOpen('${r.id}')"><td><span class="rs-av">${esc((r.first[0]||'?')+(r.last[0]||''))}</span>${esc(r.first+' '+r.last)}${r.child?' <span class="rs-chip" style="background:#fdf0e1;color:#c47d16">Child</span>':''}</td><td>${esc(r.hh)}</td><td>${esc(r.room)}</td><td>${esc(r.building)}</td><td>${esc(r.gender)}</td><td>${r.age}</td><td>${esc(r.nationality)}</td><td>${crDec(r.checkIn)}</td><td>${losText(r.los)}</td></tr>`).join('')+`</tbody></table>`;
     table=`<div class="sec-sub" style="margin:0 0 10px">${rows.length} resident${rows.length===1?'':'s'}</div>`+table;
   }
-  box.innerHTML=`<div class="sec-sub" style="margin:-6px 0 14px">Everyone currently in residence at The Barn · sample demographic data for the demo.</div>${kpis}${tools}${table}`;
+  const arrivals=(CKI_ROWS||[]).filter(r=>r.type!=='out');
+  const arrHtml=arrivals.length?`<div class="card2" style="margin-bottom:16px;border-left:4px solid #128a8f"><div class="c2h">🆕 Recent self check-ins <span class="rs-chip" style="background:#e3f2f2;color:#128a8f">${arrivals.length}</span></div>`
+    +arrivals.slice(0,12).map(r=>`<div class="dm-row">${signAvatar(r,'rs-av')}<div style="flex:1"><div class="dm-t">${esc(r.name)}</div><div class="dm-m">${esc(r.room||'—')}${r.nat?(' · '+esc(r.nat)):''}${r.party?(' · party of '+esc(r.party)):''} · ${ckDayTime(r.at)}</div></div><span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Checked in</span></div>`).join('')
+    +`</div>`:'';
+  box.innerHTML=`<div class="sec-sub" style="margin:-6px 0 14px">Everyone currently in residence at The Barn · sample demographic data for the demo.</div>${arrHtml}${kpis}${tools}${table}`;
 }
 function resStatusChip(){ return `<span class="rs-chip" style="background:#e6f6ee;color:#1aa260">In residence</span>`; }
 function resOpen(id){ const r=crRes().find(x=>x.id===id); if(!r) return; const t=$('dm-title'),b=$('dm-body'),m=$('jobsModal'); if(!m) return;
@@ -2442,6 +2450,41 @@ function renderClock(){
     <div class="ck-chips"><span class="ck-chip"><i style="background:#1aa260"></i><b>${on.length}</b> on site now</span>${(CK_ROWS&&CK_ROWS.length)?`<button class="ck-clear" onclick="clockClear()">🗑 Clear clock-ins</button>`:''}</div></div>
     <div class="ck-sum">${sum}</div>${cardsBlock}
     <div class="ck-sec">🕑 Recent clock activity</div>${logHtml}`;
+}
+
+/* ===================== SITE SIGN-IN: Visitors & Contractors + Resident arrivals (live from QR) ===================== */
+let VIS_UNSUB=null, VIS_ROWS=[], CON2_UNSUB=null, CON2_ROWS=[], CKI_UNSUB=null, CKI_ROWS=[], SIGN_TAB='visitors', SIGN_TICK=null;
+function signWatch(){ if(!db) return;
+  if(!VIS_UNSUB) VIS_UNSUB=db.collection('cr_visitors').onSnapshot(s=>{ VIS_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted); updateSignBadge(); if(onPane('signin')) renderSignin(); }, e=>console.warn('cr_visitors',e));
+  if(!CON2_UNSUB) CON2_UNSUB=db.collection('cr_contractors').onSnapshot(s=>{ CON2_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted); updateSignBadge(); if(onPane('signin')) renderSignin(); }, e=>console.warn('cr_contractors',e));
+  if(!SIGN_TICK) SIGN_TICK=setInterval(()=>{ if(onPane('signin')) renderSignin(); }, 60000);
+}
+function ckiWatch(){ if(!db||CKI_UNSUB) return; CKI_UNSUB=db.collection('cr_residents').onSnapshot(s=>{ CKI_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||''))); if(onPane('residents')) renderResidents(); }, e=>console.warn('cr_residents',e)); }
+function openSignin(){ signWatch(); renderSignin(); showSection('signin'); }
+function signTab(t){ SIGN_TAB=t; renderSignin(); }
+function signKey(r){ return ((r.name||'')+'|'+(r.company||r.visiting||'')).toLowerCase(); }
+function onSite(rows){ const m={}; (rows||[]).forEach(r=>{ const k=signKey(r); if(!m[k]||String(r.at||'')>String(m[k].at||'')) m[k]=r; }); return Object.keys(m).map(k=>m[k]).filter(r=>r.type!=='out'); }
+function updateSignBadge(){ const n=onSite(VIS_ROWS).length+onSite(CON2_ROWS).length; const b=$('bc-sign-n'); if(b) b.textContent=n; }
+function signAvatar(r,cls){ return r.photo?`<img class="${cls}" src="${r.photo}" alt="">`:`<div class="${cls}" style="display:grid;place-items:center;font:900 ${cls==='ck-av'?'20':'14'}px Lato;color:#128a8f">${esc(((r.first||r.name||'?').charAt(0))||'?')}</div>`; }
+function signOut(kind,id){ const rows=kind==='visitors'?VIS_ROWS:CON2_ROWS; const coll=kind==='visitors'?'cr_visitors':'cr_contractors'; const r=(rows||[]).find(x=>x.id===id); if(!r) return; if(!confirm('Sign out '+r.name+'?')) return;
+  const now=new Date(); const doc=Object.assign({},r,{id:kind.slice(0,3)+'_'+now.getTime()+'_'+Math.random().toString(36).slice(2,6),type:'out',at:now.toISOString(),date:now.toLocaleDateString('en-CA'),by:'reception'});
+  if(db) db.collection(coll).doc(doc.id).set(doc).then(()=>{try{toast('✓ Signed out '+r.name);}catch(e){}}).catch(e=>console.warn(e)); }
+function renderSignin(){ const box=$('sg-body'); if(!box) return;
+  const vOn=onSite(VIS_ROWS), cOn=onSite(CON2_ROWS); const now=Date.now();
+  const tab=SIGN_TAB, rows=tab==='visitors'?VIS_ROWS:CON2_ROWS, on=tab==='visitors'?vOn:cOn;
+  const tabs=`<div class="ck-head"><div class="ck-chips">
+    <button class="mg-pc${tab==='visitors'?' on':''}" onclick="signTab('visitors')">🚪 Visitors <b>${vOn.length}</b></button>
+    <button class="mg-pc${tab==='contractors'?' on':''}" onclick="signTab('contractors')">🦺 Contractors <b>${cOn.length}</b></button></div>
+    <span class="ck-chip"><i style="background:#1aa260"></i><b>${vOn.length+cOn.length}</b> on site now</span></div>`;
+  const cards=on.sort((a,b)=>String(a.at).localeCompare(String(b.at))).map(r=>{ const dur=fmtDur(now-new Date(r.at).getTime());
+    const sub=tab==='visitors'?('Visiting '+esc(r.visiting||'—')+(r.org?(' · '+esc(r.org)):'')):(esc(r.company||'—')+(r.work?(' · '+esc(r.work)):''));
+    const tagcol=tab==='visitors'?'#2f54eb':'#c47d16';
+    return `<div class="ck-card">${signAvatar(r,'ck-av')}<div style="min-width:0"><div class="ck-nm">${esc(r.name)}</div><span class="ck-po" style="background:${tagcol}1f;color:${tagcol}">${tab==='visitors'?'Visitor':'Contractor'}</span><div class="ck-since">${sub}</div><div class="ck-since">In since ${ckHHMM(r.at)} · ${dur}</div></div><button class="ck-out" onclick="signOut('${tab}','${r.id}')">Sign out</button></div>`; }).join('');
+  const cardBlock=on.length?`<div class="ck-grid">${cards}</div>`:`<div class="ck-empty">No ${tab} on site right now. They sign in by scanning the ${tab==='visitors'?'visitor':'contractor'} QR poster.</div>`;
+  const log=(rows||[]).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,40);
+  const logHtml=log.length?`<div class="ck-log">`+log.map(r=>{ const sub=tab==='visitors'?('Visiting '+esc(r.visiting||'—')):esc(r.company||'—');
+    return `<div class="ck-lr">${signAvatar(r,'av')}<div><div class="nm">${esc(r.name)}</div><div class="mt">${sub} · ${ckDayTime(r.at)}</div></div><span class="ev ${r.type!=='out'?'ev-in':'ev-out'}">${r.type!=='out'?'Signed in':'Signed out'}</span></div>`; }).join('')+`</div>`:`<div class="ck-empty">No ${tab} activity yet.</div>`;
+  box.innerHTML=`<div class="dash-sub" style="margin:-6px 0 14px">Live from the QR sign-in posters — who is on site right now. Reception can sign anyone out.</div>${tabs}${cardBlock}<div class="ck-sec">🕑 Recent ${tab} activity</div>${logHtml}`;
 }
 
 /* ======================= RECORDS: Stock · Plant · Contractors · H&S · FAQ ======================= */
