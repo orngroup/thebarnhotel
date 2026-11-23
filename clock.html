@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Staff Clock — The Barn Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--navy:#16264c;--blue:#2f54eb;--line:#e4e9f1;--ink:#15233f;--muted:#6b7a90;--green:#1aa260;--red:#e5533d}
+html,body{font-family:'Lato',system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#16264c 0%,#0e1a35 100%);min-height:100%}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:22px 16px calc(28px + env(safe-area-inset-bottom,0px))}
+.brand{color:#fff;text-align:center;margin:6px 0 16px}
+.brand .l1{font:900 24px Lato;letter-spacing:.3px}
+.brand .l1 b{color:#6a8bff}
+.brand .l2{font:700 11px Lato;letter-spacing:2px;text-transform:uppercase;color:#8ea2c8;margin-top:3px}
+.clk{font:900 34px Lato;color:#fff;letter-spacing:1px;margin-top:4px}
+.clk small{display:block;font:700 12px Lato;color:#9fb0d0;letter-spacing:1px;margin-top:2px}
+.card{background:#fff;border-radius:22px;width:100%;max-width:440px;padding:22px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,.35);margin-top:10px}
+.role-pill{display:inline-flex;align-items:center;gap:7px;background:#eef2fe;color:var(--blue);font:800 12px Lato;padding:6px 13px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px}
+.role-pill.sec{background:#fdeeea;color:#c0392b}
+h1{font:900 21px Lato;color:var(--ink);margin:14px 0 2px}
+.sub{font:600 13px Lato;color:var(--muted);margin-bottom:16px}
+label{display:block;font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select{width:100%;padding:14px;border:1.6px solid var(--line);border-radius:13px;font:700 16px Lato;color:var(--ink);background:#fff;-webkit-appearance:none}
+input:focus,select:focus{outline:none;border-color:var(--blue)}
+.fieldgap{margin-top:14px}
+.photo{margin-top:14px}
+.photo-zone{border:2px dashed #c9d3e4;border-radius:16px;background:#f6f8fc;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-align:center;padding:16px;position:relative;overflow:hidden}
+.photo-zone .ico{font-size:40px}
+.photo-zone .t{font:800 14px Lato;color:#45526a}
+.photo-zone .s{font:600 12px Lato;color:#9aa6b8}
+.photo-zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-zone .redo{position:absolute;bottom:10px;right:10px;background:rgba(21,35,63,.82);color:#fff;font:800 12px Lato;padding:7px 12px;border-radius:999px;z-index:2}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.btn{border:none;border-radius:14px;padding:17px 10px;font:900 16px Lato;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.1}
+.btn small{font:700 11px Lato;opacity:.85}
+.btn-in{background:var(--green)}
+.btn-out{background:var(--red)}
+.btn:disabled{opacity:.55}
+.err{color:var(--red);font:700 13px Lato;margin-top:12px;min-height:18px;text-align:center}
+.foot{color:#8ea2c8;font:600 11.5px Lato;text-align:center;margin-top:16px;max-width:440px}
+/* confirmation */
+.done{text-align:center;padding:14px 4px 6px}
+.done .tick{width:88px;height:88px;border-radius:50%;margin:4px auto 10px;display:grid;place-items:center;font-size:46px}
+.done.in .tick{background:#e6f6ee}.done.out .tick{background:#fdeeea}
+.done h2{font:900 24px Lato;color:var(--ink)}
+.done .who{font:800 16px Lato;color:var(--blue);margin-top:4px}
+.done .meta{font:700 14px Lato;color:var(--muted);margin-top:8px}
+.done .time{font:900 30px Lato;color:var(--ink);margin:6px 0}
+.again{margin-top:20px;background:var(--navy);color:#fff;border:none;border-radius:13px;padding:15px;font:800 15px Lato;width:100%;cursor:pointer}
+.spin{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div class="brand"><div class="l1">The <b>Barn</b></div><div class="l2">Hotel · Ruislip</div></div>
+  <div class="clk" id="clk">--:--<small id="clk-d"></small></div>
+
+  <div class="card" id="form-card">
+    <span class="role-pill" id="role-pill">👤 Staff clock</span>
+    <h1>Clock in &amp; out</h1>
+    <div class="sub">Enter your name, take a quick photo, then tap Clock In or Clock Out.</div>
+
+    <label>Your position</label>
+    <select id="position">
+      <option value="Security">Security</option>
+      <option value="Management">Management</option>
+      <option value="Maintenance">Maintenance</option>
+      <option value="Housekeeping">Housekeeping</option>
+      <option value="Reception">Reception</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <div class="row2 fieldgap">
+      <div><label>First name</label><input id="first" type="text" autocomplete="given-name" placeholder="First"></div>
+      <div><label>Last name</label><input id="last" type="text" autocomplete="family-name" placeholder="Last"></div>
+    </div>
+
+    <div class="photo">
+      <label>Your photo</label>
+      <div class="photo-zone" id="pzone" onclick="document.getElementById('pfile').click()">
+        <div class="ico" id="pico">📷</div>
+        <div class="t" id="pt">Tap to take your photo</div>
+        <div class="s" id="ps">Uses your phone camera</div>
+      </div>
+      <input id="pfile" type="file" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this.files[0])">
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-in" id="btn-in" onclick="clockEvent('in')">🟢 Clock In<small>Starting work</small></button>
+      <button class="btn btn-out" id="btn-out" onclick="clockEvent('out')">🔴 Clock Out<small>Leaving</small></button>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card" id="done-card" style="display:none"></div>
+
+  <div class="foot">The Barn Hotel · West End Road, Ruislip HA4 6JB — time &amp; attendance</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="barn-config.js"></script>
+<script>
+var db=null;
+try{ if(typeof firebase!=='undefined' && typeof firebaseConfig!=='undefined'){ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); } }catch(e){ console.warn('fb init',e); }
+
+var $=function(id){return document.getElementById(id);};
+var PHOTO=null;
+
+/* live clock */
+function tick(){ try{ var d=new Date();
+  $('clk').firstChild.nodeValue=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+  $('clk-d').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/London'}); }catch(e){} }
+setInterval(tick,10000); tick();
+
+/* role from ?role= */
+(function(){ var q=new URLSearchParams(location.search); var r=(q.get('role')||'').toLowerCase();
+  var map={security:'Security',management:'Management',maintenance:'Maintenance',housekeeping:'Housekeeping',reception:'Reception'};
+  if(map[r]){ $('position').value=map[r];
+    if(r==='security'){ var p=$('role-pill'); p.textContent='🛡️ Security clock'; p.classList.add('sec'); } }
+})();
+
+/* photo capture → compress to a small jpeg dataURL */
+function onPhoto(file){ if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){ var img=new Image();
+    img.onload=function(){ var max=460, w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+      var c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+      PHOTO=c.toDataURL('image/jpeg',0.55);
+      var z=$('pzone'); z.innerHTML='<img src="'+PHOTO+'" alt="photo"><span class="redo">↺ Retake</span>';
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clockEvent(type){
+  var first=($('first').value||'').trim(), last=($('last').value||'').trim();
+  var pos=$('position').value, err=$('err');
+  err.textContent='';
+  if(!first||!last){ err.textContent='Please enter your first and last name.'; return; }
+  if(!PHOTO){ err.textContent='Please take your photo first.'; return; }
+  var now=new Date();
+  var doc={ id:'clk_'+now.getTime()+'_'+Math.random().toString(36).slice(2,6),
+    firstName:first, lastName:last, name:first+' '+last, position:pos,
+    type:type, at:now.toISOString(), date:now.toLocaleDateString('en-CA'),
+    photo:PHOTO, ua:(navigator.userAgent||'').slice(0,120) };
+  $('btn-in').disabled=true; $('btn-out').disabled=true;
+  var btn=$(type==='in'?'btn-in':'btn-out'); var orig=btn.innerHTML; btn.innerHTML='<span class="spin"></span>Saving…';
+  function finish(ok){ if(ok){ showDone(type,doc,now); } else { err.textContent='Could not save — check your connection and try again.'; btn.innerHTML=orig; $('btn-in').disabled=false; $('btn-out').disabled=false; } }
+  if(db){ db.collection('barn_clockins').doc(doc.id).set(doc).then(function(){ finish(true); }).catch(function(e){ console.warn(e); finish(false); }); }
+  else { try{ var a=JSON.parse(localStorage.getItem('barn_clockins')||'[]'); a.unshift(doc); localStorage.setItem('barn_clockins',JSON.stringify(a)); finish(true); }catch(e){ finish(false); } }
+}
+
+function showDone(type,doc,now){
+  var t=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+  var d=$('done-card'); $('form-card').style.display='none'; d.style.display='block';
+  d.innerHTML='<div class="done '+(type==='in'?'in':'out')+'">'
+    +'<div class="tick">'+(type==='in'?'✅':'👋')+'</div>'
+    +'<h2>'+(type==='in'?'Clocked in':'Clocked out')+'</h2>'
+    +'<div class="who">'+esc(doc.name)+'</div>'
+    +'<div class="meta">'+esc(doc.position)+'</div>'
+    +'<div class="time">'+t+'</div>'
+    +'<div class="meta">'+now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+'</div>'
+    +'<button class="again" onclick="resetClock()">Done</button></div>';
+}
+function resetClock(){ PHOTO=null; $('first').value=''; $('last').value=''; $('err').textContent='';
+  var z=$('pzone'); z.innerHTML='<div class="ico">📷</div><div class="t">Tap to take your photo</div><div class="s">Uses your phone camera</div>';
+  $('btn-in').disabled=false; $('btn-out').disabled=false;
+  $('btn-in').innerHTML='🟢 Clock In<small>Starting work</small>'; $('btn-out').innerHTML='🔴 Clock Out<small>Leaving</small>';
+  $('done-card').style.display='none'; $('form-card').style.display='block';
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+</script>
+</body>
+</html>
