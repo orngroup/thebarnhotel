@@ -521,16 +521,39 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .aria-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#2f80d8);display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:0 8px 20px rgba(124,58,237,.3);flex:0 0 48px}
 .aria-t{font:900 22px Lato;color:#15233f}.aria-t b{color:#7c3aed}
 .aria-d{font:600 13px Lato;color:#6b7a90;margin-top:2px;max-width:640px}
-.aria-srch{max-width:420px;margin-bottom:16px}
-.aria-answer{background:linear-gradient(135deg,#faf7ff,#f1f6fc);border:1px solid #e6ddfb;border-radius:16px;padding:22px;margin-bottom:22px;min-height:120px}
+.aria-srch{margin-bottom:14px}
+.aria-wrap{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+@media(max-width:940px){.aria-wrap{grid-template-columns:1fr}}
+.aria-side{max-height:72vh;overflow-y:auto;padding-right:6px}
+@media(max-width:940px){.aria-side{max-height:none}}
+.aria-main{position:sticky;top:12px}
+@media(max-width:940px){.aria-main{position:static}}
+.aria-answer{background:linear-gradient(135deg,#faf7ff,#f1f6fc);border:1px solid #e6ddfb;border-radius:18px;padding:26px;min-height:200px}
+.aria-answer.reveal{animation:ariaFade .45s ease}
+@keyframes ariaFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .aria-qlabel{font:800 14px Lato;color:#7c3aed;margin-bottom:12px}
+.aria-say{font:700 18px/1.5 Lato;color:#1f2b43;margin-bottom:18px;max-width:640px}
+.aria-say b{font-weight:900;color:#15233f}
+.aria-vis{border-top:1px solid #e6ddfb;padding-top:16px}
 .aria-big{font:900 46px Lato;color:#15233f;line-height:1}
 .aria-subn{font:700 14px Lato;color:#6b7a90;margin-top:6px}
-.aria-empty{font:700 15px Lato;color:#aab4c2;text-align:center;padding:22px}
-.aria-barsbox{max-width:580px}
-.aria-cat{font:800 11px Lato;color:#9aa6b8;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px}
-.aria-qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px}
-.aria-qbtn{text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:11px;padding:12px 14px;font:700 13.5px Lato;color:#2a3850;cursor:pointer;transition:.12s}
+.aria-empty{font:700 15px/1.5 Lato;color:#9aa6b8;text-align:center;padding:30px 20px;max-width:380px;margin:0 auto}
+.aria-empty-ic{font-size:34px;margin-bottom:12px;opacity:.6}
+.aria-barsbox{max-width:600px}
+.aria-think{padding:14px 2px}
+.aria-think-row{display:flex;align-items:center;gap:12px}
+.aria-think-t{font:800 16px Lato;color:#7c3aed}
+.aria-dots{display:flex;gap:5px}
+.aria-dots span{width:9px;height:9px;border-radius:50%;background:#7c3aed;animation:ariaBounce 1s infinite ease-in-out}
+.aria-dots span:nth-child(2){animation-delay:.16s}.aria-dots span:nth-child(3){animation-delay:.32s}
+@keyframes ariaBounce{0%,80%,100%{transform:scale(.5);opacity:.4}40%{transform:scale(1);opacity:1}}
+.aria-prog{display:flex;gap:6px;margin-top:16px}
+.aria-prog span{flex:1;height:4px;border-radius:3px;background:#e6ddfb;transition:.3s}
+.aria-prog span.on{background:linear-gradient(90deg,#7c3aed,#2f80d8)}
+.aria-cat{font:800 11px Lato;color:#9aa6b8;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 7px}
+.aria-cat:first-child{margin-top:4px}
+.aria-qlist{display:flex;flex-direction:column;gap:6px}
+.aria-qbtn{text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:11px;padding:11px 13px;font:700 13px Lato;color:#2a3850;cursor:pointer;transition:.12s;width:100%}
 .aria-qbtn:hover{border-color:#7c3aed;color:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.1)}
 .aria-qbtn.on{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .ov-group{font:900 12.5px Lato;color:#45526a;text-transform:uppercase;letter-spacing:.7px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
@@ -2653,67 +2676,85 @@ function renderSignin(){ const box=$('sg-body'); if(!box) return;
 }
 
 /* ===================== ASK ARIA — data Q&A ===================== */
-let ARIA_Q='', ARIA_SEL=-1;
-function openAria(){ renderAria(); showSection('aria'); }
+let ARIA_Q='', ARIA_SEL=-1, ARIA_THINK=false, ARIA_RUN=0;
+function openAria(){ ARIA_SEL=-1; ARIA_THINK=false; renderAria(); showSection('aria'); }
 function ariaSearch(v){ ARIA_Q=(v||'').toLowerCase().trim(); renderAria(); }
-function ariaAsk(i){ ARIA_SEL=i; renderAria(); try{ const a=$('aria-answer'); if(a) a.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){} }
+function ariaAsk(i){ const bank=ariaBank(); if(!bank[i]) return; ARIA_SEL=i; ARIA_THINK=true;
+  const run=++ARIA_RUN; renderAria();
+  try{ const m=$('aria-main'); if(m) m.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){}
+  const stages=['Thinking…','Searching the resident records…','Pulling the latest figures…','Putting your answer together…'];
+  let s=0;
+  const step=()=>{ if(run!==ARIA_RUN) return; const p=$('aria-answer');
+    if(s<stages.length){ if(p) p.innerHTML=ariaThinkHTML(stages[s], s, stages.length); s++; setTimeout(step, 700+Math.random()*450); }
+    else { ARIA_THINK=false; if(p){ p.className='aria-answer reveal'; p.innerHTML=ariaAnswerHTML(bank[i]); } }
+  };
+  setTimeout(step, 180);
+}
+function ariaThinkHTML(label, i, n){ let dots=''; for(let k=0;k<n;k++) dots+=`<span class="${k<=i?'on':''}"></span>`;
+  return `<div class="aria-think"><div class="aria-think-row"><div class="aria-dots"><span></span><span></span><span></span></div><div class="aria-think-t">${esc(label)}</div></div><div class="aria-prog">${dots}</div></div>`; }
+function ariaAnswerHTML(x){ return `<div class="aria-qlabel">✨ ${esc(x.q)}</div><div class="aria-say">${x.say}</div><div class="aria-vis">${x.a()}</div>`; }
 function ariaNum(big,sub){ return `<div class="aria-big">${big}</div>${sub?`<div class="aria-subn">${sub}</div>`:''}`; }
 function ariaBarsA(obj,color){ return `<div class="aria-barsbox">${bars(obj,color)}</div>`; }
 function ariaTableA(head,rows){ return `<table class="rs-table" style="margin-top:2px"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`; }
 function ariaBank(){ const all=crRes(),hh=crHH(),last=crLatestOcc()||{};
   const kids=all.filter(r=>r.child).length, adults=all.length-kids, withKids=hh.filter(h=>h.children>0).length;
-  const avgDays=Math.round(all.reduce((s,r)=>s+(r.los||0),0)/(all.length||1));
+  const avgDays=Math.round(all.reduce((s,r)=>s+(r.los||0),0)/(all.length||1)), avgMo=(avgDays/30.44).toFixed(1);
   const over6=hh.filter(h=>h.los>42).length, over1y=hh.filter(h=>h.los>365).length;
-  const nat=grp(all,r=>r.nationality); const topNat={}; Object.keys(nat).sort((a,b)=>nat[b]-nat[a]).slice(0,8).forEach(k=>topNat[k]=nat[k]);
+  const nat=grp(all,r=>r.nationality); const topNat={}; const natSorted=Object.keys(nat).sort((a,b)=>nat[b]-nat[a]); natSorted.slice(0,8).forEach(k=>topNat[k]=nat[k]);
+  const eth=grp(all,r=>r.ethnicity); const ethTop=Object.keys(eth).sort((a,b)=>eth[b]-eth[a])[0]||'—';
+  const gen=grp(all,r=>r.gender); const genL=Object.keys(gen).sort((a,b)=>gen[b]-gen[a]).map(k=>gen[k]+' '+k.toLowerCase()).join(', ');
   const ageA={},ageC={}; ['18-24','25-34','35-44','45-54','55-64','65-74'].forEach(k=>{const n=all.filter(r=>!r.child&&r.ageBand===k).length; if(n)ageA[k]=n;});
   ['0-2','3-5','6-8','9-11','12-14','15-17'].forEach(k=>{const n=all.filter(r=>r.child&&r.ageBand===k).length; if(n)ageC[k]=n;});
   const losB={'Under 6 months':0,'6–12 months':0,'1–2 years':0,'2–5 years':0,'5+ years':0}; hh.forEach(h=>{const y=h.los/365; losB[y<0.5?'Under 6 months':y<1?'6–12 months':y<2?'1–2 years':y<5?'2–5 years':'5+ years']++;});
   const occByB={}; crBuildings().forEach(bn=>{occByB[bn]=grp(hh,h=>h.building)[bn]||0;});
   const ck=(CKI_ROWS||[]).filter(r=>r.type!=='out'); const t=new Date().toLocaleDateString('en-CA');
   const ckToday=ck.filter(r=>String(r.at||'').slice(0,10)===t).length;
-  const comp=CR_COMPLIANCE, cv=comp.filter(c=>c.status==='valid').length;
+  const comp=CR_COMPLIANCE, cv=comp.filter(c=>c.status==='valid').length, needs=comp.filter(c=>c.status!=='valid').map(c=>c.item.replace(/\s*\(.*\)/,''));
+  const voids=(last.av||0)-(last.oc||0), occP=(last.p!=null?last.p.toFixed(0):'—');
   const segs=[['Single adult, no children','4.2 months'],['Couple, no children','8.9 months'],['Family, pre-school children','11.6 months'],['Family, school-age children','14.2 months'],['Larger family (5+)','16.8 months']];
+  const B=s=>'<b>'+s+'</b>';
   return [
-   {c:'People', q:'How many residents are in house?', a:()=>ariaNum(all.length, adults+' adults · '+kids+' children, across '+hh.length+' households')},
-   {c:'People', q:'How many families (households) do we have?', a:()=>ariaNum(hh.length, withKids+' with children · '+(hh.length-withKids)+' single / no children')},
-   {c:'People', q:'How many children are there (under 18)?', a:()=>ariaNum(kids, Math.round(kids/all.length*100)+'% of all residents')},
-   {c:'People', q:'How many adults?', a:()=>ariaNum(adults,'aged 18 and over')},
-   {c:'People', q:'What is the average household size?', a:()=>ariaNum((all.length/hh.length).toFixed(1),'people per household')},
-   {c:'Demographics', q:'Breakdown of residents by ethnicity', a:()=>ariaBarsA(grp(all,r=>r.ethnicity),'#128a8f')},
-   {c:'Demographics', q:'What are the top nationalities?', a:()=>ariaBarsA(topNat,'#2f80d8')},
-   {c:'Demographics', q:'What is the gender split?', a:()=>ariaBarsA(grp(all,r=>r.gender),'#9b59b6')},
-   {c:'Demographics', q:'Age breakdown of adults', a:()=>ariaBarsA(ageA,'#1aa260')},
-   {c:'Demographics', q:'Age breakdown of children', a:()=>ariaBarsA(ageC,'#e8912a')},
-   {c:'Demographics', q:'How many nationalities are represented?', a:()=>ariaNum(Object.keys(nat).length,'different nationalities')},
-   {c:'Occupancy', q:'What is the current occupancy?', a:()=>ariaNum((last.p!=null?last.p.toFixed(0)+'%':'—'), (last.oc||'—')+' of '+(last.av||'—')+' rooms occupied')},
-   {c:'Occupancy', q:'How many rooms are void (empty)?', a:()=>ariaNum((last.av||0)-(last.oc||0),'of '+(last.av||'—')+' rooms available')},
-   {c:'Occupancy', q:'What is the occupancy by building?', a:()=>ariaBarsA(occByB,'#1fa3a8')},
-   {c:'Length of stay', q:'What is the average length of stay?', a:()=>ariaNum((avgDays/30.44).toFixed(1)+' months', avgDays+' days on average')},
-   {c:'Length of stay', q:'How many households have stayed over 6 weeks?', a:()=>ariaNum(over6,'of '+hh.length+' households — statutory watch')},
-   {c:'Length of stay', q:'How many have stayed over 1 year?', a:()=>ariaNum(over1y,'households')},
-   {c:'Length of stay', q:'Show the length-of-stay distribution', a:()=>ariaBarsA(losB,'#c47d16')},
-   {c:'Length of stay', q:'Average stay by household type (move-on)', a:()=>ariaTableA(['Household type','Average stay'],segs)},
-   {c:'Move-on & departures', q:'How many families moved on in the last 12 months?', a:()=>ariaNum(38,'43% of placements · target 40')},
-   {c:'Move-on & departures', q:'Which household types move on fastest?', a:()=>ariaNum('Single adults','~4.2 months average — vs ~14 months for families with school-age children')},
-   {c:'Check-ins', q:'How many self check-ins today?', a:()=>ariaNum(ckToday, ck.length+' active self check-ins in total')},
-   {c:'Check-ins', q:'Show recent arrivals', a:()=>{ const rows=ck.slice(0,8).map(r=>[esc(r.name||''),esc(r.room||'—'),ckDayTime(r.at)]); return rows.length?ariaTableA(['Name','Room','When'],rows):'<div class="aria-subn">No self check-ins yet — residents check in by scanning the QR code.</div>'; }},
-   {c:'Compliance', q:'How many compliance certificates are current?', a:()=>ariaNum(cv+' / '+comp.length,(comp.length-cv)+' need action (gas safety, fire alarm)')},
-   {c:'Compliance', q:'Which certificates need action?', a:()=>ariaTableA(['Certificate','Status'],comp.filter(c=>c.status!=='valid').map(c=>[esc(c.item),'<span class="rs-chip" style="background:#fdf0e1;color:#c47d16">Action</span>']))}
+   {c:'People', q:'How many residents are in house?', say:`There are currently ${B(all.length+' residents')} living at The Barn — ${adults} adults and ${kids} children, making up ${hh.length} households.`, a:()=>ariaNum(all.length, adults+' adults · '+kids+' children · '+hh.length+' households')},
+   {c:'People', q:'How many families (households) do we have?', say:`The Barn is home to ${B(hh.length+' households')} right now. Of these, ${withKids} include children and ${hh.length-withKids} are single adults or couples with no children.`, a:()=>ariaNum(hh.length, withKids+' with children · '+(hh.length-withKids)+' single / no children')},
+   {c:'People', q:'How many children are there (under 18)?', say:`There are ${B(kids+' children')} under 18 living at The Barn — around ${Math.round(kids/all.length*100)}% of all residents on site.`, a:()=>ariaNum(kids, Math.round(kids/all.length*100)+'% of all residents')},
+   {c:'People', q:'How many adults?', say:`There are ${B(adults+' adults')} aged 18 and over currently in residence.`, a:()=>ariaNum(adults,'aged 18 and over')},
+   {c:'People', q:'What is the average household size?', say:`The average household size is ${B((all.length/hh.length).toFixed(1)+' people')} — that's ${all.length} residents across ${hh.length} households.`, a:()=>ariaNum((all.length/hh.length).toFixed(1),'people per household')},
+   {c:'Demographics', q:'Breakdown of residents by ethnicity', say:`Here's the ethnicity breakdown across all ${all.length} residents. The largest single group is ${B(ethTop)}.`, a:()=>ariaBarsA(eth,'#128a8f')},
+   {c:'Demographics', q:'What are the top nationalities?', say:`Residents come from a wide mix of backgrounds. The most common nationalities on site are ${B(natSorted.slice(0,3).join(', '))}.`, a:()=>ariaBarsA(topNat,'#2f80d8')},
+   {c:'Demographics', q:'What is the gender split?', say:`Across all ${all.length} residents, the gender split is ${B(genL)}.`, a:()=>ariaBarsA(gen,'#9b59b6')},
+   {c:'Demographics', q:'Age breakdown of adults', say:`Here's how the ${B(adults+' adults')} break down by age band.`, a:()=>ariaBarsA(ageA,'#1aa260')},
+   {c:'Demographics', q:'Age breakdown of children', say:`Here's how the ${B(kids+' children')} break down by age band — useful for school and nursery planning.`, a:()=>ariaBarsA(ageC,'#e8912a')},
+   {c:'Demographics', q:'How many nationalities are represented?', say:`Residents at The Barn represent ${B(Object.keys(nat).length+' different nationalities')}.`, a:()=>ariaNum(Object.keys(nat).length,'different nationalities')},
+   {c:'Occupancy', q:'What is the current occupancy?', say:`The Barn is currently running at ${B(occP+'%')} occupancy — ${last.oc||'—'} of ${last.av||'—'} rooms occupied.`, a:()=>ariaNum(occP+'%', (last.oc||'—')+' of '+(last.av||'—')+' rooms occupied')},
+   {c:'Occupancy', q:'How many rooms are void (empty)?', say:`There ${voids===1?'is':'are'} ${B(voids+(voids===1?' void room':' void rooms'))} available right now, out of ${last.av||'—'} rooms in total.`, a:()=>ariaNum(voids,'of '+(last.av||'—')+' rooms available')},
+   {c:'Occupancy', q:'What is the occupancy by building?', say:`Here's how households are spread across the buildings on site.`, a:()=>ariaBarsA(occByB,'#1fa3a8')},
+   {c:'Length of stay', q:'What is the average length of stay?', say:`The average length of stay is ${B(avgMo+' months')} — roughly ${avgDays} days per household.`, a:()=>ariaNum(avgMo+' months', avgDays+' days on average')},
+   {c:'Length of stay', q:'How many households have stayed over 6 weeks?', say:`${B(over6+(over6===1?' household has':' households have'))} been resident for more than 6 weeks — the threshold to watch for statutory duties.`, a:()=>ariaNum(over6,'of '+hh.length+' households — statutory watch')},
+   {c:'Length of stay', q:'How many have stayed over 1 year?', say:`${B(over1y+(over1y===1?' household has':' households have'))} been at The Barn for over a year.`, a:()=>ariaNum(over1y,'households over 12 months')},
+   {c:'Length of stay', q:'Show the length-of-stay distribution', say:`Here's the full length-of-stay distribution across all ${hh.length} households.`, a:()=>ariaBarsA(losB,'#c47d16')},
+   {c:'Length of stay', q:'Average stay by household type (move-on)', say:`On average, smaller households move on fastest. Here's the typical stay by household type.`, a:()=>ariaTableA(['Household type','Average stay'],segs)},
+   {c:'Move-on & departures', q:'How many families moved on in the last 12 months?', say:`${B('38 families')} have moved on in the last 12 months — about 43% of placements, against a target of 40.`, a:()=>ariaNum(38,'43% of placements · target 40')},
+   {c:'Move-on & departures', q:'Which household types move on fastest?', say:`${B('Single adults')} move on fastest, averaging around 4.2 months, compared with roughly 14 months for families with school-age children.`, a:()=>ariaNum('Single adults','~4.2 months avg — vs ~14 months for families with school-age children')},
+   {c:'Check-ins', q:'How many self check-ins today?', say:`There ${ckToday===1?'has':'have'} been ${B(ckToday+(ckToday===1?' self check-in':' self check-ins'))} today, with ${ck.length} active self check-ins recorded in total.`, a:()=>ariaNum(ckToday, ck.length+' active self check-ins in total')},
+   {c:'Check-ins', q:'Show recent arrivals', say:`Here are the most recent residents to check in via the QR code.`, a:()=>{ const rows=ck.slice(0,8).map(r=>[esc(r.name||''),esc(r.room||'—'),ckDayTime(r.at)]); return rows.length?ariaTableA(['Name','Room','When'],rows):'<div class="aria-subn">No self check-ins yet — residents check in by scanning the QR code.</div>'; }},
+   {c:'Compliance', q:'How many compliance certificates are current?', say:`${B(cv+' of '+comp.length)} compliance certificates are current. ${comp.length-cv} need action — ${needs.join(' and ')}.`, a:()=>ariaNum(cv+' / '+comp.length,(comp.length-cv)+' need action (gas safety, fire alarm)')},
+   {c:'Compliance', q:'Which certificates need action?', say:`${B(needs.length+(needs.length===1?' certificate':' certificates'))} currently need action: ${needs.join(' and ')}.`, a:()=>ariaTableA(['Certificate','Status'],comp.filter(c=>c.status!=='valid').map(c=>[esc(c.item),'<span class="rs-chip" style="background:#fdf0e1;color:#c47d16">Action</span>']))}
   ];
 }
 function renderAria(){ const box=$('aria-body'); if(!box) return; const bank=ariaBank();
   const cats=[]; bank.forEach(x=>{ if(cats.indexOf(x.c)<0) cats.push(x.c); });
   let filtered=bank.map((x,i)=>({x:x,i:i})); if(ARIA_Q) filtered=filtered.filter(o=>o.x.q.toLowerCase().indexOf(ARIA_Q)>=0||o.x.c.toLowerCase().indexOf(ARIA_Q)>=0);
-  const header=`<div class="aria-head"><div class="aria-mark">✨</div><div><div class="aria-t">Ask <b>ARIA</b></div><div class="aria-d">Your data assistant for The Barn — pick a question and ARIA answers instantly from the live resident, occupancy and compliance data.</div></div></div>`;
+  const header=`<div class="aria-head"><div class="aria-mark">✨</div><div><div class="aria-t">Ask <b>ARIA</b></div><div class="aria-d">Your data assistant for The Barn — pick a question on the left and ARIA answers from the live resident, occupancy and compliance data.</div></div></div>`;
   const search=`<div class="rs-search aria-srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search questions…" value="${esc(ARIA_Q)}" oninput="ariaSearch(this.value)"></div>`;
-  let answer;
-  if(ARIA_SEL>=0 && bank[ARIA_SEL]){ answer=`<div class="aria-answer" id="aria-answer"><div class="aria-qlabel">✨ ${esc(bank[ARIA_SEL].q)}</div>${bank[ARIA_SEL].a()}</div>`; }
-  else { answer=`<div class="aria-answer" id="aria-answer"><div class="aria-empty">👇 Pick a question below and ARIA will answer it here.</div></div>`; }
-  let groups='';
+  let sideQs='';
   cats.forEach(c=>{ const items=filtered.filter(o=>o.x.c===c); if(!items.length) return;
-    groups+=`<div class="aria-cat">${esc(c)}</div><div class="aria-qgrid">`+items.map(o=>`<button class="aria-qbtn${o.i===ARIA_SEL?' on':''}" onclick="ariaAsk(${o.i})">${esc(o.x.q)}</button>`).join('')+'</div>'; });
-  if(!groups) groups=`<div class="aria-subn" style="padding:14px">No questions match "${esc(ARIA_Q)}".</div>`;
-  box.innerHTML=header+search+answer+groups;
+    sideQs+=`<div class="aria-cat">${esc(c)}</div><div class="aria-qlist">`+items.map(o=>`<button class="aria-qbtn${o.i===ARIA_SEL?' on':''}" onclick="ariaAsk(${o.i})">${esc(o.x.q)}</button>`).join('')+'</div>'; });
+  if(!sideQs) sideQs=`<div class="aria-subn" style="padding:10px 2px">No questions match "${esc(ARIA_Q)}".</div>`;
+  let answer;
+  if(ARIA_THINK){ answer=`<div class="aria-answer" id="aria-answer">${ariaThinkHTML('Thinking…',0,4)}</div>`; }
+  else if(ARIA_SEL>=0 && bank[ARIA_SEL]){ answer=`<div class="aria-answer reveal" id="aria-answer">${ariaAnswerHTML(bank[ARIA_SEL])}</div>`; }
+  else { answer=`<div class="aria-answer" id="aria-answer"><div class="aria-empty"><div class="aria-empty-ic">✨</div>Pick a question on the left and ARIA will answer it here — pulling live from The Barn's data.</div></div>`; }
+  box.innerHTML=header+`<div class="aria-wrap"><div class="aria-side">${search}${sideQs}</div><div class="aria-main" id="aria-main">${answer}</div></div>`;
 }
 
 /* ======================= RECORDS: Stock · Plant · Contractors · H&S · FAQ ======================= */
