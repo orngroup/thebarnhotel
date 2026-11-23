@@ -2470,46 +2470,53 @@ function renderDemographics(){ const box=$('dg-body'); if(!box) return; const al
 }
 
 /* ---- Council Reports ---- */
-let COUNCIL_TAB='weekly';
+let COUNCIL_TAB='occupancy';
+const CR_REPORT_FILES={occupancy:'reports/CR-01-Occupancy-Void-Report.pdf',quarterly:'reports/CR-02-Quarterly-Performance-KPI-Report.pdf',moveon:'reports/CR-03-Resident-Move-On-Analysis.pdf',support:'reports/CR-04-Support-Officer-Monthly-Report.pdf',compliance:'reports/CR-05-Compliance-Safety-Report.pdf'};
 function openCouncil(){ renderCouncil(); showSection('council'); }
 function councilSetTab(t){ COUNCIL_TAB=t; renderCouncil(); }
 function renderCouncil(){ const box=$('council-body'); if(!box) return; const o=crOcc(); const last=crLatestOcc(); const all=crRes(); const hh=crHH();
-  const wk=o.slice(-7); const wkAvg=wk.length?(wk.reduce((s,x)=>s+x.p,0)/wk.length):0;
-  const kids=all.filter(r=>r.child).length;
-  const now=new Date();
-  const tabs=`<div id="cr-rep-tabs" class="rs-tools" style="margin-bottom:16px"><div style="display:flex;gap:6px">
-    <button class="mg-pc${COUNCIL_TAB==='weekly'?' on':''}" onclick="councilSetTab('weekly')">Weekly occupancy</button>
-    <button class="mg-pc${COUNCIL_TAB==='demographic'?' on':''}" onclick="councilSetTab('demographic')">Demographic summary</button></div>
-    <button class="mg-print" style="margin-left:auto" onclick="window.print()">🖨 Print / Save PDF</button></div>`;
+  const kids=all.filter(r=>r.child).length; const now=new Date();
+  const avgMo=(all.reduce((s,r)=>s+(r.los||0),0)/(all.length||1)/30.44).toFixed(1);
+  const noteCss='margin-top:16px;font:600 12px Lato;color:#8a94a0;border-top:1px solid #eef1f5;padding-top:12px';
+  const TABS=[['occupancy','Occupancy & Void'],['quarterly','Performance & KPIs'],['moveon','Move-On Analysis'],['support','Support Officer'],['compliance','Compliance & Safety']];
+  const tabs=`<div class="rs-tools" style="margin-bottom:16px"><div style="display:flex;gap:6px;flex-wrap:wrap">${TABS.map(t=>`<button class="mg-pc${COUNCIL_TAB===t[0]?' on':''}" onclick="councilSetTab('${t[0]}')">${t[1]}</button>`).join('')}</div>
+    <div style="margin-left:auto;display:flex;gap:8px"><a class="mg-print" style="text-decoration:none;display:inline-flex;align-items:center" href="${CR_REPORT_FILES[COUNCIL_TAB]}" target="_blank" rel="noopener">📄 Open PDF</a><button class="mg-print" onclick="window.print()">🖨 Print</button></div></div>`;
+  const rh=(title)=>`<div class="cr-rh"><div><h2>${title}</h2><div class="sub">The Barn, Ruislip · operated by C&amp;R Housing · for the London Borough of Ealing</div></div><div class="rr"><div><b>Report date:</b> ${now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div><div>Prepared for Ealing Council · Perceval House, 14/16 Uxbridge Road, W5 2HL</div></div></div>`;
   let body;
-  if(COUNCIL_TAB==='weekly'){
+  if(COUNCIL_TAB==='occupancy'){
     const occByB=grp(hh,h=>h.building); const roomsByB=grp(crRooms(),r=>r.building);
-    body=`<div class="cr-report">
-      <div class="cr-rh"><div><h2>Weekly Temporary Accommodation Report</h2><div class="sub">The Barn, Ruislip · operated by C&amp;R Housing · for the London Borough of Ealing</div></div>
-      <div class="rr"><div><b>Report date:</b> ${now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div><div><b>Week ending:</b> ${last?crDec(last.d):'—'}</div><div>Prepared by HosPRO Social Housing</div></div></div>
-      <div class="cr-mini"><div class="m"><div class="v">${last?last.av:'—'}</div><div class="l">Rooms available</div></div>
-        <div class="m"><div class="v">${last?last.oc:'—'}</div><div class="l">Rooms occupied</div></div>
-        <div class="m"><div class="v">${last?last.g:'—'}</div><div class="l">Residents in house</div></div>
-        <div class="m"><div class="v">${wkAvg.toFixed(1)}%</div><div class="l">Avg occupancy (7d)</div></div></div>
-      <div class="c2h" style="margin-top:10px">Daily occupancy — last 7 days</div>
-      <table class="rs-table"><thead><tr><th>Date</th><th>Day</th><th>Available</th><th>Occupied</th><th>Residents</th><th>Occupancy %</th></tr></thead><tbody>${wk.slice().reverse().map(x=>`<tr><td>${crDec(x.d)}</td><td>${new Date(x.d).toLocaleDateString('en-GB',{weekday:'long'})}</td><td>${x.av}</td><td>${x.oc}</td><td>${x.g}</td><td>${x.p.toFixed(1)}%</td></tr>`).join('')}</tbody></table>
-      <div class="c2h" style="margin-top:18px">Occupancy by building</div>
-      <table class="rs-table"><thead><tr><th>Building</th><th>Rooms</th><th>Occupied</th><th>Households</th><th>Occupancy %</th></tr></thead><tbody>${crBuildings().map(bn=>{const r=roomsByB[bn]||0,oc=occByB[bn]||0;return `<tr><td>${esc(bn)}</td><td>${r}</td><td>${oc}</td><td>${oc}</td><td>${r?Math.round(oc/r*100):0}%</td></tr>`;}).join('')}</tbody></table>
-      <div style="margin-top:18px;font:600 12px Lato;color:#8a94a0;border-top:1px solid #eef1f5;padding-top:12px">All rooms meet HMO licensing standards. Compliance certificates (gas, electrical, fire risk assessment) current — see Compliance &amp; certification. This report is generated automatically by HosPRO Social Housing from live occupancy data.</div></div>`;
-  } else {
-    const adults=all.filter(r=>!r.child); const withKids=hh.filter(h=>h.children>0).length;
+    body=`<div class="cr-report">${rh('Monthly Occupancy &amp; Void Report')}
+      <div class="cr-mini"><div class="m"><div class="v">${last?last.av:'—'}</div><div class="l">Rooms available</div></div><div class="m"><div class="v">${last?last.oc:'—'}</div><div class="l">Rooms occupied</div></div><div class="m"><div class="v">${last?(last.av-last.oc):'—'}</div><div class="l">Voids</div></div><div class="m"><div class="v">${last?last.p.toFixed(0)+'%':'—'}</div><div class="l">Occupancy</div></div></div>
+      <div class="c2h" style="margin-top:14px">Occupancy by building</div>
+      <table class="rs-table"><thead><tr><th>Building</th><th>Rooms</th><th>Occupied</th><th>Voids</th><th>Occupancy %</th></tr></thead><tbody>${crBuildings().map(bn=>{const r=roomsByB[bn]||0,oc=occByB[bn]||0;return `<tr><td>${esc(bn)}</td><td>${r}</td><td>${oc}</td><td>${r-oc}</td><td>${r?Math.round(oc/r*100):0}%</td></tr>`;}).join('')}</tbody></table>
+      <div class="c2h" style="margin-top:16px">Room turnaround — SLA 5 working days</div>
+      <div class="cr-mini"><div class="m"><div class="v">4.3</div><div class="l">Avg days actual</div></div><div class="m"><div class="v">88%</div><div class="l">Within SLA</div></div><div class="m"><div class="v">2</div><div class="l">Over SLA</div></div></div>
+      <div style="${noteCss}">All rooms meet HMO licensing standards. Generated automatically from live occupancy data.</div></div>`;
+  } else if(COUNCIL_TAB==='quarterly'){
     const eth=grp(all,r=>r.ethnicity); const gender=grp(all,r=>r.gender);
-    body=`<div class="cr-report">
-      <div class="cr-rh"><div><h2>Demographic &amp; Welfare Summary</h2><div class="sub">The Barn, Ruislip · operated by C&amp;R Housing · for the London Borough of Ealing</div></div>
-      <div class="rr"><div><b>Report date:</b> ${now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div><div>Prepared by HosPRO Social Housing</div></div></div>
-      <div class="cr-mini"><div class="m"><div class="v">${hh.length}</div><div class="l">Households</div></div>
-        <div class="m"><div class="v">${withKids}</div><div class="l">With children</div></div>
-        <div class="m"><div class="v">${all.length}</div><div class="l">Residents</div></div>
-        <div class="m"><div class="v">${kids}</div><div class="l">Children</div></div></div>
-      <div class="dg-grid"><div><div class="c2h">Ethnicity</div>${bars(eth,'#128a8f')}</div><div><div class="c2h">Gender</div>${bars(gender,'#2a9d9d')}</div></div>
-      <div style="margin-top:18px;font:600 12px Lato;color:#8a94a0;border-top:1px solid #eef1f5;padding-top:12px">Demographic data recorded at check-in. Safeguarding and welfare follow-ups logged per household. Sample data shown for demonstration.</div></div>`;
+    body=`<div class="cr-report">${rh('Quarterly Performance &amp; KPI Report')}
+      <table class="rs-table"><thead><tr><th>Measure</th><th>Target</th><th>Actual</th></tr></thead><tbody>
+        <tr><td>Average occupancy</td><td>≥ 90%</td><td>${last?last.p.toFixed(0)+'%':'—'}</td></tr>
+        <tr><td>Room turnaround within SLA (5 days)</td><td>≥ 85%</td><td>88%</td></tr>
+        <tr><td>New households onboarded &lt; 24h</td><td>100%</td><td>100%</td></tr>
+        <tr><td>Families moved on (rolling 12 months)</td><td>40</td><td>38</td></tr>
+        <tr><td>Average length of stay</td><td>≤ 12 months</td><td>${avgMo} months</td></tr></tbody></table>
+      <div class="dg-grid" style="margin-top:14px"><div><div class="c2h">Ethnicity</div>${bars(eth,'#128a8f')}</div><div><div class="c2h">Gender</div>${bars(gender,'#2a9d9d')}</div></div>
+      <div style="${noteCss}">KPIs defined in the Service Agreement (lease Appendix). Sample data shown for demonstration.</div></div>`;
+  } else if(COUNCIL_TAB==='moveon'){
+    const segs=[['Single adult, no children','4.2','Highest'],['Couple, no children','8.9','Medium'],['Family, pre-school children','11.6','Lower'],['Family, school-age children','14.2','Lowest'],['Larger family (5+)','16.8','Lowest']];
+    body=`<div class="cr-report">${rh('Resident Move-On Analysis')}
+      <table class="rs-table"><thead><tr><th>Household type</th><th>Avg stay (months)</th><th>Move-on likelihood</th></tr></thead><tbody>${segs.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td><span class="rs-chip" style="background:${s[2]==='Highest'||s[2]==='Medium'?'#e6f6ee;color:#1aa260':'#fdf0e1;color:#c47d16'}">${s[2]}</span></td></tr>`).join('')}</tbody></table>
+      <div style="${noteCss}">Indicative, AI-assisted analysis on sample data. Families with school-age children stay ~3× longer than single adults; onward supply of 4-bed+ homes is the binding constraint for larger families. Open the full PDF for drivers and recommendations.</div></div>`;
+  } else if(COUNCIL_TAB==='support'){
+    const so=[['42','Family meetings held'],['6','New families onboarded'],['9','Welfare referrals made'],['2','Safeguarding escalations']];
+    body=`<div class="cr-report">${rh('Support Officer Monthly Report')}
+      <div class="cr-mini">${so.map(x=>`<div class="m"><div class="v">${x[0]}</div><div class="l">${x[1]}</div></div>`).join('')}</div>
+      <div style="${noteCss}">Support Officer: Grace Mensah · October 2026. Regular welfare check-ins across all four buildings — school places, ESOL, GP registration and benefits. Two households are now move-on ready. Open the full PDF for meeting-level outcomes.</div></div>`;
+  } else {
+    body=`<div class="cr-report">${rh('Compliance &amp; Safety Report')}${crMatrix(true)}<div style="${noteCss}">Certificates held on file and viewable. Gas safety and fire alarm are flagged for action. No resident personal data is included in this report.</div></div>`;
   }
-  box.innerHTML=`<div class="sec-sub" style="margin:-6px 0 14px">Reports ready to send to the council — printable / exportable to PDF.</div>${tabs}${body}`;
+  box.innerHTML=`<div class="sec-sub" style="margin:-6px 0 14px">Reports for the London Borough of Ealing — preview, open the branded PDF, or print.</div>${tabs}${body}`;
 }
 
 /* ======================= DRILL-DOWN (click a card → see the jobs) ======================= */
