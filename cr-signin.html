@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Sign in — C&amp;R Housing · The Barn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--navy:#16264c;--teal:#128a8f;--teal2:#0f797e;--line:#e4e9f1;--ink:#15233f;--muted:#6b7a90;--green:#1aa260;--red:#e5533d;--amber:#c47d16}
+html,body{font-family:'Lato',system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#16264c 0%,#0e1a35 100%);min-height:100%}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:22px 16px calc(28px + env(safe-area-inset-bottom,0px))}
+.brand{color:#fff;text-align:center;margin:6px 0 14px}
+.brand .l1{font:900 25px Lato;letter-spacing:.3px}
+.brand .l1 b{color:#4fc3c8}
+.brand .l2{font:700 11px Lato;letter-spacing:2px;text-transform:uppercase;color:#8ea2c8;margin-top:3px}
+.clk{font:900 32px Lato;color:#fff;letter-spacing:1px;margin-top:4px;text-align:center}
+.clk small{display:block;font:700 12px Lato;color:#9fb0d0;letter-spacing:1px;margin-top:2px}
+.card{background:#fff;border-radius:22px;width:100%;max-width:450px;padding:22px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,.35);margin-top:10px}
+.role-pill{display:inline-flex;align-items:center;gap:7px;font:800 12px Lato;padding:6px 13px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px;background:#e3f2f2;color:var(--teal)}
+.role-pill.vis{background:#eef2fe;color:#2f54eb}
+.role-pill.con{background:#fdf4e7;color:var(--amber)}
+h1{font:900 21px Lato;color:var(--ink);margin:14px 0 2px}
+.sub{font:600 13px Lato;color:var(--muted);margin-bottom:16px}
+label{display:block;font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select{width:100%;padding:14px;border:1.6px solid var(--line);border-radius:13px;font:700 16px Lato;color:var(--ink);background:#fff;-webkit-appearance:none}
+input:focus,select:focus{outline:none;border-color:var(--teal)}
+.fieldgap{margin-top:14px}
+.photo{margin-top:14px}
+.photo-zone{border:2px dashed #c9d3e4;border-radius:16px;background:#f6f8fc;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-align:center;padding:16px;position:relative;overflow:hidden}
+.photo-zone .ico{font-size:38px}
+.photo-zone .t{font:800 14px Lato;color:#45526a}
+.photo-zone .s{font:600 12px Lato;color:#9aa6b8}
+.photo-zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-zone .redo{position:absolute;bottom:10px;right:10px;background:rgba(21,35,63,.82);color:#fff;font:800 12px Lato;padding:7px 12px;border-radius:999px;z-index:2}
+.consent{display:flex;gap:10px;align-items:flex-start;margin-top:16px;background:#f6f8fc;border:1.4px solid var(--line);border-radius:13px;padding:13px}
+.consent input{width:22px;height:22px;flex:0 0 22px;margin-top:1px;accent-color:var(--teal)}
+.consent .ct{font:600 12.5px Lato;color:#45526a;line-height:1.45;text-transform:none;letter-spacing:0}
+.btns{display:grid;gap:12px;margin-top:18px}
+.btns.two{grid-template-columns:1fr 1fr}
+.btn{border:none;border-radius:14px;padding:17px 10px;font:900 16px Lato;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.1}
+.btn small{font:700 11px Lato;opacity:.85}
+.btn-in{background:var(--teal)}
+.btn-out{background:var(--navy)}
+.btn-go{background:var(--teal)}
+.btn:disabled{opacity:.55}
+.err{color:var(--red);font:700 13px Lato;margin-top:12px;min-height:18px;text-align:center}
+.foot{color:#8ea2c8;font:600 11.5px Lato;text-align:center;margin-top:16px;max-width:450px}
+.done{text-align:center;padding:14px 4px 6px}
+.done .tick{width:88px;height:88px;border-radius:50%;margin:4px auto 10px;display:grid;place-items:center;font-size:46px;background:#e6f6ee}
+.done.out .tick{background:#eef2fe}
+.done h2{font:900 24px Lato;color:var(--ink)}
+.done .who{font:800 17px Lato;color:var(--teal);margin-top:4px}
+.done .meta{font:700 14px Lato;color:var(--muted);margin-top:8px}
+.done .time{font:900 30px Lato;color:var(--ink);margin:6px 0}
+.again{margin-top:20px;background:var(--navy);color:#fff;border:none;border-radius:13px;padding:15px;font:800 15px Lato;width:100%;cursor:pointer}
+.spin{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+  <div class="brand"><div class="l1">C&amp;R <b>Housing</b></div><div class="l2">The Barn · Ruislip</div></div>
+  <div class="clk" id="clk">--:--<small id="clk-d"></small></div>
+
+  <div class="card" id="form-card">
+    <span class="role-pill" id="role-pill">👤 Resident check-in</span>
+    <h1 id="f-title">Resident check-in</h1>
+    <div class="sub" id="f-sub">Welcome. Please register your arrival.</div>
+
+    <div id="f-fields"></div>
+
+    <div class="photo" id="photo-wrap">
+      <label id="photo-label">Your photo</label>
+      <div class="photo-zone" id="pzone" onclick="document.getElementById('pfile').click()">
+        <div class="ico">📷</div>
+        <div class="t">Tap to take a photo</div>
+        <div class="s">Uses your phone camera</div>
+      </div>
+      <input id="pfile" type="file" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this.files[0])">
+    </div>
+
+    <div id="consent-wrap"></div>
+
+    <div class="btns" id="btns"></div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card" id="done-card" style="display:none"></div>
+  <div class="foot">C&amp;R Housing · The Barn, West End Road, Ruislip HA4 6JB</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="barn-config.js"></script>
+<script>
+var db=null;
+try{ if(typeof firebase!=='undefined' && typeof firebaseConfig!=='undefined'){ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); } }catch(e){ console.warn('fb init',e); }
+var $=function(id){return document.getElementById(id);};
+var PHOTO=null;
+
+/* live clock */
+function tick(){ try{ var d=new Date();
+  $('clk').firstChild.nodeValue=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+  $('clk-d').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/London'}); }catch(e){} }
+setInterval(tick,10000); tick();
+
+/* ---- mode config ---- */
+var MODES={
+  resident:{ pill:'👤 Resident check-in', pillClass:'', title:'Resident check-in', sub:'Welcome to The Barn. Please register your arrival with us.',
+    coll:'cr_residents', photoLabel:'Your photo', photoReq:true,
+    fields:'<div class="row2"><div><label>First name</label><input id="first" autocomplete="given-name" placeholder="First"></div><div><label>Last name</label><input id="last" autocomplete="family-name" placeholder="Last"></div></div>'
+      +'<div class="row2 fieldgap"><div><label>Room / unit</label><input id="room" placeholder="e.g. GB.12"></div><div><label>Household size</label><input id="party" type="number" min="1" inputmode="numeric" placeholder="e.g. 3"></div></div>'
+      +'<div class="fieldgap"><label>Nationality</label><input id="nat" placeholder="e.g. Somali"></div>'
+      +'<div class="fieldgap"><label>Mobile number</label><input id="phone" type="tel" inputmode="tel" placeholder="07…"></div>',
+    consent:'I confirm the details above are correct and consent to C&amp;R Housing holding them for the purpose of my accommodation.',
+    buttons:'single', inLabel:'✅ Check in', inSub:'Register arrival',
+    collect:function(){ var o={first:v('first'),last:v('last'),room:v('room'),party:v('party'),nat:v('nat'),phone:v('phone')};
+      if(!o.first||!o.last){return 'Please enter your first and last name.';}
+      if(!o.room){return 'Please enter your room or unit.';}
+      return o; },
+    done:function(o){return {tick:'✅',h:'Checked in',who:o.first+' '+o.last,meta:'Room '+o.room};} },
+  visitor:{ pill:'🚪 Visitor sign-in', pillClass:'vis', title:'Visitor sign-in', sub:'Please sign in on arrival and sign out when you leave.',
+    coll:'cr_visitors', photoLabel:'Photo (optional)', photoReq:false,
+    fields:'<div class="row2"><div><label>First name</label><input id="first" autocomplete="given-name" placeholder="First"></div><div><label>Last name</label><input id="last" autocomplete="family-name" placeholder="Last"></div></div>'
+      +'<div class="fieldgap"><label>Who / which room are you visiting?</label><input id="visiting" placeholder="Resident name or room"></div>'
+      +'<div class="row2 fieldgap"><div><label>Your organisation (if any)</label><input id="org" placeholder="e.g. Social worker"></div><div><label>Car reg (optional)</label><input id="car" placeholder="e.g. AB12 CDE"></div></div>',
+    consent:'', buttons:'two', inLabel:'🟢 Sign In', inSub:'Arriving', outLabel:'🔵 Sign Out', outSub:'Leaving',
+    collect:function(){ var o={first:v('first'),last:v('last'),visiting:v('visiting'),org:v('org'),car:v('car')};
+      if(!o.first||!o.last){return 'Please enter your first and last name.';}
+      if(!o.visiting){return 'Please enter who or which room you are visiting.';}
+      return o; },
+    done:function(o,t){return {tick:t==='in'?'🟢':'🔵',h:t==='in'?'Signed in':'Signed out',who:o.first+' '+o.last,meta:'Visiting '+o.visiting};} },
+  contractor:{ pill:'🦺 Contractor sign-in', pillClass:'con', title:'Contractor sign-in', sub:'Please sign in on arrival and sign out when you leave site.',
+    coll:'cr_contractors', photoLabel:'Photo (optional)', photoReq:false,
+    fields:'<div class="row2"><div><label>First name</label><input id="first" autocomplete="given-name" placeholder="First"></div><div><label>Last name</label><input id="last" autocomplete="family-name" placeholder="Last"></div></div>'
+      +'<div class="fieldgap"><label>Company</label><input id="company" placeholder="e.g. Cato Services"></div>'
+      +'<div class="fieldgap"><label>Work / area on site</label><input id="work" placeholder="e.g. Boiler service, Garden Block"></div>'
+      +'<div class="row2 fieldgap"><div><label>Phone</label><input id="phone" type="tel" inputmode="tel" placeholder="07…"></div><div><label>Signed in by</label><input id="host" placeholder="Staff name"></div></div>',
+    consent:'I have received and understood the site health &amp; safety induction and fire evacuation procedure.',
+    buttons:'two', inLabel:'🟢 Sign In', inSub:'On site', outLabel:'🔵 Sign Out', outSub:'Leaving site',
+    collect:function(){ var o={first:v('first'),last:v('last'),company:v('company'),work:v('work'),phone:v('phone'),host:v('host')};
+      if(!o.first||!o.last){return 'Please enter your first and last name.';}
+      if(!o.company){return 'Please enter your company.';}
+      return o; },
+    done:function(o,t){return {tick:t==='in'?'🟢':'🔵',h:t==='in'?'Signed in':'Signed out',who:o.first+' '+o.last,meta:o.company};} }
+};
+function v(id){ var e=$(id); return e?(e.value||'').trim():''; }
+
+/* pick mode from ?mode= (resident default) */
+var MODE, MK;
+(function(){ var q=new URLSearchParams(location.search); var m=(q.get('mode')||'resident').toLowerCase();
+  if(!MODES[m]) m='resident'; MODE=m; MK=MODES[m];
+  var p=$('role-pill'); p.textContent=MK.pill; if(MK.pillClass) p.classList.add(MK.pillClass);
+  $('f-title').textContent=MK.title; $('f-sub').textContent=MK.sub;
+  $('f-fields').innerHTML=MK.fields;
+  $('photo-label').textContent=MK.photoLabel;
+  if(MK.consent){ $('consent-wrap').innerHTML='<label class="consent"><input type="checkbox" id="consent"><span class="ct">'+MK.consent+'</span></label>'; }
+  var b=$('btns');
+  if(MK.buttons==='single'){ b.innerHTML='<button class="btn btn-go" id="btn-in" onclick="submitForm(\'in\')">'+MK.inLabel+'<small>'+MK.inSub+'</small></button>'; }
+  else { b.className='btns two'; b.innerHTML='<button class="btn btn-in" id="btn-in" onclick="submitForm(\'in\')">'+MK.inLabel+'<small>'+MK.inSub+'</small></button><button class="btn btn-out" id="btn-out" onclick="submitForm(\'out\')">'+MK.outLabel+'<small>'+MK.outSub+'</small></button>'; }
+})();
+
+/* photo capture → small jpeg dataURL */
+function onPhoto(file){ if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){ var img=new Image();
+    img.onload=function(){ var max=460, w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+      var c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+      PHOTO=c.toDataURL('image/jpeg',0.55);
+      $('pzone').innerHTML='<img src="'+PHOTO+'" alt="photo"><span class="redo">↺ Retake</span>'; };
+    img.src=ev.target.result; };
+  reader.readAsDataURL(file); }
+
+function submitForm(type){
+  var err=$('err'); err.textContent='';
+  var o=MK.collect(); if(typeof o==='string'){ err.textContent=o; return; }
+  if(MK.photoReq && !PHOTO){ err.textContent='Please take a photo first.'; return; }
+  if(MK.consent && type==='in'){ var cb=$('consent'); if(cb && !cb.checked){ err.textContent='Please tick the box to continue.'; return; } }
+  var now=new Date();
+  var doc={ id:MODE+'_'+now.getTime()+'_'+Math.random().toString(36).slice(2,6),
+    kind:MODE, type:type, name:o.first+' '+o.last,
+    at:now.toISOString(), date:now.toLocaleDateString('en-CA'),
+    photo:PHOTO||null, ua:(navigator.userAgent||'').slice(0,120) };
+  for(var k in o){ doc[k]=o[k]; }
+  var ib=$('btn-in'), ob=$('btn-out');
+  if(ib) ib.disabled=true; if(ob) ob.disabled=true;
+  var btn=$(type==='out'&&ob?'btn-out':'btn-in'); var orig=btn.innerHTML; btn.innerHTML='<span class="spin"></span>Saving…';
+  function finish(ok){ if(ok){ showDone(type,doc,now); }
+    else { err.textContent='Could not save — check your connection and try again.'; btn.innerHTML=orig; if(ib) ib.disabled=false; if(ob) ob.disabled=false; } }
+  if(db){ db.collection(MK.coll).doc(doc.id).set(doc).then(function(){ finish(true); }).catch(function(e){ console.warn(e); finish(false); }); }
+  else { try{ var a=JSON.parse(localStorage.getItem(MK.coll)||'[]'); a.unshift(doc); localStorage.setItem(MK.coll,JSON.stringify(a)); finish(true); }catch(e){ finish(false); } }
+}
+
+function showDone(type,doc,now){
+  var o={first:doc.first,last:doc.last,room:doc.room,visiting:doc.visiting,company:doc.company};
+  var d=MK.done(o,type);
+  var t=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'});
+  var card=$('done-card'); $('form-card').style.display='none'; card.style.display='block';
+  card.innerHTML='<div class="done '+(type==='out'?'out':'in')+'">'
+    +'<div class="tick">'+d.tick+'</div>'
+    +'<h2>'+esc(d.h)+'</h2>'
+    +'<div class="who">'+esc(d.who)+'</div>'
+    +'<div class="meta">'+esc(d.meta)+'</div>'
+    +'<div class="time">'+t+'</div>'
+    +'<div class="meta">'+now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+'</div>'
+    +'<button class="again" onclick="location.reload()">Done</button></div>';
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+</script>
+</body>
+</html>
