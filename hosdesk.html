@@ -513,6 +513,8 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .ck-lr .mt{font:600 12px Lato;color:#94a0b2;margin-top:1px}
 .ck-lr .ev{margin-left:auto;font:800 11.5px Lato;padding:5px 11px;border-radius:999px}
 .ev-in{background:#e6f6ee;color:#1aa260}.ev-out{background:#fdeeea;color:#c0392b}
+.ck-clear{border:1px solid #e3c4c0;background:#fdeceb;color:#b3261e;border-radius:999px;padding:8px 14px;font:800 12.5px Lato;cursor:pointer}
+.ck-clear:hover{background:#fbe0dd}
 /* fix: stale section-title must stay hidden on the dashboard */
 body.console .hd-back.hide{display:none!important}
 /* Management controls on one line */
@@ -2197,6 +2199,11 @@ function updateClockBadge(){ const b=$('bc-clock-n'); if(b) b.textContent=ckPres
 function fmtDur(ms){ if(ms<0)ms=0; const mins=Math.floor(ms/60000),h=Math.floor(mins/60),m=mins%60; return h?(h+'h '+m+'m'):(m+'m'); }
 function ckHHMM(iso){ try{ return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/London'}); }catch(e){ return ''; } }
 function ckDayTime(iso){ try{ const d=new Date(iso); const t=ckHHMM(iso); const isToday=d.toLocaleDateString('en-CA',{timeZone:'Europe/London'})===todayISO(); return isToday?t:(d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'Europe/London'})+', '+t); }catch(e){ return ''; } }
+function clockClear(){ if(!db) return; const code=prompt('Enter the management code (2222) to clear all clock-in records:'); if(code==null) return; if(code!=='2222'){ toast('Wrong code'); return; }
+  if(!confirm('Clear ALL clock-in / out records? Anyone currently on site will be removed from the board. This cannot be undone.')) return;
+  const rows=(CK_ROWS||[]).slice(); if(!rows.length){ toast('Nothing to clear'); return; }
+  try{ const batch=db.batch(); rows.forEach(r=>batch.update(db.collection('barn_clockins').doc(r.id),{deleted:true,clearedAt:new Date().toISOString()})); batch.commit().then(()=>toast('✓ Clock-ins cleared')).catch(e=>{ console.warn(e); rows.forEach(r=>db.collection('barn_clockins').doc(r.id).update({deleted:true})); }); }
+  catch(e){ console.warn(e); toast('Could not clear'); } }
 function clockOut(id){ const r=(CK_ROWS||[]).find(x=>x.id===id); if(!r) return; if(!confirm('Clock out '+r.name+'?')) return;
   const now=new Date(); const doc={ id:'clk_'+now.getTime()+'_'+Math.random().toString(36).slice(2,6), firstName:r.firstName,lastName:r.lastName,name:r.name,position:r.position,type:'out',at:now.toISOString(),date:now.toLocaleDateString('en-CA'),photo:r.photo||null,by:'reception' };
   if(db){ db.collection('barn_clockins').doc(doc.id).set(doc).then(()=>{ try{toast('✓ Clocked out '+r.name);}catch(e){} }).catch(e=>console.warn(e)); } }
@@ -2213,7 +2220,7 @@ function renderClock(){
   const log=(CK_ROWS||[]).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,40);
   const logHtml=log.length?`<div class="ck-log">`+log.map(r=>`<div class="ck-lr">${ckAvatar(r,'av')}<div><div class="nm">${esc(r.name)}</div><div class="mt">${esc(r.position)} · ${ckDayTime(r.at)}</div></div><span class="ev ${r.type==='in'?'ev-in':'ev-out'}">${r.type==='in'?'Clocked in':'Clocked out'}</span></div>`).join('')+`</div>`:`<div class="ck-empty">No clock activity yet. Staff clock in by scanning the QR poster.</div>`;
   box.innerHTML=`<div class="ck-head"><div class="dash-sub" style="margin:0;font-size:13.5px">Live from the staff clock-in QR poster — who is in the building right now.</div>
-    <div class="ck-chips"><span class="ck-chip"><i style="background:#1aa260"></i><b>${on.length}</b> on site now</span></div></div>
+    <div class="ck-chips"><span class="ck-chip"><i style="background:#1aa260"></i><b>${on.length}</b> on site now</span>${(CK_ROWS&&CK_ROWS.length)?`<button class="ck-clear" onclick="clockClear()">🗑 Clear clock-ins</button>`:''}</div></div>
     <div class="ck-sum">${sum}</div>${cardsBlock}
     <div class="ck-sec">🕑 Recent clock activity</div>${logHtml}`;
 }
