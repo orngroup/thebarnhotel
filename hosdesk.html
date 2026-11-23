@@ -234,6 +234,7 @@ body.console .wrap{max-width:1500px}
 #pane-team.on{grid-template-columns:1fr}
 #pane-mgmt.on{grid-template-columns:1fr}
 #pane-clock.on{grid-template-columns:1fr}
+#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on{grid-template-columns:1fr}
 .req.mj{cursor:pointer}
 .req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
 .req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
@@ -512,6 +513,56 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .ck-lr .mt{font:600 12px Lato;color:#94a0b2;margin-top:1px}
 .ck-lr .ev{margin-left:auto;font:800 11.5px Lato;padding:5px 11px;border-radius:999px}
 .ev-in{background:#e6f6ee;color:#1aa260}.ev-out{background:#fdeeea;color:#c0392b}
+/* fix: stale section-title must stay hidden on the dashboard */
+body.console .hd-back.hide{display:none!important}
+/* Management controls on one line */
+.mg-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.mg-div{width:1px;height:24px;background:#e4e9f1;margin:0 2px}
+.mg-sel{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px;font:600 13px Lato;color:#394655;cursor:pointer;max-width:170px}
+/* ---- Generic records sections (Stock / Plant / Contractors / H&S) ---- */
+.sec-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sec-h1{font:900 24px Lato;color:#15233f;line-height:1}
+.sec-sub{font:600 13px Lato;color:#7e8aa0;margin-top:4px}
+.add-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.add-row .fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.add-row label{font:800 10.5px Lato;color:#8a94a0;text-transform:uppercase;letter-spacing:.4px}
+.add-row input,.add-row select,.add-row textarea{border:1.4px solid var(--line);border-radius:10px;padding:10px 11px;font:600 14px Lato;color:#15233f;background:#fff;width:100%}
+.add-row input:focus,.add-row select:focus{outline:none;border-color:#2f54eb}
+.btn-add{background:#2f54eb;color:#fff;border:none;border-radius:11px;padding:11px 18px;font:800 14px Lato;cursor:pointer;white-space:nowrap}
+.btn-add:hover{background:#2443c8}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.item{background:#fff;border:1px solid #e9edf3;border-radius:16px;padding:16px 17px;box-shadow:0 1px 3px rgba(16,24,40,.05);position:relative}
+.item h4{font:800 16px Lato;color:#15233f;padding-right:22px}
+.item .tr{font:700 11px Lato;text-transform:uppercase;letter-spacing:.3px;color:#2f54eb;margin-top:2px}
+.item .ln{font:600 13px Lato;color:#51607a;margin-top:7px;display:flex;gap:8px}
+.item .ln b{color:#8a94a0;font-weight:800;min-width:66px;flex:0 0 auto}
+.item .ln a{color:#2f54eb;text-decoration:none;font-weight:800}
+.item .del{position:absolute;top:13px;right:14px;border:none;background:none;color:#c6cdd8;cursor:pointer;font-size:17px;line-height:1}
+.item .del:hover{color:#c0392b}
+.tag2{display:inline-block;font:800 10px Lato;text-transform:uppercase;letter-spacing:.3px;padding:3px 9px;border-radius:999px;margin-top:9px}
+.stk-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e9edf3;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+.stk-table th{background:#f6f8fc;font:800 11px Lato;color:#6b7a90;text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:12px 14px}
+.stk-table td{padding:11px 14px;border-top:1px solid #f0f3f7;font:700 13.5px Lato;color:#25324a;vertical-align:middle}
+.stk-qty{display:inline-flex;align-items:center;gap:9px}
+.stk-qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;font:900 16px Lato;color:#2f54eb;cursor:pointer;line-height:1}
+.stk-qty button:hover{background:#eef2fe}
+.pill-low{background:#fdeeea;color:#c0392b;font:800 10px Lato;padding:2px 8px;border-radius:999px;text-transform:uppercase;margin-left:7px}
+.hs-group{margin-bottom:18px}
+.hs-cat{font:900 13px Lato;color:#15233f;margin:0 0 9px;text-transform:uppercase;letter-spacing:.4px}
+.hs-doc{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e9edf3;border-radius:12px;padding:12px 14px;margin-bottom:8px;text-decoration:none;box-shadow:0 1px 3px rgba(16,24,40,.04)}
+.hs-doc:hover{border-color:#2f54eb}
+.hs-doc .ic{font-size:22px}
+.hs-doc .nm{font:800 14px Lato;color:#15233f}
+.hs-doc .mt{font:600 12px Lato;color:#94a0b2;margin-top:1px}
+.hs-doc .rv{margin-left:auto;font:800 11px Lato;color:#6b7a90}
+.faq-item{background:#fff;border:1px solid #e9edf3;border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.04)}
+.faq-q{padding:16px 18px;font:800 15.5px Lato;color:#15233f;cursor:pointer;display:flex;align-items:center;gap:11px}
+.faq-q .ar{margin-left:auto;transition:.2s;color:#9aa6b8;font-size:13px}
+.faq-item.open .faq-q .ar{transform:rotate(90deg)}
+.faq-a{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease;font:500 14px Lato;color:#45526a;line-height:1.65}
+.faq-item.open .faq-a{max-height:2000px;padding:2px 18px 18px}
+.faq-a b{color:#15233f}.faq-a ul{margin:8px 0 10px 20px}.faq-a li{margin:5px 0}
+.faq-a .step{display:flex;gap:10px;margin:7px 0}.faq-a .step b{flex:0 0 22px;color:#2f54eb}
 
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%);transition:transform .22s;box-shadow:0 0 40px rgba(0,0,0,.3)}
@@ -561,10 +612,17 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
       <button class="sb-i" id="nav-deliveries" onclick="showSection('deliveries');sbClose()"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>Deliveries<span class="cnt" id="bc-del-n">0</span></button>
       <button class="sb-i" id="nav-maintenance" onclick="showSection('maintenance');sbClose()"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Maintenance<span class="cnt" id="bc-mnt-n">0</span></button>
       <button class="sb-i" id="nav-team" onclick="openTeam();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Resources<span class="cnt" id="bc-team-n">0</span></button>
-      <button class="sb-i" id="nav-hub" onclick="openHub();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg>BarnHUB<span class="cnt" id="bc-hub-n">8</span></button>
       <button class="sb-i" id="nav-clock" onclick="openClock();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Staff on site<span class="cnt" id="bc-clock-n">0</span></button>
+      <div class="sb-cap">Records</div>
+      <button class="sb-i" id="nav-hub" onclick="openHub();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg>BarnHUB<span class="cnt" id="bc-hub-n">8</span></button>
+      <button class="sb-i" id="nav-stock" onclick="openStock();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M3 9v6l9 5 9-5V9"/></svg>Stock<span class="cnt" id="bc-stock-n">0</span></button>
+      <button class="sb-i" id="nav-plant" onclick="openPlant();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V20a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H24"/></svg>Plant &amp; Equipment<span class="cnt" id="bc-plant-n">0</span></button>
+      <button class="sb-i" id="nav-contractors" onclick="openContractors();sbClose()"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Contractors<span class="cnt" id="bc-con-n">0</span></button>
+      <button class="sb-i" id="nav-hs" onclick="openHs();sbClose()"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Health &amp; Safety<span class="cnt" id="bc-hs-n">0</span></button>
       <div class="sb-cap">Insights</div>
       <button class="sb-i" id="nav-mgmt" onclick="openMgmt();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 3 4-6"/></svg>Management<span class="cnt" id="bc-mgmt-n">0</span></button>
+      <div class="sb-cap">Help</div>
+      <button class="sb-i" id="nav-faq" onclick="openFaq();sbClose()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4"/><path d="M12 17h.01"/></svg>FAQ &amp; Training</button>
     </nav>
     <div class="sb-foot">
       <button class="sb-fire" onclick="openFire()"><span>🔥</span>Fire &amp; Emergency</button>
@@ -753,6 +811,76 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
     <div class="pane" id="pane-clock">
       <div id="ck-body" style="width:100%"></div>
     </div>
+
+    <!-- ===== STOCK ===== -->
+    <div class="pane" id="pane-stock"><div style="width:100%">
+      <div class="sec-sub" style="margin:-6px 0 16px">Load and track consumables &amp; supplies — low items are flagged.</div>
+      <div class="card2" style="margin-bottom:16px"><div class="c2h">➕ Add / load stock</div>
+        <div class="add-row">
+          <div class="fld" style="grid-column:span 2"><label>Item</label><input id="stk-name" placeholder="e.g. Toilet rolls"></div>
+          <div class="fld"><label>Category</label><select id="stk-cat"></select></div>
+          <div class="fld"><label>Quantity</label><input id="stk-qty" type="number" value="0" min="0"></div>
+          <div class="fld"><label>Unit</label><input id="stk-unit" placeholder="units / boxes"></div>
+          <div class="fld"><label>Location</label><input id="stk-loc" placeholder="Store room"></div>
+          <div class="fld"><label>Re-order at</label><input id="stk-reorder" type="number" value="0" min="0"></div>
+          <div class="fld"><button class="btn-add" onclick="stockAdd()">Add stock</button></div>
+        </div></div>
+      <div id="stk-list"></div>
+    </div></div>
+
+    <!-- ===== PLANT & EQUIPMENT ===== -->
+    <div class="pane" id="pane-plant"><div style="width:100%">
+      <div class="sec-sub" style="margin:-6px 0 16px">Register tools, machinery &amp; equipment and track servicing.</div>
+      <div class="card2" style="margin-bottom:16px"><div class="c2h">➕ Register equipment</div>
+        <div class="add-row">
+          <div class="fld" style="grid-column:span 2"><label>Name</label><input id="plt-name" placeholder="e.g. Ride-on mower"></div>
+          <div class="fld"><label>Category</label><select id="plt-cat"></select></div>
+          <div class="fld"><label>Make / model</label><input id="plt-model" placeholder="Make / model"></div>
+          <div class="fld"><label>Serial / asset no.</label><input id="plt-serial" placeholder="Serial"></div>
+          <div class="fld"><label>Location</label><input id="plt-loc" placeholder="Where kept"></div>
+          <div class="fld"><label>Condition</label><select id="plt-cond"><option>Good</option><option>Fair</option><option>Needs attention</option><option>Out of service</option></select></div>
+          <div class="fld"><label>Next service</label><input id="plt-service" type="date"></div>
+          <div class="fld"><button class="btn-add" onclick="plantAdd()">Register</button></div>
+        </div></div>
+      <div id="plt-list"></div>
+    </div></div>
+
+    <!-- ===== CONTRACTOR DATABASE ===== -->
+    <div class="pane" id="pane-contractors"><div style="width:100%">
+      <div class="sec-sub" style="margin:-6px 0 16px">Approved contractors &amp; suppliers — tap to call or email.</div>
+      <div class="card2" style="margin-bottom:16px"><div class="c2h">➕ Add contractor</div>
+        <div class="add-row">
+          <div class="fld" style="grid-column:span 2"><label>Company</label><input id="con-name" placeholder="Company name"></div>
+          <div class="fld"><label>Trade / service</label><input id="con-trade" placeholder="e.g. Electrician"></div>
+          <div class="fld"><label>Contact name</label><input id="con-contact" placeholder="Contact"></div>
+          <div class="fld"><label>Phone</label><input id="con-phone" placeholder="Phone"></div>
+          <div class="fld"><label>Email</label><input id="con-email" placeholder="Email"></div>
+          <div class="fld" style="grid-column:span 2"><label>Website / address</label><input id="con-web" placeholder="Website or address"></div>
+          <div class="fld"><button class="btn-add" onclick="conAdd()">Add</button></div>
+        </div></div>
+      <div id="con-list"></div>
+    </div></div>
+
+    <!-- ===== HEALTH & SAFETY ===== -->
+    <div class="pane" id="pane-hs"><div style="width:100%">
+      <div class="sec-sub" style="margin:-6px 0 16px">Upload and store all H&amp;S documents — policies, risk assessments, COSHH, training.</div>
+      <div class="card2" style="margin-bottom:16px"><div class="c2h">⬆️ Upload a document</div>
+        <div class="add-row">
+          <div class="fld" style="grid-column:span 2"><label>Title</label><input id="hs-title" placeholder="e.g. Fire Safety Policy"></div>
+          <div class="fld"><label>Category</label><select id="hs-cat"></select></div>
+          <div class="fld"><label>Review date</label><input id="hs-review" type="date"></div>
+          <div class="fld" style="grid-column:span 2"><label>File (PDF / image)</label><input id="hs-file" type="file" accept="application/pdf,image/*"></div>
+          <div class="fld"><button class="btn-add" id="hs-btn" onclick="hsUpload()">Upload</button></div>
+        </div>
+        <div id="hs-err" style="color:#c0392b;font:700 13px Lato;margin-top:10px;min-height:16px"></div></div>
+      <div id="hs-list"></div>
+    </div></div>
+
+    <!-- ===== FAQ & TRAINING ===== -->
+    <div class="pane" id="pane-faq"><div style="width:100%;max-width:900px">
+      <div class="sec-sub" style="margin:-6px 0 16px">A complete guide to using HosDesk for The Barn Hotel.</div>
+      <div id="faq-list"></div>
+    </div></div>
 
     <div class="pane" id="pane-maintenance">
       <div class="pane-form">
@@ -1197,7 +1325,7 @@ async function startBoard(){
   try{ dSyncInputs(); }catch(e){}
   try{ mInitAreas(); }catch(e){}
   try{ mRenderRoutes(); }catch(e){}
-  try{ sbNav('dashboard'); renderDash(); }catch(e){}
+  try{ sbNav('dashboard'); renderDash(); const dr=$('date-row'); if(dr) dr.style.display='none'; }catch(e){}
   // Section 1 — requests (live)
   $('b-chips').innerHTML=B_FILTERS.map(([f,l])=>`<button class="chip ${B_FILTER===f?'on':''}" onclick="bSetFilter('${f}')">${l}</button>`).join('');
   if(db){
@@ -1219,6 +1347,10 @@ async function startBoard(){
     try{ teamWatch(); }catch(e){ console.warn('teamWatch',e); }
     try{ mgStart(); }catch(e){ console.warn('mgStart',e); }
     try{ clockWatch(); }catch(e){ console.warn('clockWatch',e); }
+    try{ stockWatch(); }catch(e){ console.warn('stockWatch',e); }
+    try{ plantWatch(); }catch(e){ console.warn('plantWatch',e); }
+    try{ conWatch(); conSeed(); }catch(e){ console.warn('conWatch',e); }
+    try{ hsWatch(); }catch(e){ console.warn('hsWatch',e); }
   } else {
     B_ROWS=JSON.parse(localStorage.getItem('barn_requests')||'[]'); bRender();
     D_ROWS=JSON.parse(localStorage.getItem('barn_deliveries')||'[]'); renderDeliveries();
@@ -1456,22 +1588,24 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance'};
-function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training'};
+function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
+  const dr=$('date-row'); if(dr) dr.style.display=['deliveries','maintenance','requests'].indexOf(x)>=0?'':'none';
   sbNav(x);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
+  const dr=$('date-row'); if(dr) dr.style.display='none';
   sbNav('dashboard');
   try{ renderDash(); }catch(e){}
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1852,13 +1986,15 @@ function renderMgmt(){
   const statusOpts=Object.keys(MG_STATUS).map(k=>`<option value="${k}"${MG_F.status===k?' selected':''}>${esc(MG_STATUS[k])}</option>`).join('');
   const anyF=MG_F.person||MG_F.area||MG_F.type||MG_F.status;
   const controls=`<div class="mg-controls">
-    <div class="mg-top"><div class="mg-periods">${chips}</div><button class="mg-print" onclick="mgPrint()">🖨 Print / Save PDF</button></div>
-    <div class="mg-filters">
-      <label>Person<select onchange="mgSetFilter('person',this.value)"><option value="">All people</option>${mgOpts(periodRows,mgPerson,MG_F.person)}</select></label>
-      <label>Area<select onchange="mgSetFilter('area',this.value)"><option value="">All areas</option>${mgOpts(periodRows,mgArea,MG_F.area)}</select></label>
-      <label>Type of work<select onchange="mgSetFilter('type',this.value)"><option value="">All types</option>${typeOpts}</select></label>
-      <label>Status<select onchange="mgSetFilter('status',this.value)"><option value="">Any status</option>${statusOpts}</select></label>
-      ${anyF?`<button class="mg-reset" onclick="mgResetFilters()">✕ Clear filters</button>`:''}
+    <div class="mg-bar">
+      <div class="mg-periods">${chips}</div>
+      <span class="mg-div"></span>
+      <select class="mg-sel" onchange="mgSetFilter('person',this.value)"><option value="">All people</option>${mgOpts(periodRows,mgPerson,MG_F.person)}</select>
+      <select class="mg-sel" onchange="mgSetFilter('area',this.value)"><option value="">All areas</option>${mgOpts(periodRows,mgArea,MG_F.area)}</select>
+      <select class="mg-sel" onchange="mgSetFilter('type',this.value)"><option value="">All types</option>${typeOpts}</select>
+      <select class="mg-sel" onchange="mgSetFilter('status',this.value)"><option value="">Any status</option>${statusOpts}</select>
+      ${anyF?`<button class="mg-reset" onclick="mgResetFilters()">✕ Clear</button>`:''}
+      <button class="mg-print" onclick="mgPrint()">🖨 Print / Save PDF</button>
     </div></div>`;
   // ---- report header (prints nicely) ----
   const now=new Date();
@@ -2027,6 +2163,104 @@ function renderClock(){
     <div class="ck-sum">${sum}</div>${cardsBlock}
     <div class="ck-sec">🕑 Recent clock activity</div>${logHtml}`;
 }
+
+/* ======================= RECORDS: Stock · Plant · Contractors · H&S · FAQ ======================= */
+function onPane(x){ const p=$('pane-'+x); return p&&p.classList.contains('on'); }
+function fillOpts(id,arr){ const s=$(id); if(s) s.innerHTML=arr.map(o=>`<option>${esc(o)}</option>`).join(''); }
+function ukDate(iso){ try{ if(!iso) return ''; const d=new Date(String(iso).length<=10?iso+'T00:00:00':iso); if(isNaN(d)) return iso; return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return iso; } }
+
+/* ---- Stock ---- */
+let STK_UNSUB=null, STK_ROWS=[];
+const STK_CATS=['Cleaning','Maintenance','Linen','Toiletries','Kitchen','Office','Grounds','Other'];
+function stockWatch(){ if(STK_UNSUB||!db) return; STK_UNSUB=db.collection('barn_stock').onSnapshot(s=>{ STK_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted).sort((a,b)=>(a.name||'').localeCompare(b.name||'')); const b=$('bc-stock-n'); if(b) b.textContent=STK_ROWS.length; if(onPane('stock')) renderStock(); }, e=>console.warn('stock',e)); }
+function openStock(){ stockWatch(); fillOpts('stk-cat',STK_CATS); renderStock(); showSection('stock'); }
+function stockAdd(){ const name=($('stk-name').value||'').trim(); if(!name){ toast('Enter an item name'); return; } const now=new Date().toISOString();
+  const doc={ id:'stk_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), name, category:$('stk-cat').value, qty:+($('stk-qty').value||0), unit:($('stk-unit').value||'').trim(), location:($('stk-loc').value||'').trim(), reorder:+($('stk-reorder').value||0), createdAt:now, updatedAt:now };
+  if(db) db.collection('barn_stock').doc(doc.id).set(doc).then(()=>toast('✓ Stock added')).catch(e=>{console.warn(e);toast('Could not save');});
+  $('stk-name').value=''; $('stk-qty').value='0'; $('stk-unit').value=''; $('stk-loc').value=''; $('stk-reorder').value='0'; }
+function stockAdj(id,d){ const r=STK_ROWS.find(x=>x.id===id); if(!r||!db) return; const q=Math.max(0,(+r.qty||0)+d); db.collection('barn_stock').doc(id).update({qty:q,updatedAt:new Date().toISOString()}); }
+function stockDel(id){ if(!db) return; if(!confirm('Remove this stock item?')) return; db.collection('barn_stock').doc(id).update({deleted:true}); }
+function renderStock(){ const box=$('stk-list'); if(!box) return;
+  if(!STK_ROWS.length){ box.innerHTML='<div class="ck-empty">No stock items yet. Add your first item above.</div>'; return; }
+  box.innerHTML='<table class="stk-table"><thead><tr><th>Item</th><th>Category</th><th>Location</th><th>In stock</th><th></th></tr></thead><tbody>'+
+    STK_ROWS.map(r=>{ const low=(+r.qty||0)<=(+r.reorder||0); return `<tr><td>${esc(r.name)}${low?'<span class="pill-low">Low</span>':''}</td><td>${esc(r.category||'')}</td><td>${esc(r.location||'—')}</td><td><span class="stk-qty"><button onclick="stockAdj('${r.id}',-1)">−</button><b style="min-width:48px;text-align:center;display:inline-block${low?';color:#c0392b':''}">${(+r.qty||0)} ${esc(r.unit||'')}</b><button onclick="stockAdj('${r.id}',1)">+</button></span></td><td style="text-align:right"><button class="del" style="position:static" onclick="stockDel('${r.id}')">🗑</button></td></tr>`; }).join('')+'</tbody></table>'; }
+
+/* ---- Plant & Equipment ---- */
+let PLT_UNSUB=null, PLT_ROWS=[];
+const PLT_CATS=['Grounds','Kitchen','Cleaning','Power tools','Heating','Access','Electrical','Other'];
+function plantWatch(){ if(PLT_UNSUB||!db) return; PLT_UNSUB=db.collection('barn_plant').onSnapshot(s=>{ PLT_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted).sort((a,b)=>(a.name||'').localeCompare(b.name||'')); const b=$('bc-plant-n'); if(b) b.textContent=PLT_ROWS.length; if(onPane('plant')) renderPlant(); }, e=>console.warn('plant',e)); }
+function openPlant(){ plantWatch(); fillOpts('plt-cat',PLT_CATS); renderPlant(); showSection('plant'); }
+function plantAdd(){ const name=($('plt-name').value||'').trim(); if(!name){ toast('Enter a name'); return; } const now=new Date().toISOString();
+  const doc={ id:'plt_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), name, category:$('plt-cat').value, model:($('plt-model').value||'').trim(), serial:($('plt-serial').value||'').trim(), location:($('plt-loc').value||'').trim(), condition:$('plt-cond').value, nextService:$('plt-service').value||'', createdAt:now };
+  if(db) db.collection('barn_plant').doc(doc.id).set(doc).then(()=>toast('✓ Equipment registered')).catch(e=>{console.warn(e);toast('Could not save');});
+  ['plt-name','plt-model','plt-serial','plt-loc','plt-service'].forEach(i=>{ if($(i)) $(i).value=''; }); }
+function plantDel(id){ if(!db) return; if(!confirm('Remove this equipment?')) return; db.collection('barn_plant').doc(id).update({deleted:true}); }
+function plantCol(c){ return ({'Good':'#1aa260','Fair':'#e8912a','Needs attention':'#c0392b','Out of service':'#8b94a3'})[c]||'#2f54eb'; }
+function renderPlant(){ const box=$('plt-list'); if(!box) return;
+  if(!PLT_ROWS.length){ box.innerHTML='<div class="ck-empty">No equipment registered yet.</div>'; return; }
+  const today=todayISO();
+  box.innerHTML='<div class="item-grid">'+PLT_ROWS.map(r=>{ const due=r.nextService&&r.nextService<=today; const col=plantCol(r.condition);
+    return `<div class="item"><button class="del" onclick="plantDel('${r.id}')">🗑</button><h4>${esc(r.name)}</h4><div class="tr">${esc(r.category||'')}</div>${r.model?`<div class="ln"><b>Model</b>${esc(r.model)}</div>`:''}${r.serial?`<div class="ln"><b>Serial</b>${esc(r.serial)}</div>`:''}${r.location?`<div class="ln"><b>Location</b>${esc(r.location)}</div>`:''}${r.nextService?`<div class="ln"><b>Service</b>${esc(ukDate(r.nextService))}${due?' <span class="pill-low">Due</span>':''}</div>`:''}<span class="tag2" style="background:${col}1f;color:${col}">${esc(r.condition||'')}</span></div>`; }).join('')+'</div>'; }
+
+/* ---- Contractor Database (seeded with Cato + Build Up Builder) ---- */
+let CON_UNSUB=null, CON_ROWS=[];
+const CON_SEED=[
+  {id:'con_cato',name:'Cato Services',trade:'Facilities & building services',contact:'',phone:'0203 051 0487',email:'hello@catoservices.com',web:'catoservices.com · 22–25 Portman Close, London W1H 6BS'},
+  {id:'con_buildup',name:'Build Up Builder Limited',trade:'Construction (domestic buildings)',contact:'',phone:'',email:'',web:'Unit 9, Mill Farm Business Park, Millfield Road, Hounslow TW4 5PY · Company no. 12698596'}
+];
+function conSeed(){ if(!db) return; CON_SEED.forEach(c=>{ db.collection('barn_contractors').doc(c.id).get().then(d=>{ if(!d.exists) db.collection('barn_contractors').doc(c.id).set({...c,createdAt:new Date().toISOString(),seeded:true}); }).catch(()=>{}); }); }
+function conWatch(){ if(CON_UNSUB||!db) return; CON_UNSUB=db.collection('barn_contractors').onSnapshot(s=>{ CON_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.deleted).sort((a,b)=>(a.name||'').localeCompare(b.name||'')); const b=$('bc-con-n'); if(b) b.textContent=CON_ROWS.length; if(onPane('contractors')) renderContractors(); }, e=>console.warn('con',e)); }
+function openContractors(){ conWatch(); renderContractors(); showSection('contractors'); }
+function conAdd(){ const name=($('con-name').value||'').trim(); if(!name){ toast('Enter a company name'); return; }
+  const doc={ id:'con_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), name, trade:($('con-trade').value||'').trim(), contact:($('con-contact').value||'').trim(), phone:($('con-phone').value||'').trim(), email:($('con-email').value||'').trim(), web:($('con-web').value||'').trim(), createdAt:new Date().toISOString() };
+  if(db) db.collection('barn_contractors').doc(doc.id).set(doc).then(()=>toast('✓ Contractor added')).catch(e=>{console.warn(e);toast('Could not save');});
+  ['con-name','con-trade','con-contact','con-phone','con-email','con-web'].forEach(i=>{ if($(i)) $(i).value=''; }); }
+function conDel(id){ if(!db) return; if(!confirm('Remove this contractor?')) return; db.collection('barn_contractors').doc(id).update({deleted:true}); }
+function renderContractors(){ const box=$('con-list'); if(!box) return;
+  if(!CON_ROWS.length){ box.innerHTML='<div class="ck-empty">No contractors yet.</div>'; return; }
+  box.innerHTML='<div class="item-grid">'+CON_ROWS.map(r=>`<div class="item"><button class="del" onclick="conDel('${r.id}')">🗑</button><h4>${esc(r.name)}</h4><div class="tr">${esc(r.trade||'')}</div>${r.contact?`<div class="ln"><b>Contact</b>${esc(r.contact)}</div>`:''}${r.phone?`<div class="ln"><b>Phone</b><a href="tel:${esc(String(r.phone).replace(/\s/g,''))}">${esc(r.phone)}</a></div>`:''}${r.email?`<div class="ln"><b>Email</b><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></div>`:''}${r.web?`<div class="ln"><b>More</b>${esc(r.web)}</div>`:''}</div>`).join('')+'</div>'; }
+
+/* ---- Health & Safety (upload to Firebase Storage) ---- */
+let HS_UNSUB=null, HS_ROWS=[];
+const HS_CATS=['Policy','Risk Assessment','Method Statement','COSHH','Training Record','Certificate','Fire Safety','Other'];
+function hsWatch(){ if(HS_UNSUB||!db) return; HS_UNSUB=db.collection('barn_hs_docs').onSnapshot(s=>{ HS_ROWS=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r&&!r.hidden).sort((a,b)=>String(b.uploadedAt||'').localeCompare(String(a.uploadedAt||''))); const b=$('bc-hs-n'); if(b) b.textContent=HS_ROWS.length; if(onPane('hs')) renderHs(); }, e=>console.warn('hs',e)); }
+function openHs(){ hsWatch(); fillOpts('hs-cat',HS_CATS); renderHs(); showSection('hs'); }
+async function hsUpload(){ const err=$('hs-err'); err.textContent=''; const title=($('hs-title').value||'').trim(); const f=($('hs-file').files||[])[0];
+  if(!title){ err.textContent='Enter a title.'; return; } if(!f){ err.textContent='Choose a file to upload.'; return; }
+  if(!db || typeof firebase==='undefined' || !firebase.storage){ err.textContent='Not connected — try again in a moment.'; return; }
+  const btn=$('hs-btn'); const orig=btn.textContent; btn.disabled=true; btn.textContent='Uploading…';
+  try{ const id='hs_'+Date.now()+'_'+Math.random().toString(36).slice(2,5); const safe=f.name.replace(/[^a-zA-Z0-9._-]/g,'_'); const path='barn_hs/'+id+'/'+safe;
+    const snap=await firebase.storage().ref(path).put(f,{contentType:f.type||'application/octet-stream'}); const url=await snap.ref.getDownloadURL();
+    await db.collection('barn_hs_docs').doc(id).set({ id, title, category:$('hs-cat').value, review:$('hs-review').value||'', name:f.name, path, url, size:f.size, type:f.type||'', uploadedAt:new Date().toISOString(), by:'HosDesk' });
+    toast('✓ Document uploaded'); $('hs-title').value=''; $('hs-review').value=''; $('hs-file').value='';
+  }catch(e){ console.warn(e); err.textContent='Upload failed — '+((e&&e.message)||'try again'); }
+  btn.disabled=false; btn.textContent=orig; }
+function hsDel(id){ if(!db) return; if(!confirm('Remove this document?')) return; db.collection('barn_hs_docs').doc(id).update({hidden:true}); }
+function hsIcon(t){ t=t||''; return t.includes('pdf')?'📄':t.includes('image')?'🖼️':'📎'; }
+function renderHs(){ const box=$('hs-list'); if(!box) return;
+  if(!HS_ROWS.length){ box.innerHTML='<div class="ck-empty">No H&S documents yet. Upload your first above.</div>'; return; }
+  const groups={}; HS_ROWS.forEach(r=>{ const c=r.category||'Other'; (groups[c]=groups[c]||[]).push(r); });
+  box.innerHTML=Object.keys(groups).map(cat=>`<div class="hs-group"><div class="hs-cat">${esc(cat)}</div>`+groups[cat].map(r=>`<a class="hs-doc" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="ic">${hsIcon(r.type)}</span><div style="min-width:0"><div class="nm">${esc(r.title)}</div><div class="mt">${esc(r.name||'')}${r.uploadedAt?(' · added '+ukDate(String(r.uploadedAt).slice(0,10))):''}</div></div>${r.review?`<span class="rv">Review ${esc(ukDate(r.review))}</span>`:''}<button class="del" style="position:static;margin-left:10px" onclick="event.preventDefault();hsDel('${r.id}')">🗑</button></a>`).join('')+'</div>').join(''); }
+
+/* ---- FAQ & Training (static) ---- */
+function faqToggle(i){ const el=document.querySelectorAll('#faq-list .faq-item')[i]; if(el) el.classList.toggle('open'); }
+function openFaq(){ renderFaq(); showSection('faq'); }
+function renderFaq(){ const box=$('faq-list'); if(!box) return; box.innerHTML=FAQ.map((f,i)=>`<div class="faq-item"><div class="faq-q" onclick="faqToggle(${i})">${f.q}<span class="ar">▶</span></div><div class="faq-a">${f.a}</div></div>`).join(''); }
+const FAQ=[
+ {q:'🚀 Getting started &amp; logging in',a:`<p>HosDesk is the reception console for The Barn Hotel. Open <b>thebarnhotel.hospro.co.uk/hosdesk.html</b> and enter the login code <b>3132</b>. It works on any computer or tablet browser — no install needed.</p><p>The <b>left sidebar</b> is how you move around. The <b>top bar</b> shows today's date and a search box. The <b>Dashboard</b> is your home screen.</p>`},
+ {q:'📊 The Dashboard',a:`<p>Your operational overview at a glance:</p><ul><li><b>KPI tiles</b> — open jobs, completed, deliveries today, active temps, contractors booked, total jobs.</li><li><b>Jobs over time</b> — a 2-week trend of jobs logged vs completed.</li><li><b>Jobs by status</b> — the split of not-started / in-progress / completed / ended.</li><li><b>Contractors booked in</b> and <b>Recent jobs</b> — live lists.</li></ul>`},
+ {q:'🔧 Logging a maintenance job',a:`<p>Click <b>Maintenance</b> in the sidebar, then fill the form on the left:</p><div class="step"><b>1</b><div>Choose who does it — <b>Josh</b> (in-house), a <b>temp</b>, or <b>External contractor</b> (sends to Raj Kumar).</div></div><div class="step"><b>2</b><div>Pick the area/room, say what's wrong, add a photo and set priority.</div></div><div class="step"><b>3</b><div>Send it. In-house jobs push straight to Josh's phone; external jobs let you copy or open a ready-made email to Raj.</div></div><p>Jobs appear in the list on the right. Tap one to open it, change status, add notes or archive it (code <b>2222</b>).</p>`},
+ {q:'📦 Deliveries',a:`<p>Click <b>Deliveries</b> to log a parcel: supplier, what it is, size, who it's for and where it's left. The date and time are recorded automatically. Everything logged shows in the list on the right.</p>`},
+ {q:'🕑 Staff on site &amp; the clock-in QR',a:`<p>Staff clock in and out by scanning a <b>QR poster</b> on their phone — they pick their position, type their name, take a photo and tap Clock In or Clock Out. There are two posters: a general <b>Staff</b> one and a <b>Security</b> one.</p><p>The <b>Staff on site</b> screen shows who is in the building right now, grouped by position, with time in and a one-tap Clock out, plus a full activity log.</p>`},
+ {q:'👷 Resources — temporary staff',a:`<p>Under <b>Resources</b> you add a temporary maintenance helper (name, agency, dates, daily rate, approved by). It generates their own HosFIX app link that expires at the end of their last day. You can extend or end it, and see projected and to-date cost. While active they appear in the "who will do this job?" chooser.</p>`},
+ {q:'📥 Stock',a:`<p>Under <b>Stock</b> you load consumables and supplies — item, category, quantity, unit, location and a re-order level. Use the <b>+ / −</b> buttons to adjust quantities as stock is used or replenished. Anything at or below its re-order level is flagged <b>Low</b>.</p>`},
+ {q:'⚙️ Plant &amp; Equipment',a:`<p>Register tools, machinery and equipment — name, category, make/model, serial/asset number, location, condition and next service date. Equipment past its service date is flagged <b>Due</b>.</p>`},
+ {q:'🏢 Contractor Database',a:`<p>A directory of approved contractors and suppliers. Cato Services and Build Up Builder are already loaded. Tap <b>Add contractor</b> to add more — phone numbers and emails become tap-to-call / tap-to-email links.</p>`},
+ {q:'🛡️ Health &amp; Safety',a:`<p>Upload and store all H&S documents — policies, risk assessments, method statements, COSHH sheets, training records and certificates. Give each a title, category and optional review date, then upload the PDF or image. Documents are grouped by category; tap one to open it.</p>`},
+ {q:'🗂️ BarnHUB — compliance',a:`<p>BarnHUB holds the building's compliance certificates (fire risk assessment, gas, electrical, legionella, PAT, emergency lighting and more). Tap a tile to open the document, or use <b>Upload a document</b> to add new ones.</p>`},
+ {q:'📈 Management reports',a:`<p>The <b>Management</b> screen is the analytics view: headline totals, a completion-rate / avg-days strip, a jobs-over-time line chart (hover any day for a breakdown), Josh's performance, and breakdowns by person, type, area, status, reporter and source. Use the <b>period buttons</b> and <b>filters</b> to slice the data, and <b>Print / Save PDF</b> to produce a report.</p>`},
+ {q:'🔑 Codes, links &amp; posters',a:`<p><b>Codes:</b> HosDesk login <b>3132</b> · HosFIX app (Josh) <b>3131</b> · edit/delete &amp; archive <b>2222</b>.</p><p><b>Links:</b> HosDesk — thebarnhotel.hospro.co.uk/hosdesk.html · Josh's app — /hosfix-josh.html · report a fault QR — /hosfix.html?tier=reporter · staff clock — /clock.html (security: /clock.html?role=security).</p><p><b>Fire &amp; Emergency</b> is always at the bottom-left of the sidebar.</p>`}
+];
 
 let _emJob=null;
 function openEmail(j){ _emJob=j; const e=emailText(j); $('em-to').value=RAJ_EMAIL; $('em-subj').value=e.subj; $('em-body').value=e.body; $('em-prev').innerHTML=e.html;
