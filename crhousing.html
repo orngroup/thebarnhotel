@@ -3093,14 +3093,14 @@ if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeo
   // Capture the real Barn dataset so we can switch back to it exactly
   var BARN={res:(window.CR_RES||[]).slice(), hh:(window.CR_HH||[]).slice(), rooms:(window.CR_ROOMS||[]).slice(), occ:(window.CR_OCC||[]).slice(), comp:(typeof CR_COMPLIANCE!=='undefined'?CR_COMPLIANCE.slice():[])};
   var BRENT=[
-   ['3 Beaconsfield Road, London','NW10 2JE',6,0,'pre','pending'],
-   ['111 Walm Lane, London','NW2 4QE',10,0,'pre','pending'],
-   ['39 Grove Way, Wembley','HA9 6JS',6,0,'pre','pending'],
-   ['29 Essex Road, Harlesden','NW10 9PG',6,0,'pre','pending'],
-   ['33 Kenwyn Drive, London','NW2 7NX',6,0,'pre','pending'],
-   ['876 North Circular Road, Willesden','NW2 7TE',4,0,'pre','pending'],
-   ['18 Greenwood Terrace, London','NW10 8PJ',6,0,'pre','pending'],
-   ['136 Review Road, Cricklewood','NW2 7BD',6,0,'pre','pending'],
+   ['3 Beaconsfield Road, London','NW10 2JE',6,4,'part','signed'],
+   ['111 Walm Lane, London','NW2 4QE',10,6,'part','signed'],
+   ['39 Grove Way, Wembley','HA9 6JS',6,3,'part','signed'],
+   ['29 Essex Road, Harlesden','NW10 9PG',6,4,'part','signed'],
+   ['33 Kenwyn Drive, London','NW2 7NX',6,5,'part','signed'],
+   ['876 North Circular Road, Willesden','NW2 7TE',4,2,'part','signed'],
+   ['18 Greenwood Terrace, London','NW10 8PJ',6,4,'part','signed'],
+   ['136 Review Road, Cricklewood','NW2 7BD',6,3,'part','signed'],
    ['20 St Julians Road, Brent','NW6 7LA',9,1,'part','signed'],
    ['403 North Circular Road, London','NW10 0HS',5,2,'part','signed'],
    ['88 Chamberlayne Road, London','NW10 3JL',8,3,'part','signed'],
@@ -3149,20 +3149,66 @@ if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeo
   BRENT.forEach(function(row,i){ var p={id:'brent-'+i,addr:row[0],pc:row[1],units:row[2],occ:row[3],status:row[4],signoff:row[5],seed:i+3};
     p.hiName=row[0].split(',')[0]; p.sub=row[0]+' · '+row[1]+' · '+row[2]+' units · Brent — Pinnacle Investments · '+statusLabel(row[4]); p.data=genData(p); PROPS[p.id]=p; });
 
+  // Whole-portfolio aggregate dataset (sum of every property)
+  function aggregate(){ var res=[],hh=[],rooms=[]; var ids=Object.keys(PROPS);
+    ids.forEach(function(id){ var d=PROPS[id].data; res=res.concat(d.res); hh=hh.concat(d.hh); rooms=rooms.concat(d.rooms); });
+    var base=PROPS.barn.data.occ; var occ=base.map(function(b,i){ var av=0,oc=0; ids.forEach(function(id){ var e=PROPS[id].data.occ[i]; if(e){av+=e.av;oc+=e.oc;} }); return {d:b.d,av:av,oc:oc,g:oc*2,p:av?Math.round(oc/av*1000)/10:0}; });
+    return {res:res,hh:hh,rooms:rooms,occ:occ,comp:BARN.comp};
+  }
+
   // Populate the dropdown
   var sel=document.getElementById('loc-select');
-  if(sel){ sel.innerHTML='<optgroup label="Ealing — The Barn"><option value="barn">The Barn Hotel</option></optgroup>'+
+  if(sel){ sel.innerHTML='<option value="all">📊 All properties — Portfolio</option>'+
+    '<optgroup label="Ealing — The Barn"><option value="barn">The Barn Hotel</option></optgroup>'+
     '<optgroup label="Brent — Pinnacle Portfolio">'+BRENT.map(function(row,i){return '<option value="brent-'+i+'">'+row[0].split(',')[0]+' — '+row[1]+'</option>';}).join('')+'</optgroup>'; sel.value='barn'; }
 
-  window.switchProperty=function(id){ var p=PROPS[id]; if(!p) return; var d=p.data;
-    var s=document.getElementById('loc-select'); if(s) s.value=id;
+  // Portfolio-overview container (locations table + filters), inserted into the home view
+  var pv=document.createElement('div'); pv.id='pf-overview'; pv.className='mgmt-only'; pv.style.display='none';
+  var dc=document.getElementById('dash-charts');
+  if(dc&&dc.parentNode){ dc.parentNode.insertBefore(pv, dc.nextSibling); } else { var hm=document.getElementById('hd-home'); if(hm) hm.appendChild(pv); }
+
+  function pfStats(id){ var p=PROPS[id],d=p.data; var units=d.rooms.length,occ=d.hh.length,res=d.res.length; var pct=units?Math.round(occ/units*100):0;
+    return {id:id,name:p.hiName,port:p.barn?'barn':'brent',units:units,occ:occ,vac:units-occ,pct:pct,res:res,status:(pct>=100?'full':occ===0?'pre':'part'),signoff:p.barn?'signed':p.signoff}; }
+  var PFV_Q='',PFV_PORT='all',PFV_STAT='all';
+  window.pfvSearch=function(v){ PFV_Q=(v||'').toLowerCase().trim(); renderPortfolioTable(); };
+  window.pfvPort=function(v){ PFV_PORT=v; renderPortfolioTable(); };
+  window.pfvStat=function(v){ PFV_STAT=v; renderPortfolioTable(); };
+  function renderPortfolioTable(){ var box=document.getElementById('pf-overview'); if(!box) return;
+    var ids=Object.keys(PROPS); var all=ids.map(pfStats);
+    var tot=all.reduce(function(a,r){a.u+=r.units;a.o+=r.occ;a.r+=r.res;return a;},{u:0,o:0,r:0});
+    var rows=all.slice();
+    if(PFV_PORT!=='all') rows=rows.filter(function(r){return r.port===PFV_PORT;});
+    if(PFV_STAT!=='all') rows=rows.filter(function(r){return r.status===PFV_STAT;});
+    if(PFV_Q) rows=rows.filter(function(r){return r.name.toLowerCase().indexOf(PFV_Q)>=0;});
+    rows.sort(function(a,b){return b.pct-a.pct;});
+    var portLabel=function(p){return p==='barn'?'Ealing — The Barn':'Brent — Pinnacle';};
+    var statChip=function(s){var c=s==='full'?'#e6f6ee;color:#1aa260':s==='pre'?'#fdf0e1;color:#c47d16':'#e8f3fb;color:#2f80d8';var t=s==='full'?'Fully occupied':s==='pre'?'Pre-handover':'Partially occupied';return '<span class="rs-chip" style="background:'+c+'">'+t+'</span>';};
+    var sopt=function(v,t){return '<option value="'+v+'"'+(PFV_STAT===v?' selected':'')+'>'+t+'</option>';};
+    var popt=function(v,t){return '<option value="'+v+'"'+(PFV_PORT===v?' selected':'')+'>'+t+'</option>';};
+    var head='<div class="ov-group" style="margin-top:26px">🗂️ All locations <span style="font:700 12px Lato;color:#8a94a0;margin-left:8px">'+tot.u+' units · '+tot.o+' occupied · '+Math.round(tot.o/tot.u*100)+'% · '+tot.r+' residents across '+all.length+' sites</span></div>';
+    var tools='<div class="rs-tools" style="margin-bottom:12px"><div class="rs-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search a property…" value="'+esc(PFV_Q)+'" oninput="pfvSearch(this.value)"></div>'+
+      '<select class="rs-f" onchange="pfvPort(this.value)">'+popt('all','All portfolios')+popt('brent','Brent — Pinnacle')+popt('barn','Ealing — The Barn')+'</select>'+
+      '<select class="rs-f" onchange="pfvStat(this.value)">'+sopt('all','All statuses')+sopt('part','Partially occupied')+sopt('full','Fully occupied')+sopt('pre','Pre-handover')+'</select>'+
+      '<div style="margin-left:auto;font:700 12px Lato;color:#8a94a0;align-self:center">'+rows.length+' of '+all.length+' shown</div></div>';
+    var table='<div class="card2" style="padding:4px 2px"><table class="rs-table"><thead><tr><th>Property</th><th>Portfolio</th><th>Units</th><th>Occupied</th><th>Void</th><th>Occ. %</th><th>Residents</th><th>Status</th><th>Compliance</th><th></th></tr></thead><tbody>'+
+      (rows.length?rows.map(function(r){return '<tr class="clk" onclick="switchProperty(\''+r.id+'\')"><td><b>'+esc(r.name)+'</b></td><td>'+portLabel(r.port)+'</td><td>'+r.units+'</td><td>'+r.occ+'</td><td>'+r.vac+'</td><td>'+r.pct+'%</td><td>'+r.res+'</td><td>'+statChip(r.status)+'</td><td>'+(r.signoff==='signed'?'<span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Signed off</span>':'<span class="rs-chip" style="background:#fdf0e1;color:#c47d16">Pending</span>')+'</td><td><a onclick="event.stopPropagation();switchProperty(\''+r.id+'\')" style="color:#128a8f;font-weight:800;white-space:nowrap">Open ›</a></td></tr>';}).join(''):'<tr><td colspan="10" style="color:#8a94a0;padding:16px">No properties match your filters.</td></tr>')+
+      '</tbody></table></div>';
+    box.innerHTML=head+tools+table;
+  }
+
+  window.switchProperty=function(id){ var s=document.getElementById('loc-select'); if(s) s.value=id;
+    var d,title,sub,barn;
+    if(id==='all'){ d=aggregate(); title='All Properties — C&R Portfolio'; sub='23 locations · Brent — Pinnacle Investments + Ealing — The Barn · whole-portfolio view'; barn=false; }
+    else { var p=PROPS[id]; if(!p) return; d=p.data; title=p.hiName; sub=p.sub; barn=!!p.barn; }
     window.CR_RES=d.res; window.CR_HH=d.hh; window.CR_ROOMS=d.rooms; window.CR_OCC=d.occ;
     try{ CR_COMPLIANCE.length=0; d.comp.forEach(function(c){CR_COMPLIANCE.push(c);}); }catch(e){}
-    var ti=document.getElementById('loc-title'); if(ti) ti.textContent=p.hiName;
-    var sub=document.getElementById('loc-sub'); if(sub) sub.innerHTML=p.sub;
-    var tb=document.getElementById('tb-hi'); if(tb) tb.textContent='Welcome back · '+p.hiName;
+    var ti=document.getElementById('loc-title'); if(ti) ti.textContent=title;
+    var sub2=document.getElementById('loc-sub'); if(sub2) sub2.innerHTML=sub;
+    var tb=document.getElementById('tb-hi'); if(tb) tb.textContent='Welcome back · '+(id==='all'?'C&R Portfolio':title);
     var og=document.getElementById('ops-group'), od=document.getElementById('ops-dash');
-    if(og) og.style.display=p.barn?'':'none'; if(od) od.style.display=p.barn?'':'none';
+    if(og) og.style.display=barn?'':'none'; if(od) od.style.display=barn?'':'none';
+    var pvb=document.getElementById('pf-overview'); if(pvb) pvb.style.display=(id==='all')?'':'none';
+    if(id==='all'){ try{renderPortfolioTable();}catch(e){} }
     crRerender();
   };
   function crRerender(){ var home=document.getElementById('hd-home');
