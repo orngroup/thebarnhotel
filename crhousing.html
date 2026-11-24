@@ -498,7 +498,13 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 /* ---- Dashboard landing ---- */
 .dash-head{display:flex;align-items:flex-end;gap:14px;margin-bottom:18px}
 .dash-h1{font:900 26px Lato;color:#15233f;line-height:1}
-.dash-sub{font:600 13px Lato;color:#7e8aa0;margin-top:4px}
+.dash-sub{font:600 13px Lato;color:#7e8aa0;margin-top:6px}
+.loc-wrap{display:flex;align-items:center;gap:8px}
+.loc-select{appearance:none;-webkit-appearance:none;border:1.5px solid #e2e8f2;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2316264c' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 14px center;border-radius:12px;font:900 24px Lato;color:#15233f;line-height:1;padding:9px 46px 9px 14px;cursor:pointer;max-width:520px}
+.loc-select:hover{border-color:#16264c}
+.loc-select:focus{outline:none;border-color:#16264c;box-shadow:0 0 0 3px rgba(22,38,76,.08)}
+.loc-select optgroup{font:900 12px Lato;color:#7e8aa0}
+.loc-select option{font:700 15px Lato;color:#15233f}
 .dash-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
 @media(max-width:1300px){.dash-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:640px){.dash-kpis{grid-template-columns:repeat(2,1fr)}}
@@ -788,7 +794,7 @@ body.role-ops .mgmt-only{display:none!important}
     <div class="sb-logo"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:152px;max-width:100%;height:auto;display:block" onerror="this.outerHTML='&lt;div class=\'l1\'&gt;C&amp;amp;R &lt;b&gt;Housing&lt;/b&gt;&lt;/div&gt;'"><div class="l2" style="margin-top:10px">HosPRO · The Barn</div></div>
     <nav class="sb-nav">
       <div class="sb-cap">Main</div>
-      <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Location Overview</button>
+      <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Overview</button>
       <div class="sb-cap mgmt-only">Social Housing</div>
       <button class="sb-i mgmt-only" id="nav-aria" onclick="openAria();sbClose()"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 2 .2.0 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>Ask ARIA</button>
       <button class="sb-i mgmt-only" id="nav-residents" onclick="openResidents();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Residents<span class="cnt" id="bc-res-n">0</span></button>
@@ -819,7 +825,7 @@ body.role-ops .mgmt-only{display:none!important}
   <div class="main">
     <header class="topbar">
       <button class="sb-toggle" onclick="sbToggle()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-      <div><div class="tb-date" id="tb-date">—</div><div class="tb-hi">Welcome back · The Barn Hotel</div></div>
+      <div><div class="tb-date" id="tb-date">—</div><div class="tb-hi" id="tb-hi">Welcome back · The Barn Hotel</div></div>
       <div class="tb-sp"></div>
       <a class="tb-council" href="cr-council.html" target="_blank" rel="noopener" title="Open the council portal (read-only)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>Council Login</a>
       <div class="tb-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="Search jobs…" oninput="topSearch(this.value)"></div>
@@ -912,10 +918,10 @@ body.role-ops .mgmt-only{display:none!important}
 
     <!-- HOME: welcome + three big kiosk cards (tap one to open it full-page) + stats -->
     <div id="hd-home">
-      <div class="dash-head"><div><div class="dash-h1">Location Overview</div><div class="dash-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
+      <div class="dash-head"><div><div class="loc-wrap"><select class="loc-select" id="loc-select" onchange="switchProperty(this.value)"><option value="barn">The Barn Hotel</option></select></div><div class="dash-sub" id="loc-sub">The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it</div></div><a class="ov-council mgmt-only" href="cr-council.html" target="_blank" rel="noopener">🏛️ Council portal ›</a></div>
       <div class="mgmt-only"><div class="ov-group">🏠 Social Housing</div><div class="ov-grid" id="sh-dash"></div></div>
       <div id="dash-charts" class="mgmt-only"></div>
-      <div class="ov-group">⚙️ Operations</div>
+      <div class="ov-group" id="ops-group">⚙️ Operations</div>
       <div class="ov-grid" id="ops-dash"></div>
     </div>
 
@@ -3077,6 +3083,94 @@ function mToggleAll(){ M_FILTER_ALL=!M_FILTER_ALL; const b=$('m-toggle'); if(b) 
 
 /* entry: login screen first (code remembered for this browser session), then straight into the console */
 if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeout(()=>{ try{ $('lg-in').focus(); }catch(e){} },80); }
+</script>
+
+<script>
+/* ===================== PROPERTY SWITCHER — multi-location ===================== */
+(function(){
+  // Capture the real Barn dataset so we can switch back to it exactly
+  var BARN={res:(window.CR_RES||[]).slice(), hh:(window.CR_HH||[]).slice(), rooms:(window.CR_ROOMS||[]).slice(), occ:(window.CR_OCC||[]).slice(), comp:(typeof CR_COMPLIANCE!=='undefined'?CR_COMPLIANCE.slice():[])};
+  var BRENT=[
+   ['3 Beaconsfield Road, London','NW10 2JE',6,0,'pre','pending'],
+   ['111 Walm Lane, London','NW2 4QE',10,0,'pre','pending'],
+   ['39 Grove Way, Wembley','HA9 6JS',6,0,'pre','pending'],
+   ['29 Essex Road, Harlesden','NW10 9PG',6,0,'pre','pending'],
+   ['33 Kenwyn Drive, London','NW2 7NX',6,0,'pre','pending'],
+   ['876 North Circular Road, Willesden','NW2 7TE',4,0,'pre','pending'],
+   ['18 Greenwood Terrace, London','NW10 8PJ',6,0,'pre','pending'],
+   ['136 Review Road, Cricklewood','NW2 7BD',6,0,'pre','pending'],
+   ['20 St Julians Road, Brent','NW6 7LA',9,1,'part','signed'],
+   ['403 North Circular Road, London','NW10 0HS',5,2,'part','signed'],
+   ['88 Chamberlayne Road, London','NW10 3JL',8,3,'part','signed'],
+   ['12 Bruce Road, London','NW10 8QP',6,3,'part','signed'],
+   ['127 Review Road, Cricklewood','NW2 7BH',6,4,'part','signed'],
+   ['12 Nutfield Road, Neasden','NW2 7EB',6,4,'part','signed'],
+   ['806 North Circular Road, London','NW2 7TD',6,4,'part','signed'],
+   ['23 Aldershot Road, London','NW6 7LF',7,4,'part','signed'],
+   ['31 Tadworth Road, London','NW2 7UB',6,4,'part','signed'],
+   ['103 Warren Road, Neasden','NW2 7NH',6,4,'part','signed'],
+   ['12 Avondale Avenue, London','NW2 7PA',6,4,'part','signed'],
+   ['118 Roundwood Road, Willesden','NW10 9LN',6,5,'part','signed'],
+   ['17 Harlesden Gardens, London','NW10 4EY',8,6,'part','signed'],
+   ['26 Chamberlayne Road, Kensal Rise','NW10 3JD',7,7,'full','signed']
+  ];
+  var FIRST=['Amara','Mohammed','Linh','Priya','João','Fatima','Kwame','Zofia','Yusuf','Nadia','Kofi','Thandi','Samir','Sofia','Ayan','Grace','Leyla','Mateo','Ibrahim','Hana','Daniel','Mary','Ahmed','Aisha','Omar','Esther','Ali','Rania','Tesfaye','Blessing'];
+  var SUR=['Okafor','Ahmed','Nguyen','Patel','Santos','Begum','Mensah','Kowalski','Ali','Haddad','Osei','Dube','Rahman','Silva','Yusuf','Campbell','Darko','Hassan','Lopez','Ibrahim','Farah','Mwangi'];
+  var ETH=['African','Caribbean','White other','Arab','Asian other','White British','Black other','Other','Unknown'];
+  var NAT=['Somali','Nigerian','Afghan','Eritrean','Syrian','Bangladeshi','Albanian','Sudanese','Congolese','Iranian','Kurdish','Ethiopian','Iraqi'];
+  function seeded(n){ var x=(n*9301+49297)%233280; return function(){ x=(x*9301+49297)%233280; return x/233280; }; }
+  function pick(a,r){ return a[Math.floor(r()*a.length)]; }
+  function ageBandOf(a){ if(a<18) return a<3?'0-2':a<6?'3-5':a<9?'6-8':a<12?'9-11':a<15?'12-14':'15-17'; return a<25?'18-24':a<35?'25-34':a<45?'35-44':a<55?'45-54':'55-64'; }
+  function isoAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toLocaleDateString('en-CA'); }
+  function statusLabel(s){ return s==='pre'?'Pre-handover':s==='full'?'Fully occupied':'Partially occupied'; }
+  function genComp(signed){ var base=['Electrical (EICR)','Fire Risk Assessment','Emergency Lighting','Gas Safety (Non-Domestic)','Legionella Risk Assessment','Fire Alarm (BS5839)','PAT Testing','Fire Extinguishers'];
+    return base.map(function(b,i){ var st=signed?'valid':(i<2?'valid':i<4?'due':'await'); return {item:b,status:st,detail:st==='valid'?'In date · signed off':st==='due'?'Renewal due':'Awaiting first inspection'}; }); }
+  var idc=1;
+  function genData(p){ var r=seeded(p.seed*7+11); var short=p.addr.split(',')[0];
+    var rooms=[]; for(var i=1;i<=p.units;i++) rooms.push({room:'Flat '+i,building:short,floor:Math.ceil(i/3),cap:3});
+    var hh=[],res=[];
+    for(var k=1;k<=p.occ;k++){ var adults=1+Math.floor(r()*2), kids=Math.floor(r()*3); var eth=pick(ETH,r),nat=pick(NAT,r);
+      var daysAgo=20+Math.floor(r()*300), checkIn=isoAgo(daysAgo); var lf=pick(FIRST,r),ll=pick(SUR,r);
+      var code='F'+k, room='Flat '+k;
+      hh.push({code:code,lead:lf+' '+ll,room:room,building:short,adults:adults,children:kids,nationality:nat,ethnicity:eth,checkIn:checkIn,los:daysAgo,status:'In residence',phone:'07'+String(700000000+Math.floor(r()*99999999))});
+      for(var a=0;a<adults;a++){ var fa=a===0?lf:pick(FIRST,r),ag=22+Math.floor(r()*40); res.push({id:'rp'+(idc++),first:fa,last:ll,hh:code,room:room,building:short,gender:(r()<0.5?'Male':'Female'),age:ag,ageBand:ageBandOf(ag),child:false,nationality:nat,ethnicity:eth,checkIn:checkIn,los:daysAgo,status:'In residence'}); }
+      for(var c=0;c<kids;c++){ var cg=1+Math.floor(r()*16); res.push({id:'rp'+(idc++),first:pick(FIRST,r),last:ll,hh:code,room:room,building:short,gender:(r()<0.5?'Male':'Female'),age:cg,ageBand:ageBandOf(cg),child:true,nationality:nat,ethnicity:eth,checkIn:checkIn,los:daysAgo,status:'In residence'}); }
+    }
+    var occ=[],today=new Date();
+    for(var d=364;d>=0;d--){ var dt=new Date(today); dt.setDate(dt.getDate()-d); var frac=(364-d)/364;
+      var oc=p.occ===0?0:Math.min(p.units,Math.max(0,Math.round(p.occ*(0.4+0.6*frac))+(r()<0.25?1:0))); if(d===0) oc=p.occ;
+      occ.push({d:dt.toLocaleDateString('en-CA'),av:p.units,oc:oc,g:oc*2,p:p.units?Math.round(oc/p.units*1000)/10:0}); }
+    return {res:res,hh:hh,rooms:rooms,occ:occ,comp:genComp(p.signoff==='signed')};
+  }
+
+  var PROPS={ barn:{id:'barn',hiName:'The Barn Hotel',sub:'The Barn, Ruislip · operated by C&amp;R Housing · tap any card to open it',data:BARN,barn:true} };
+  BRENT.forEach(function(row,i){ var p={id:'brent-'+i,addr:row[0],pc:row[1],units:row[2],occ:row[3],status:row[4],signoff:row[5],seed:i+3};
+    p.hiName=row[0].split(',')[0]; p.sub=row[0]+' · '+row[1]+' · '+row[2]+' units · Brent — Pinnacle Investments · '+statusLabel(row[4]); p.data=genData(p); PROPS[p.id]=p; });
+
+  // Populate the dropdown
+  var sel=document.getElementById('loc-select');
+  if(sel){ sel.innerHTML='<optgroup label="Ealing — The Barn"><option value="barn">The Barn Hotel</option></optgroup>'+
+    '<optgroup label="Brent — Pinnacle Portfolio">'+BRENT.map(function(row,i){return '<option value="brent-'+i+'">'+row[0].split(',')[0]+' — '+row[1]+'</option>';}).join('')+'</optgroup>'; sel.value='barn'; }
+
+  window.switchProperty=function(id){ var p=PROPS[id]; if(!p) return; var d=p.data;
+    var s=document.getElementById('loc-select'); if(s) s.value=id;
+    window.CR_RES=d.res; window.CR_HH=d.hh; window.CR_ROOMS=d.rooms; window.CR_OCC=d.occ;
+    try{ CR_COMPLIANCE.length=0; d.comp.forEach(function(c){CR_COMPLIANCE.push(c);}); }catch(e){}
+    var sub=document.getElementById('loc-sub'); if(sub) sub.innerHTML=p.sub;
+    var tb=document.getElementById('tb-hi'); if(tb) tb.textContent='Welcome back · '+p.hiName;
+    var og=document.getElementById('ops-group'), od=document.getElementById('ops-dash');
+    if(og) og.style.display=p.barn?'':'none'; if(od) od.style.display=p.barn?'':'none';
+    crRerender();
+  };
+  function crRerender(){ var home=document.getElementById('hd-home');
+    if(home && !home.classList.contains('hide')){ try{renderDash();}catch(e){} return; }
+    try{ if(onPane('residents')) renderResidents(); }catch(e){}
+    try{ if(onPane('occupancy')) renderOccupancy(); }catch(e){}
+    try{ if(onPane('demographics')) renderDemographics(); }catch(e){}
+    try{ if(onPane('council')) renderCouncil(); }catch(e){}
+    try{ if(onPane('aria')) renderAria(); }catch(e){}
+  }
+})();
 </script>
 </body>
 </html>
