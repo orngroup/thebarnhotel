@@ -42,10 +42,23 @@ a{color:var(--teal2);text-decoration:none}
 .nav a.on,.nav a:hover{color:#fff;border-bottom-color:var(--teal)}
 .who{margin-left:auto;text-align:right;font:600 12px Lato;color:var(--muted)}
 .who b{color:var(--ink)}
-.pfbar{display:flex;align-items:center;gap:12px;padding:16px 0 2px}
+.pfbar{display:flex;align-items:center;gap:12px;padding:14px 0 14px;flex-wrap:wrap}
 .pfbar .pl{font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.pf{padding:9px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--panel);color:var(--muted);font:800 13px Lato;cursor:default}
-.pf.on{background:var(--teal);color:#06212a;border-color:var(--teal)}
+.pf-sel{appearance:none;-webkit-appearance:none;background:var(--panel) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235bc4c9' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 14px center;border:1px solid var(--bd);border-radius:11px;color:#fff;font:900 14px Lato;padding:11px 40px 11px 16px;cursor:pointer;min-width:260px}
+.pf-sel:focus{outline:none;border-color:var(--teal)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--panel);color:var(--muted);font:800 12.5px Lato;cursor:pointer}
+.chip:hover{color:#fff;border-color:var(--teal)}
+.chip.on{background:var(--teal);color:#06212a;border-color:var(--teal)}
+.trow{cursor:pointer}.trow:hover td{background:rgba(63,185,192,.06)}
+.pfhdr td{background:rgba(255,255,255,.03);font:900 12px Lato;color:#cdd8e6;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bd)}
+.p-pre{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-part{background:rgba(63,185,192,.16);color:#73cfd4}
+.p-full{background:rgba(57,185,129,.16);color:#54d39d}
+.p-pending{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-signed{background:rgba(57,185,129,.16);color:#54d39d}
+.p-occ{background:rgba(57,185,129,.16);color:#54d39d}
+.p-av{background:rgba(224,163,58,.14);color:#f0bd6a}
 .sec{padding:26px 0 60px}
 .eyebrow{font:800 11px Lato;letter-spacing:2px;text-transform:uppercase;color:var(--teal2)}
 h1{font:900 30px Lato;margin:4px 0 4px}
@@ -156,7 +169,14 @@ tr:last-child td{border-bottom:none}
       </nav>
       <div class="who">Signed in as <b>London Borough of Ealing</b><br>Access: The Barn, Ruislip · <a onclick="cLogout()">Sign out</a></div>
     </div>
-    <div class="pfbar"><span class="pl">Portfolio</span><span class="pf">All portfolios</span><span class="pf on">Ealing — The Barn</span></div>
+    <div class="pfbar"><span class="pl">Portfolio</span>
+      <select class="pf-sel" id="pf-sel" onchange="setPF(this.value)">
+        <option value="all">All portfolios</option>
+        <option value="brent">Brent — Pinnacle Portfolio</option>
+        <option value="barn" selected>Ealing — The Barn</option>
+      </select>
+      <div class="chips" id="pf-chips"></div>
+    </div>
     </div></div>
     <div class="wrap"><div id="c-body" class="sec"></div></div>
     <div class="foot"><b style="color:#cdd8e6">C&amp;R Housing</b> · The Barn, West End Road, Ruislip HA4 6JB&nbsp;&nbsp;·&nbsp;&nbsp;<b style="color:#cdd8e6">Ealing Council</b> · Perceval House, 14/16 Uxbridge Road, Ealing W5 2HL<br>Figures shown are sample data for demonstration · Powered by HosPRO Social Housing</div>
@@ -177,6 +197,61 @@ function losText(d){ if(d>=365) return (d/365).toFixed(1)+' yr'; if(d>=30) retur
 function grp(a,f){const m={};a.forEach(x=>{const k=f(x);if(k==null||k==='')return;m[k]=(m[k]||0)+1;});return m;}
 function buildings(){return [...new Set(ROOMS().map(r=>r.building))];}
 var CKI=[];
+
+/* ===== PORTFOLIOS ===== */
+var BRENT=[
+ ['3 Beaconsfield Road, London','NW10 2JE',6,0,'pre','pending','plan'],
+ ['111 Walm Lane, London','NW2 4QE',10,0,'pre','pending','plan'],
+ ['39 Grove Way, Wembley','HA9 6JS',6,0,'pre','pending','plan'],
+ ['29 Essex Road, Harlesden','NW10 9PG',6,0,'pre','pending','plan'],
+ ['33 Kenwyn Drive, London','NW2 7NX',6,0,'pre','pending','plan'],
+ ['876 North Circular Road, Willesden','NW2 7TE',4,0,'pre','pending','detail'],
+ ['18 Greenwood Terrace, London','NW10 8PJ',6,0,'pre','pending','plan'],
+ ['136 Review Road, Cricklewood','NW2 7BD',6,0,'pre','pending','detail'],
+ ['20 St Julians Road, Brent','NW6 7LA',9,1,'part','signed','detail'],
+ ['403 North Circular Road, London','NW10 0HS',5,2,'part','signed','detail'],
+ ['88 Chamberlayne Road, London','NW10 3JL',8,3,'part','signed','detail'],
+ ['12 Bruce Road, London','NW10 8QP',6,3,'part','signed','detail'],
+ ['127 Review Road, Cricklewood','NW2 7BH',6,4,'part','signed','detail'],
+ ['12 Nutfield Road, Neasden','NW2 7EB',6,4,'part','signed','detail'],
+ ['806 North Circular Road, London','NW2 7TD',6,4,'part','signed','detail'],
+ ['23 Aldershot Road, London','NW6 7LF',7,4,'part','signed','detail'],
+ ['31 Tadworth Road, London','NW2 7UB',6,4,'part','signed','detail'],
+ ['103 Warren Road, Neasden','NW2 7NH',6,4,'part','signed','detail'],
+ ['12 Avondale Avenue, London','NW2 7PA',6,4,'part','signed','detail'],
+ ['118 Roundwood Road, Willesden','NW10 9LN',6,5,'part','signed','detail'],
+ ['17 Harlesden Gardens, London','NW10 4EY',8,6,'part','signed','detail'],
+ ['26 Chamberlayne Road, Kensal Rise','NW10 3JD',7,7,'full','signed','detail']
+];
+var PROPS=[];
+BRENT.forEach(function(r,i){ PROPS.push({id:'brent-'+i,pf:'brent',addr:r[0],pc:r[1],units:r[2],occ:r[3],status:r[4],signoff:r[5],link:r[6],seed:i+3}); });
+(function(){ var hh=HH().length||50, rooms=(ROOMS().length||57); PROPS.push({id:'barn',pf:'barn',addr:'The Barn, West End Road, Ruislip',pc:'HA4 6JB',units:rooms,occ:hh,status:(hh>=rooms?'full':'part'),signoff:'signed',link:'detail',seed:99,isBarn:true}); })();
+var PF_META={
+ all:{name:'All portfolios',lead:'Every property C&amp;R Housing manages across the Brent (Pinnacle) and Ealing (The Barn) portfolios — occupancy, voids and compliance sign-off at a glance.'},
+ brent:{name:'Brent — Pinnacle Portfolio',lead:'All 22 properties leased from Pinnacle Investments under the Brent agreement. Beaconsfield Road, Walm Lane, Grove Way and Essex Road are the first four onboarded and are pinned to the top; the rest follow as renovation completes.'},
+ barn:{name:'Ealing — The Barn',lead:'Family welcome centre leased in full to the London Borough of Ealing — 57 self-contained suites across four buildings.'}
+};
+var PF='barn';
+function propsFor(pf){ return pf==='all'?PROPS.slice():PROPS.filter(function(p){return p.pf===pf;}); }
+function statusLabel(s){ return s==='pre'?'Pre-handover':s==='full'?'Fully occupied':'Partially occupied'; }
+function statusPill(s){ return '<span class="pill p-'+s+'">'+statusLabel(s)+'</span>'; }
+function signPill(s){ return s==='signed'?'<span class="pill p-signed">Signed off</span>':'<span class="pill p-pending">Pending</span>'; }
+function totals(list){ var u=0,o=0; list.forEach(function(p){u+=p.units;o+=p.occ;}); return {props:list.length,units:u,occ:o,vac:u-o,pct:u?Math.round(o/u*100):0,signed:list.filter(function(p){return p.signoff==='signed';}).length,pre:list.filter(function(p){return p.status==='pre';}).length,part:list.filter(function(p){return p.status==='part';}).length,full:list.filter(function(p){return p.status==='full';}).length}; }
+var SUR=['Okafor','Ahmed','Nguyen','Patel','Santos','Begum','Mensah','Kowalski','Ali','Haddad','Osei','Dube','Rahman','Silva','Yusuf','Campbell','Darko','Hassan','Lopez','Ibrahim','Farah','Mwangi'];
+var NAT2=['Somali','Nigerian','Afghan','Eritrean','Syrian','Bangladeshi','Albanian','Sudanese','Congolese','Iranian','Kurdish','Ethiopian'];
+function seeded(n){ var x=(n*9301+49297)%233280; return function(){ x=(x*9301+49297)%233280; return x/233280; }; }
+function genUnits(p){ var out=[],rnd=seeded(p.seed||1),pfx=p.pf==='brent'?'BRT':'EAL';
+  for(var i=1;i<=p.units;i++){ var occ=i<=p.occ; var ad=1+Math.floor(rnd()*2), ch=occ?Math.floor(rnd()*3):0;
+    out.push({unit:'Flat '+i,occ:occ,ref:occ?(pfx+'-2026-0'+String(1000+Math.floor(rnd()*899)).slice(1)):'',lead:occ?SUR[Math.floor(rnd()*SUR.length)]:'',nat:occ?NAT2[Math.floor(rnd()*NAT2.length)]:'',hh:occ?(ad+' + '+ch):''}); }
+  return out; }
+var DETAIL=null;
+function setPF(pf){ PF=pf; var s=$('pf-sel'); if(s) s.value=pf; DETAIL=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function renderChips(){ var c=$('pf-chips'); if(!c) return; var order=['all','brent','barn'];
+  c.innerHTML=order.map(function(k){return '<span class="chip'+(PF===k?' on':'')+'" onclick="setPF(\''+k+'\')">'+PF_META[k].name+'</span>';}).join(''); }
+function pfRow(p){ var vac=p.units-p.occ, pct=p.units?Math.round(p.occ/p.units*100):0;
+  return '<tr class="trow" onclick="openPDetail(\''+p.id+'\')"><td>'+esc(p.addr)+'</td><td>'+esc(p.pc)+'</td><td>'+p.units+'</td><td>'+p.occ+'</td><td>'+vac+'</td><td>'+pct+'%</td><td>'+statusPill(p.status)+'</td><td>'+signPill(p.signoff)+'</td><td><a onclick="event.stopPropagation();openPDetail(\''+p.id+'\')">'+(p.link==='plan'?'View plan':'View detail')+'</a></td></tr>'; }
+function pfTableHead(){ return '<thead><tr><th>Property</th><th>Postcode</th><th>Units</th><th>Occupied</th><th>Vacant</th><th>Occ. %</th><th>Status</th><th>Compliance sign-off</th><th>Floor plan</th></tr></thead>'; }
+function openPDetail(id){ DETAIL=PROPS.filter(function(p){return p.id===id;})[0]||null; CUR='property'; [].forEach.call(document.querySelectorAll('.nav a'),function(a){a.classList.toggle('on',a.getAttribute('data-v')==='property');}); render(); window.scrollTo({top:0,behavior:'smooth'}); }
 
 var COMPLIANCE=[
  {item:'Electrical Installation Condition Report (EICR)',type:'Electrical',issued:'08 Jun 2026',expires:'08 Jun 2031',status:'valid',file:'compliance/eicr.pdf'},
@@ -199,14 +274,16 @@ function startCouncil(){ if(db){ try{ db.collection('cr_residents').onSnapshot(f
 /* ---- view switch ---- */
 var CUR='overview';
 function cView(v){ CUR=v; [].forEach.call(document.querySelectorAll('.nav a'),function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); render(); window.scrollTo({top:0,behavior:'smooth'}); }
-function render(){ var b=$('c-body'); if(!b) return;
+function render(){ var b=$('c-body'); if(!b) return; renderChips(); var s=$('pf-sel'); if(s) s.value=PF;
   if(CUR==='overview') b.innerHTML=vOverview();
-  else if(CUR==='demographics') b.innerHTML=vDemographics();
-  else if(CUR==='stays') b.innerHTML=vStays();
+  else if(CUR==='demographics') b.innerHTML=scopeGuard()||vDemographics();
+  else if(CUR==='stays') b.innerHTML=scopeGuard()||vStays();
   else if(CUR==='property') b.innerHTML=vProperty();
-  else if(CUR==='performance') b.innerHTML=vPerformance();
+  else if(CUR==='performance') b.innerHTML=scopeGuard()||vPerformance();
   else if(CUR==='reports'){ b.innerHTML=vReports(); repSel(REP); }
 }
+function scopeGuard(){ if(PF!=='brent') return ''; // resident-level views only apply where residents are in place
+  return '<div class="eyebrow">'+PF_META.brent.name+'</div><h1>Resident-level view</h1><div class="lead">The Brent — Pinnacle portfolio is mid-onboarding: 8 properties are pre-handover and the rest are filling as renovation completes. Resident demographics, length-of-stay and performance reporting switch on per property once households are placed. See <a onclick="cView(\'property\')">Properties</a> for the live occupancy position, or switch the portfolio to <a onclick="setPF(\'barn\')">Ealing — The Barn</a> for the full resident view.</div>'; }
 
 /* ---- charts / bars ---- */
 function lineChart(series,color){ var n=series.length; if(!n) return ''; var vals=series.map(function(s){return s.v;});
@@ -246,7 +323,31 @@ function stayStats(){ var hh=HH(); var los=hh.map(function(h){return h.los;}); v
 function losBand(d){ var y=d/365; return y<0.5?'Under 6 months':y<1?'6–12 months':y<2?'1–2 years':y<5?'2–5 years':'5+ years'; }
 
 /* ---- views ---- */
-function vOverview(){ var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.length-1]||{}; var kids=all.filter(function(r){return r.child;}).length;
+function pfOverview(){ var m=PF_META[PF]; var list=propsFor(PF); var t=totals(list);
+  var kpi=[
+    ['','Properties',t.props,PF==='all'?'across 2 portfolios':'in this portfolio'],
+    ['','Units / rooms',t.units,t.occ+' occupied · '+t.vac+' void'],
+    ['v','Occupancy',t.pct+'%',t.occ+' of '+t.units],
+    ['','Void units',t.vac,'ready / in renovation'],
+    ['v','Compliance signed off',t.signed+' / '+t.props,'properties cleared'],
+    ['flag','Pre-handover',t.pre,'awaiting first sign-off']
+  ].map(function(k){return '<div class="kpi '+(k[0]==='flag'?'flag':'')+'"><div class="v">'+k[2]+'</div><div class="l">'+k[1]+'</div><div class="s">'+k[3]+'</div></div>';}).join('');
+  var occObj={}; list.slice().sort(function(a,b){return (b.units?b.occ/b.units:0)-(a.units?a.occ/a.units:0);}).slice(0,10).forEach(function(p){ occObj[p.addr.split(',')[0]]=p.units?Math.round(p.occ/p.units*100):0; });
+  var statusParts=[['Fully occupied',t.full,'#39b981'],['Partially occupied',t.part,'#3fb9c0'],['Pre-handover',t.pre,'#e0a33a']].filter(function(x){return x[1]>0;});
+  var signParts=[['Signed off',t.signed,'#39b981'],['Pending',t.props-t.signed,'#e0a33a']].filter(function(x){return x[1]>0;});
+  var pfSummary='';
+  if(PF==='all'){ pfSummary='<div class="card" style="margin-top:16px"><h3>🗂️ By portfolio</h3><table><thead><tr><th>Portfolio</th><th>Properties</th><th>Units</th><th>Occupied</th><th>Void</th><th>Occupancy</th><th>Signed off</th></tr></thead><tbody>'+
+    ['brent','barn'].map(function(k){var tt=totals(propsFor(k));return '<tr class="trow" onclick="setPF(\''+k+'\')"><td>'+PF_META[k].name+'</td><td>'+tt.props+'</td><td>'+tt.units+'</td><td>'+tt.occ+'</td><td>'+tt.vac+'</td><td>'+tt.pct+'%</td><td>'+tt.signed+'/'+tt.props+'</td></tr>';}).join('')+'</tbody></table></div>'; }
+  return '<div class="eyebrow">Portfolio overview</div><h1>'+m.name.replace('—','·')+'</h1><div class="lead">'+m.lead+'</div>'+
+    '<div class="kpis">'+kpi+'</div>'+
+    '<div class="grid2"><div class="card"><h3>🏠 Status breakdown</h3>'+shDonutP(statusParts,t.props,'sites')+'</div>'+
+    '<div class="card"><h3>🛡️ Compliance sign-off</h3>'+shDonutP(signParts,t.signed,'cleared')+'</div></div>'+
+    '<div class="card" style="margin-top:16px"><h3>📊 Occupancy by property <span class="mu">top sites</span></h3>'+bars(occObj,Object.keys(occObj))+'</div>'+
+    pfSummary+
+    '<div style="margin-top:16px"><a onclick="cView(\'property\')">View full property portfolio ›</a></div>';
+}
+function vOverview(){ if(PF!=='barn') return pfOverview();
+  var all=RES(), hh=HH(), occ=OCC(); var last=occ[occ.length-1]||{}; var kids=all.filter(function(r){return r.child;}).length;
   var st=stayStats(); var nats=grp(all,function(r){return r.nationality;});
   var cv=COMPLIANCE.filter(function(c){return c.status==='valid';}).length, ca=COMPLIANCE.filter(function(c){return c.status!=='valid';}).length;
   var kpi=[
@@ -301,7 +402,29 @@ function vStays(){ var hh=HH().slice().sort(function(a,b){return b.los-a.los;});
     '<div class="card" style="margin-top:16px"><h3>🏠 All households — actual stay</h3><table><thead><tr><th>HH</th><th>Lead contact</th><th>Room</th><th>Building</th><th>Household</th><th>Placed</th><th>Stay</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 
-function vProperty(){ var rooms=ROOMS().slice().sort(function(a,b){return (a.building+a.room).localeCompare(b.building+b.room);}); var hh=HH();
+function clearDetail(){ DETAIL=null; render(); }
+function vProperty(){ if(DETAIL) return pDetail(DETAIL); if(PF==='barn') return barnProperty(); return pfProperty(); }
+function pfProperty(){ var m=PF_META[PF]; var list=propsFor(PF); var t=totals(list);
+  var minis=[['Properties',t.props],['Units',t.units],['Occupied',t.occ],['Void',t.vac],['Occupancy',t.pct+'%']].map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('');
+  var body;
+  if(PF==='all'){ body='<table>'+pfTableHead()+'<tbody>'+['brent','barn'].map(function(k){var sub=propsFor(k),tt=totals(sub);return '<tr class="pfhdr"><td colspan="9">'+PF_META[k].name+' — '+tt.props+' propert'+(tt.props===1?'y':'ies')+' · '+tt.units+' units · '+tt.pct+'% occupied</td></tr>'+sub.map(pfRow).join('');}).join('')+'</tbody></table>'; }
+  else body='<table>'+pfTableHead()+'<tbody>'+list.map(pfRow).join('')+'</tbody></table>';
+  var note=PF==='brent'?'<div class="note">Beaconsfield Road, Walm Lane, Grove Way and Essex Road are the first four properties onboarded and are pinned to the top of this list; the rest follow as renovation completes. Compliance sign-off is a C&amp;R-appointed compliance officer\'s visit confirming each unit is fit for occupation and all HMO certification is in place — required before a property is put forward to the council, and repeated every time.</div>':'<div class="note">All properties across the Brent (Pinnacle) and Ealing (The Barn) portfolios. Click any property for its unit schedule.</div>';
+  return '<div class="eyebrow">Portfolio list</div><h1>Property portfolio</h1><div class="lead">'+m.lead+'</div><div class="minis">'+minis+'</div><div class="card">'+body+note+'</div>';
+}
+function pDetail(p){ if(p.isBarn){ return barnProperty(); }
+  var vac=p.units-p.occ, pct=p.units?Math.round(p.occ/p.units*100):0;
+  var minis=[['Units',p.units],['Occupied',p.occ],['Void',vac],['Occupancy',pct+'%']].map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('');
+  var rows=genUnits(p).map(function(u){ return '<tr><td>'+u.unit+'</td><td>'+(u.occ?'<span class="pill p-occ">Occupied</span>':'<span class="pill p-av">Available</span>')+'</td><td>'+(u.ref||'—')+'</td><td>'+(u.lead?esc(u.lead)+' household':'—')+'</td><td>'+(u.hh||'—')+'</td><td>'+(u.nat||'—')+'</td></tr>'; }).join('');
+  return '<a class="back" style="font:800 13px Lato;color:var(--teal2);display:inline-block;margin-bottom:12px" onclick="clearDetail()">‹ Back to portfolio</a>'+
+    '<div class="eyebrow">Property detail · '+esc(PF_META[p.pf].name)+'</div><h1>'+esc(p.addr)+'</h1>'+
+    '<div class="lead">'+esc(p.pc)+' · leased from Pinnacle Investments under the Brent agreement · '+statusLabel(p.status)+'. '+(p.signoff==='signed'?'Compliance signed off by the C&amp;R compliance officer.':'Awaiting compliance sign-off before units are put forward to the council.')+'</div>'+
+    '<div style="display:flex;gap:10px;margin-bottom:16px">'+statusPill(p.status)+signPill(p.signoff)+'</div>'+
+    '<div class="minis">'+minis+'</div>'+
+    '<div class="card"><h3>🛏️ Unit schedule <span class="mu">'+p.units+' units · sample data</span></h3><table><thead><tr><th>Unit</th><th>Status</th><th>Placement ref</th><th>Lead contact</th><th>Household</th><th>Nationality</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<div class="note">HMO licensed. Occupancy and placement references are sample data for the demo. Compliance sign-off is recorded per unit at the C&amp;R compliance officer\'s visit; the whole-property audit report is filed against this address.</div></div>';
+}
+function barnProperty(){ var rooms=ROOMS().slice().sort(function(a,b){return (a.building+a.room).localeCompare(b.building+b.room);}); var hh=HH();
   var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(ROOMS(),function(r){return r.building;});
   var cap=rooms.reduce(function(s,r){return s+(r.cap||0);},0);
   var minis=[['Suites',rooms.length],['Total capacity',cap+' (est.)'],['Buildings',buildings().length],['Occupied',hh.length+' rooms']]
