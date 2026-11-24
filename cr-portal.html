@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C&amp;R Housing — Property Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e1a2b;--panel:#15243a;--panel2:#1a2c45;--bd:rgba(255,255,255,.09);--ink:#eaf0f7;--muted:#90a4bf;--teal:#3fb9c0;--teal2:#5bc4c9;--green:#39b981;--amber:#e0a33a;--red:#e2685c}
+html,body{font-family:'Lato',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100%}
+body{min-height:100vh}
+a{color:var(--teal2);text-decoration:none;cursor:pointer}
+.wrap{max-width:1300px;margin:0 auto;padding:0 28px}
+.mark{width:40px;height:40px;border-radius:50%;background:conic-gradient(from 210deg,#2a9da4,#1d6b8f,#2a9da4);display:grid;place-items:center;flex:0 0 40px;position:relative}
+.mark::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2.5px solid #fff;border-right-color:transparent;transform:rotate(25deg)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .ls{font:700 8.5px Lato;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+/* Login */
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.lg-card{background:var(--panel);border:1px solid var(--bd);border-radius:20px;padding:34px 30px;width:100%;max-width:420px;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.lg-card .logo{justify-content:center;margin-bottom:6px}
+.lg-h{font:900 22px Lato;text-align:center;margin-bottom:4px}
+.lg-s{font:600 13px Lato;color:var(--muted);text-align:center;margin-bottom:22px}
+.lg-card label{display:block;font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 7px}
+.lg-card input{width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:12px;background:#0d1826;color:var(--ink);font:700 16px Lato;letter-spacing:2px;text-align:center}
+.lg-card input:focus{outline:none;border-color:var(--teal)}
+.lg-btn{width:100%;margin-top:16px;padding:15px;border:none;border-radius:12px;background:var(--teal);color:#06212a;font:900 15px Lato;cursor:pointer}
+.lg-btn:hover{background:var(--teal2)}
+.lg-hint{font:600 12px Lato;color:var(--muted);text-align:center;margin-top:16px}
+.lg-hint b{color:var(--teal2);letter-spacing:1px}
+.lg-err{color:var(--red);font:700 13px Lato;text-align:center;margin-top:10px;min-height:16px}
+/* Portal */
+#portal{display:none}
+.top{border-bottom:1px solid var(--bd);background:rgba(13,22,36,.6);position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
+.top .row{display:flex;align-items:center;gap:26px;height:74px}
+.nav{display:flex;gap:22px;margin-left:10px;flex-wrap:wrap}
+.nav a{font:800 14px Lato;color:var(--muted);cursor:pointer;padding:6px 0;border-bottom:2px solid transparent}
+.nav a.on,.nav a:hover{color:#fff;border-bottom-color:var(--teal)}
+.who{margin-left:auto;text-align:right;font:600 12px Lato;color:var(--muted)}
+.who b{color:var(--ink)}
+.pfbar{display:flex;align-items:center;gap:12px;padding:14px 0 14px;flex-wrap:wrap}
+.pfbar .pl{font:800 11px Lato;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.pf-sel{appearance:none;-webkit-appearance:none;background:var(--panel) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235bc4c9' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 14px center;border:1px solid var(--bd);border-radius:11px;color:#fff;font:900 14px Lato;padding:11px 40px 11px 16px;cursor:pointer;min-width:260px}
+.pf-sel:focus{outline:none;border-color:var(--teal)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--panel);color:var(--muted);font:800 12.5px Lato;cursor:pointer}
+.chip:hover{color:#fff;border-color:var(--teal)}
+.chip.on{background:var(--teal);color:#06212a;border-color:var(--teal)}
+.sec{padding:22px 0 60px}
+.eyebrow{font:800 11px Lato;letter-spacing:2px;text-transform:uppercase;color:var(--teal2)}
+h1{font:900 30px Lato;margin:4px 0 4px}
+.lead{font:600 14px Lato;color:var(--muted);margin-bottom:22px;max-width:820px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px;border-top:3px solid var(--teal)}
+.kpi .v{font:900 28px Lato;color:#fff}
+.kpi .l{font:700 12px Lato;color:var(--muted);margin-top:3px}
+.kpi .s{font:600 11px Lato;color:#6f84a0;margin-top:2px}
+.kpi.flag{border-top-color:var(--amber)}
+.kpi.good{border-top-color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:16px;padding:18px}
+.card h3{font:900 15px Lato;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h3 .mu{font:700 12px Lato;color:var(--muted);margin-left:auto}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar .bl{flex:0 0 190px;font:700 12.5px Lato;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .bt{flex:1;height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden}
+.bar .bf{height:100%;background:var(--teal);border-radius:7px}
+.bar .bn{flex:0 0 72px;text-align:right;font:900 12.5px Lato;color:#fff}
+.bar .bn small{font:700 11px Lato;color:var(--muted);margin-left:4px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font:800 10.5px Lato;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--bd)}
+td{font:700 13px Lato;color:var(--ink);padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+tr:last-child td{border-bottom:none}
+.trow{cursor:pointer}
+.trow:hover td{background:rgba(63,185,192,.06)}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font:800 11px Lato;white-space:nowrap}
+.p-pre{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-part{background:rgba(63,185,192,.16);color:#73cfd4}
+.p-full{background:rgba(57,185,129,.16);color:#54d39d}
+.p-pending{background:rgba(224,163,58,.16);color:#f0bd6a}
+.p-signed{background:rgba(57,185,129,.16);color:#54d39d}
+.p-occ{background:rgba(57,185,129,.16);color:#54d39d}
+.p-av{background:rgba(224,163,58,.14);color:#f0bd6a}
+.pfhdr td{background:rgba(255,255,255,.03);font:900 12px Lato;color:#cdd8e6;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bd)}
+.minis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.mini{background:var(--panel2);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;min-width:120px}
+.mini .v{font:900 22px Lato;color:#fff}.mini .l{font:700 11px Lato;color:var(--muted);margin-top:2px}
+.note{font:600 12px Lato;color:#6f84a0;border-top:1px solid var(--bd);padding-top:12px;margin-top:14px;line-height:1.5}
+.back{font:800 13px Lato;color:var(--teal2);display:inline-flex;align-items:center;gap:6px;margin-bottom:12px}
+.rep-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rep-item{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.rep-item .rt{font:900 15px Lato;color:#fff}
+.rep-item .rd{font:600 12.5px Lato;color:var(--muted);margin-top:5px;line-height:1.45}
+.rep-pdf{display:inline-block;margin-top:10px;background:rgba(63,185,192,.14);color:var(--teal2);border:1px solid rgba(63,185,192,.3);border-radius:8px;padding:6px 12px;font:800 11.5px Lato}
+.rep-pdf:hover{background:var(--teal);color:#06212a}
+.foot{border-top:1px solid var(--bd);padding:20px 0;color:#6f84a0;font:600 12px Lato;text-align:center}
+.donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+@media print{ body{background:#fff;color:#111} .top,.pfbar,.foot{display:none!important} *{-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="lg-card">
+      <div class="logo" style="justify-content:center;margin-bottom:6px"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:210px;max-width:100%;height:auto" onerror="this.outerHTML='&lt;div class=\'mark\'&gt;&lt;/div&gt;'"></div>
+      <div class="lg-h">Property Management</div>
+      <div class="lg-s">C&amp;R Housing · portfolio &amp; occupancy portal</div>
+      <label>Access code</label>
+      <input id="c-code" type="text" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')cLogin()">
+      <button class="lg-btn" onclick="cLogin()">Sign in to portal</button>
+      <div class="lg-err" id="c-err"></div>
+      <div class="lg-hint">Demo access code: <b>CANDR</b></div>
+    </div>
+  </div>
+
+  <!-- PORTAL -->
+  <div id="portal">
+    <div class="top"><div class="wrap">
+      <div class="row">
+        <div class="logo"><span style="background:#fff;border-radius:8px;padding:6px 8px;display:inline-block;line-height:0"><img src="cr-logo.png" alt="C&amp;R Housing" style="width:104px;height:auto;display:block" onerror="this.style.display='none'"></span><div class="ls" style="margin-left:2px;align-self:center">Property Management</div></div>
+        <nav class="nav">
+          <a class="on" data-v="overview" onclick="cView('overview')">Overview</a>
+          <a data-v="properties" onclick="cView('properties')">Properties</a>
+          <a data-v="detail" onclick="cView('detail')">Property detail</a>
+          <a data-v="reports" onclick="cView('reports')">Council reports</a>
+          <a href="index.html">Back to site</a>
+        </nav>
+        <div class="who">Signed in as <b>Andrew Riley</b> · andrew@candrhousing.co.uk<br>Access: All portfolios · <a onclick="cLogout()">Sign out</a></div>
+      </div>
+      <div class="pfbar">
+        <span class="pl">Portfolio</span>
+        <select class="pf-sel" id="pf-sel" onchange="setPF(this.value)">
+          <option value="all">All portfolios</option>
+          <option value="brent">Brent — Pinnacle Portfolio</option>
+          <option value="barn">Ealing — The Barn</option>
+        </select>
+        <div class="chips" id="pf-chips"></div>
+      </div>
+    </div></div>
+    <div class="wrap"><div id="c-body" class="sec"></div></div>
+    <div class="foot"><b style="color:#cdd8e6">C&amp;R Housing</b> · Property management portal&nbsp;&nbsp;·&nbsp;&nbsp;Brent — Pinnacle Investments&nbsp;·&nbsp;Ealing — The Barn, West End Road, Ruislip HA4 6JB<br>Figures shown are sample data for demonstration · Powered by HosPRO Social Housing</div>
+  </div>
+
+<script src="cr-data.js"></script>
+<script>
+var $=function(id){return document.getElementById(id);};
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function HH(){return window.CR_HH||[];} function ROOMS(){return window.CR_ROOMS||[];} function RES(){return window.CR_RES||[];}
+function grp(a,f){var m={};a.forEach(function(x){var k=f(x);if(k==null||k==='')return;m[k]=(m[k]||0)+1;});return m;}
+
+/* ---------- PORTFOLIO DATA ---------- */
+// status: pre | part | full   signoff: pending | signed   link label: plan | detail
+var BRENT=[
+ ['3 Beaconsfield Road, London','NW10 2JE',6,0,'pre','pending','plan'],
+ ['111 Walm Lane, London','NW2 4QE',10,0,'pre','pending','plan'],
+ ['39 Grove Way, Wembley','HA9 6JS',6,0,'pre','pending','plan'],
+ ['29 Essex Road, Harlesden','NW10 9PG',6,0,'pre','pending','plan'],
+ ['33 Kenwyn Drive, London','NW2 7NX',6,0,'pre','pending','plan'],
+ ['876 North Circular Road, Willesden','NW2 7TE',4,0,'pre','pending','detail'],
+ ['18 Greenwood Terrace, London','NW10 8PJ',6,0,'pre','pending','plan'],
+ ['136 Review Road, Cricklewood','NW2 7BD',6,0,'pre','pending','detail'],
+ ['20 St Julians Road, Brent','NW6 7LA',9,1,'part','signed','detail'],
+ ['403 North Circular Road, London','NW10 0HS',5,2,'part','signed','detail'],
+ ['88 Chamberlayne Road, London','NW10 3JL',8,3,'part','signed','detail'],
+ ['12 Bruce Road, London','NW10 8QP',6,3,'part','signed','detail'],
+ ['127 Review Road, Cricklewood','NW2 7BH',6,4,'part','signed','detail'],
+ ['12 Nutfield Road, Neasden','NW2 7EB',6,4,'part','signed','detail'],
+ ['806 North Circular Road, London','NW2 7TD',6,4,'part','signed','detail'],
+ ['23 Aldershot Road, London','NW6 7LF',7,4,'part','signed','detail'],
+ ['31 Tadworth Road, London','NW2 7UB',6,4,'part','signed','detail'],
+ ['103 Warren Road, Neasden','NW2 7NH',6,4,'part','signed','detail'],
+ ['12 Avondale Avenue, London','NW2 7PA',6,4,'part','signed','detail'],
+ ['118 Roundwood Road, Willesden','NW10 9LN',6,5,'part','signed','detail'],
+ ['17 Harlesden Gardens, London','NW10 4EY',8,6,'part','signed','detail'],
+ ['26 Chamberlayne Road, Kensal Rise','NW10 3JD',7,7,'full','signed','detail']
+];
+var PROPS=[];
+BRENT.forEach(function(r,i){ PROPS.push({id:'brent-'+i,pf:'brent',addr:r[0],pc:r[1],units:r[2],occ:r[3],status:r[4],signoff:r[5],link:r[6],seed:i+3}); });
+// The Barn (Ealing) — single family welcome centre; uses live Barn figures
+(function(){ var hh=HH().length||50, rooms=(ROOMS().length||57); PROPS.push({id:'barn','pf':'barn',addr:'The Barn, West End Road, Ruislip','pc':'HA4 6JB',units:rooms,occ:hh,status:(hh>=rooms?'full':'part'),signoff:'signed',link:'detail',seed:99,isBarn:true}); })();
+
+var PF_META={
+ all:{name:'All portfolios',short:'All',lead:'Every property C&amp;R Housing manages across Brent and Ealing — occupancy, voids and compliance sign-off at a glance.'},
+ brent:{name:'Brent — Pinnacle Portfolio',short:'Brent',landlord:'Pinnacle Investments',council:'London Borough of Brent',lead:'All 22 properties leased from Pinnacle Investments under the Brent agreement. Beaconsfield Road, Walm Lane, Grove Way and Essex Road are the first four onboarded and are pinned to the top; the rest follow as renovation completes.'},
+ barn:{name:'Ealing — The Barn',short:'Ealing',landlord:'The Barn, Ruislip','council':'London Borough of Ealing',lead:'Family welcome centre leased in full to the London Borough of Ealing. 57 self-contained suites across four buildings.'}
+};
+var PF='all';
+function propsFor(pf){ return pf==='all'?PROPS.slice():PROPS.filter(function(p){return p.pf===pf;}); }
+function statusLabel(s){ return s==='pre'?'Pre-handover':s==='full'?'Fully occupied':'Partially occupied'; }
+function statusPill(s){ return '<span class="pill p-'+s+'">'+statusLabel(s)+'</span>'; }
+function signPill(s){ return s==='signed'?'<span class="pill p-signed">Signed off</span>':'<span class="pill p-pending">Pending</span>'; }
+function totals(list){ var u=0,o=0; list.forEach(function(p){u+=p.units;o+=p.occ;}); return {props:list.length,units:u,occ:o,vac:u-o,pct:u?Math.round(o/u*100):0,signed:list.filter(function(p){return p.signoff==='signed';}).length,pre:list.filter(function(p){return p.status==='pre';}).length,part:list.filter(function(p){return p.status==='part';}).length,full:list.filter(function(p){return p.status==='full';}).length}; }
+
+/* sample unit occupants (deterministic) */
+var SUR=['Okafor','Ahmed','Nguyen','Patel','Santos','Begum','Mensah','Kowalski','Ali','Haddad','Osei','Dube','Rahman','Silva','Yusuf','Campbell','Darko','Hassan','Lopez','Ibrahim','Farah','Mwangi'];
+var NAT=['Somali','Nigerian','Afghan','Eritrean','Syrian','Bangladeshi','Albanian','Sudanese','Congolese','Iranian','Kurdish','Ethiopian'];
+function seeded(n){ var x=(n*9301+49297)%233280; return function(){ x=(x*9301+49297)%233280; return x/233280; }; }
+function genUnits(p){ var out=[],rnd=seeded(p.seed||1),pfx=p.pf==='brent'?'BRT':'EAL';
+  for(var i=1;i<=p.units;i++){ var occ=i<=p.occ; var ad=1+Math.floor(rnd()*2), ch=occ?Math.floor(rnd()*3):0;
+    out.push({unit:'Flat '+i,occ:occ,ref:occ?(pfx+'-2026-0'+String(1000+Math.floor(rnd()*899)).slice(1)):'',lead:occ?SUR[Math.floor(rnd()*SUR.length)]:'',nat:occ?NAT[Math.floor(rnd()*NAT.length)]:'',hh:occ?(ad+' + '+ch):''}); }
+  return out; }
+
+/* ---------- login ---------- */
+function cLogin(){ var v=($('c-code').value||'').trim().toUpperCase(); if(v==='CANDR'||v==='CR2026'){ $('login').style.display='none'; $('portal').style.display='block'; cView('overview'); } else { $('c-err').textContent='Incorrect access code.'; } }
+function cLogout(){ $('portal').style.display='none'; $('login').style.display='flex'; $('c-code').value=''; $('c-err').textContent=''; }
+
+/* ---------- portfolio switch ---------- */
+function setPF(pf){ PF=pf; var s=$('pf-sel'); if(s) s.value=pf; if(CUR==='detail'&&DETAIL&&propsFor(pf).indexOf(DETAIL)<0) DETAIL=null; render(); }
+function renderChips(){ var c=$('pf-chips'); if(!c) return; var order=['all','brent','barn'];
+  c.innerHTML=order.map(function(k){return '<span class="chip'+(PF===k?' on':'')+'" onclick="setPF(\''+k+'\')">'+PF_META[k].name+'</span>';}).join(''); }
+
+/* ---------- view switch ---------- */
+var CUR='overview', DETAIL=null;
+function cView(v){ CUR=v; [].forEach.call(document.querySelectorAll('.nav a[data-v]'),function(a){a.classList.toggle('on',a.getAttribute('data-v')===v);}); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function openDetail(id){ DETAIL=PROPS.filter(function(p){return p.id===id;})[0]||null; cView('detail'); }
+function render(){ renderChips(); var b=$('c-body'); if(!b) return;
+  if(CUR==='overview') b.innerHTML=vOverview();
+  else if(CUR==='properties') b.innerHTML=vProperties();
+  else if(CUR==='detail') b.innerHTML=vDetail();
+  else if(CUR==='reports') b.innerHTML=vReports();
+}
+
+/* ---------- bars / donut ---------- */
+function bars(obj,order,color){ var keys=order||Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}); var total=keys.reduce(function(s,k){return s+obj[k];},0)||1; var max=Math.max.apply(null,[1].concat(keys.map(function(k){return obj[k];})));
+  return keys.map(function(k){return '<div class="bar"><div class="bl" title="'+esc(k)+'">'+esc(k)+'</div><div class="bt"><div class="bf" style="width:'+Math.round(obj[k]/max*100)+'%'+(color?';background:'+color:'')+'"></div></div><div class="bn">'+obj[k]+'<small>'+Math.round(obj[k]/total*100)+'%</small></div></div>';}).join(''); }
+function donut(parts,center,label){ var total=parts.reduce(function(s,p){return s+p[1];},0)||1; var R=52,C=2*Math.PI*R; var off=0;
+  var segs=parts.map(function(p){var dash=p[1]/total*C;var s='<circle cx="75" cy="75" r="'+R+'" fill="none" stroke="'+p[2]+'" stroke-width="20" stroke-dasharray="'+dash.toFixed(2)+' '+(C-dash).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 75 75)"/>';off+=dash;return s;}).join('');
+  var leg=parts.map(function(p){return '<div class="bar" style="margin-bottom:6px"><span style="width:10px;height:10px;border-radius:3px;background:'+p[2]+';display:inline-block;margin-right:8px"></span><span style="font:700 12.5px Lato;color:#eaf0f7;flex:1">'+esc(p[0])+'</span><b style="font:900 13px Lato;color:#fff">'+p[1]+'</b></div>';}).join('');
+  return '<div class="donut-wrap"><div style="position:relative;width:150px;height:150px"><svg viewBox="0 0 150 150" width="150" height="150">'+segs+'</svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font:900 24px Lato;color:#fff">'+center+'</div><div style="font:700 10px Lato;color:#90a4bf;text-transform:uppercase">'+label+'</div></div></div><div style="flex:1;min-width:180px">'+leg+'</div></div>'; }
+
+/* ---------- OVERVIEW ---------- */
+function vOverview(){ var m=PF_META[PF]; var list=propsFor(PF); var t=totals(list);
+  var kpi=[
+    ['','Properties',t.props,PF==='all'?'across 2 portfolios':(m.council||'')],
+    ['','Units / rooms',t.units,t.occ+' occupied · '+t.vac+' void'],
+    ['good','Occupancy',t.pct+'%',t.occ+' of '+t.units],
+    ['','Void units',t.vac,'ready / in renovation'],
+    ['good','Compliance signed off',t.signed+' / '+t.props,'properties cleared'],
+    ['flag','Pre-handover',t.pre,'awaiting first sign-off']
+  ].map(function(k){return '<div class="kpi '+(k[0]?k[0]:'')+'"><div class="v">'+k[2]+'</div><div class="l">'+k[1]+'</div><div class="s">'+k[3]+'</div></div>';}).join('');
+  // occupancy by property (top occupied)
+  var occObj={}; list.slice().sort(function(a,b){return (b.units?b.occ/b.units:0)-(a.units?a.occ/a.units:0);}).slice(0,10).forEach(function(p){ occObj[p.addr.split(',')[0]]=p.units?Math.round(p.occ/p.units*100):0; });
+  var statusParts=[['Fully occupied',t.full,'#39b981'],['Partially occupied',t.part,'#3fb9c0'],['Pre-handover',t.pre,'#e0a33a']].filter(function(x){return x[1]>0;});
+  var signParts=[['Signed off',t.signed,'#39b981'],['Pending',t.props-t.signed,'#e0a33a']].filter(function(x){return x[1]>0;});
+  var pfSummary='';
+  if(PF==='all'){ pfSummary='<div class="card" style="margin-top:16px"><h3>🗂️ By portfolio</h3><table><thead><tr><th>Portfolio</th><th>Properties</th><th>Units</th><th>Occupied</th><th>Void</th><th>Occupancy</th><th>Signed off</th></tr></thead><tbody>'+
+    ['brent','barn'].map(function(k){var tt=totals(propsFor(k));return '<tr class="trow" onclick="setPF(\''+k+'\')"><td>'+PF_META[k].name+'</td><td>'+tt.props+'</td><td>'+tt.units+'</td><td>'+tt.occ+'</td><td>'+tt.vac+'</td><td>'+tt.pct+'%</td><td>'+tt.signed+'/'+tt.props+'</td></tr>';}).join('')+'</tbody></table></div>'; }
+  return '<div class="eyebrow">Portfolio overview</div><h1>'+m.name.replace('—','·')+'</h1><div class="lead">'+m.lead+'</div>'+
+    '<div class="kpis">'+kpi+'</div>'+
+    '<div class="grid2"><div class="card"><h3>🏠 Status breakdown</h3>'+donut(statusParts,t.props,'sites')+'</div>'+
+    '<div class="card"><h3>🛡️ Compliance sign-off</h3>'+donut(signParts,t.signed,'cleared')+'</div></div>'+
+    '<div class="card" style="margin-top:16px"><h3>📊 Occupancy by property <span class="mu">top sites</span></h3>'+bars(occObj,Object.keys(occObj))+'</div>'+
+    pfSummary+
+    '<div style="margin-top:16px"><a onclick="cView(\'properties\')">View full property portfolio ›</a></div>';
+}
+
+/* ---------- PROPERTIES (the portfolio table) ---------- */
+function propRow(p){ var vac=p.units-p.occ, pct=p.units?Math.round(p.occ/p.units*100):0;
+  return '<tr class="trow" onclick="openDetail(\''+p.id+'\')"><td>'+esc(p.addr)+'</td><td>'+esc(p.pc)+'</td><td>'+p.units+'</td><td>'+p.occ+'</td><td>'+vac+'</td><td>'+pct+'%</td><td>'+statusPill(p.status)+'</td><td>'+signPill(p.signoff)+'</td><td><a onclick="event.stopPropagation();openDetail(\''+p.id+'\')">'+(p.link==='plan'?'View plan':'View detail')+'</a></td></tr>'; }
+function propTable(list){ return '<table><thead><tr><th>Property</th><th>Postcode</th><th>Units</th><th>Occupied</th><th>Vacant</th><th>Occ. %</th><th>Status</th><th>Compliance sign-off</th><th>Floor plan</th></tr></thead><tbody>'+list.map(propRow).join('')+'</tbody></table>'; }
+function vProperties(){ var m=PF_META[PF]; var list=propsFor(PF); var t=totals(list);
+  var minis=[['Properties',t.props],['Units',t.units],['Occupied',t.occ],['Void',t.vac],['Occupancy',t.pct+'%']].map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('');
+  var body;
+  if(PF==='all'){ body=['brent','barn'].map(function(k){var sub=propsFor(k);return '<table><thead><tr><th colspan="9"></th></tr></thead></table>';}).join(''); // placeholder replaced below
+    body='<table><thead><tr><th>Property</th><th>Postcode</th><th>Units</th><th>Occupied</th><th>Vacant</th><th>Occ. %</th><th>Status</th><th>Compliance sign-off</th><th>Floor plan</th></tr></thead><tbody>'+
+      ['brent','barn'].map(function(k){ var sub=propsFor(k); var tt=totals(sub);
+        return '<tr class="pfhdr"><td colspan="9">'+PF_META[k].name+' — '+tt.props+' propert'+(tt.props===1?'y':'ies')+' · '+tt.units+' units · '+tt.pct+'% occupied</td></tr>'+sub.map(propRow).join(''); }).join('')+
+      '</tbody></table>'; }
+  else body=propTable(list);
+  var footNote=PF==='brent'?'<div class="note">Beaconsfield Road, Walm Lane, Grove Way and Essex Road are the first four properties onboarded and are pinned to the top of this list; the rest follow as renovation completes. Compliance sign-off is a C&amp;R-appointed compliance officer\'s visit confirming each unit is fit for occupation and all HMO certification is in place — required before a property is put forward to the council, and repeated every time. See the property\'s detail page for the audit position.</div>':
+    PF==='barn'?'<div class="note">The Barn is a single family welcome centre of 57 self-contained suites, leased in full to the London Borough of Ealing. Open the property detail for the room-by-room schedule and building breakdown.</div>':
+    '<div class="note">All properties across the Brent (Pinnacle) and Ealing (The Barn) portfolios. Compliance sign-off confirms each unit is fit for occupation with HMO certification in place.</div>';
+  return '<div class="eyebrow">Portfolio list</div><h1>Property portfolio</h1><div class="lead">'+m.lead+'</div>'+
+    '<div class="minis">'+minis+'</div><div class="card">'+body+footNote+'</div>';
+}
+
+/* ---------- PROPERTY DETAIL ---------- */
+function vDetail(){ var list=propsFor(PF); var p=DETAIL&&list.indexOf(DETAIL)>=0?DETAIL:list[0];
+  if(!p) return '<div class="lead">No property selected.</div>';
+  DETAIL=p;
+  var opts=list.map(function(x){return '<option value="'+x.id+'"'+(x.id===p.id?' selected':'')+'>'+esc(x.addr.split(',')[0])+' — '+esc(x.pc)+'</option>';}).join('');
+  var picker='<div style="margin-bottom:14px"><span class="pl" style="font:800 11px Lato;color:#90a4bf;text-transform:uppercase;letter-spacing:1px;margin-right:10px">Property</span><select class="pf-sel" style="min-width:300px" onchange="openDetail(this.value)">'+opts+'</select></div>';
+  if(p.isBarn) return picker+barnDetail(p);
+  var vac=p.units-p.occ, pct=p.units?Math.round(p.occ/p.units*100):0;
+  var minis=[['Units',p.units],['Occupied',p.occ],['Void',vac],['Occupancy',pct+'%']].map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('');
+  var units=genUnits(p);
+  var rows=units.map(function(u){ return '<tr><td>'+u.unit+'</td><td>'+(u.occ?'<span class="pill p-occ">Occupied</span>':'<span class="pill p-av">Available</span>')+'</td><td>'+(u.ref||'—')+'</td><td>'+(u.lead?esc(u.lead)+' household':'—')+'</td><td>'+(u.hh||'—')+'</td><td>'+(u.nat||'—')+'</td></tr>'; }).join('');
+  return picker+'<a class="back" onclick="cView(\'properties\')">‹ Back to portfolio</a>'+
+    '<div class="eyebrow">Property detail · '+esc(PF_META[p.pf].name)+'</div><h1>'+esc(p.addr)+'</h1>'+
+    '<div class="lead">'+esc(p.pc)+' · leased from Pinnacle Investments under the Brent agreement · '+statusLabel(p.status)+'. '+(p.signoff==='signed'?'Compliance signed off by the C&amp;R compliance officer.':'Awaiting compliance sign-off before units are put forward to the council.')+'</div>'+
+    '<div style="display:flex;gap:10px;margin-bottom:16px">'+statusPill(p.status)+signPill(p.signoff)+'</div>'+
+    '<div class="minis">'+minis+'</div>'+
+    '<div class="card"><h3>🛏️ Unit schedule <span class="mu">'+p.units+' units · sample data</span></h3><table><thead><tr><th>Unit</th><th>Status</th><th>Placement ref</th><th>Lead contact</th><th>Household</th><th>Nationality</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<div class="note">HMO licensed. Occupancy and placement references are sample data for the demo. Compliance sign-off is recorded per unit at the C&amp;R compliance officer\'s visit; the whole-property audit report is filed against this address.</div></div>';
+}
+function barnDetail(p){ var hh=HH(), rooms=ROOMS(); var occByB=grp(hh,function(h){return h.building;}), roomsByB=grp(rooms,function(r){return r.building;});
+  var bset=[].concat.apply([],[[...new Set(rooms.map(function(r){return r.building;}))]]);
+  var vac=p.units-p.occ, pct=p.units?Math.round(p.occ/p.units*100):0;
+  var minis=[['Suites',p.units],['Occupied',p.occ],['Void',vac],['Occupancy',pct+'%'],['Residents',RES().length]].map(function(x){return '<div class="mini"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('');
+  var bRows=bset.map(function(bn){var r=roomsByB[bn]||0,oc=occByB[bn]||0;return '<tr><td>'+esc(bn)+'</td><td>'+r+'</td><td>'+oc+'</td><td>'+(r-oc)+'</td><td>'+(r?Math.round(oc/r*100):0)+'%</td></tr>';}).join('');
+  return '<a class="back" onclick="cView(\'properties\')">‹ Back to portfolio</a>'+
+    '<div class="eyebrow">Property detail · Ealing — The Barn</div><h1>'+esc(p.addr)+'</h1>'+
+    '<div class="lead">'+esc(p.pc)+' · family welcome centre leased in full to the London Borough of Ealing · 57 self-contained suites across four buildings.</div>'+
+    '<div style="display:flex;gap:10px;margin-bottom:16px">'+statusPill(p.status)+signPill(p.signoff)+'</div>'+
+    '<div class="minis">'+minis+'</div>'+
+    '<div class="card"><h3>🏘️ Occupancy by building</h3><table><thead><tr><th>Building</th><th>Rooms</th><th>Occupied</th><th>Void</th><th>Occupancy</th></tr></thead><tbody>'+bRows+'</tbody></table>'+
+    '<div class="note">The Barn runs on the full HosPRO Social Housing deployment — live check-ins, resident demographics and council reporting. Open the Council Portal for the Ealing-facing view.</div></div>';
+}
+
+/* ---------- COUNCIL REPORTS ---------- */
+var REPORT_FILES={occupancy:'reports/CR-01-Occupancy-Void-Report.pdf',quarterly:'reports/CR-02-Quarterly-Performance-KPI-Report.pdf',moveon:'reports/CR-03-Resident-Move-On-Analysis.pdf',support:'reports/CR-04-Support-Officer-Monthly-Report.pdf',compliance:'reports/CR-05-Compliance-Safety-Report.pdf'};
+function vReports(){ var items=[
+  ['occupancy','Monthly Occupancy &amp; Void Report','Occupancy, voids and room-turnaround against the 5-day SLA.'],
+  ['quarterly','Quarterly Performance &amp; KPI Report','KPIs vs target — move-ons, length of stay, turnaround.'],
+  ['moveon','Resident Move-On Analysis','Which household types move on fastest vs stay longest — and why.'],
+  ['support','Support Officer Monthly Report','Family meetings, outcomes, welfare &amp; safeguarding.'],
+  ['compliance','Compliance &amp; Safety Report','Certificate status and expiry dates across the property.']];
+  var cards=items.map(function(it){return '<div class="rep-item"><div class="rt">'+it[1]+'</div><div class="rd">'+it[2]+'</div><a class="rep-pdf" href="'+REPORT_FILES[it[0]]+'" target="_blank" rel="noopener">📄 Open PDF ›</a></div>';}).join('');
+  return '<div class="eyebrow">Reporting suite</div><h1>Council reports</h1><div class="lead">Co-branded reports shared with the relevant local authority. The Barn (Ealing) reporting is live below; Brent portfolio reporting is produced on the same templates as properties come into management.</div>'+
+    '<div class="rep-grid">'+cards+'</div>'+
+    '<div class="note" style="border:none;margin-top:18px">Reports are branded C&amp;R Housing and the receiving council, with the council\'s registered address, and generated automatically by HosPRO Social Housing from live data.</div>';
+}
+</script>
+</body>
+</html>
