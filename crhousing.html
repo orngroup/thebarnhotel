@@ -448,6 +448,9 @@ body.console .wrap{max-width:none;margin:0 0 0 238px;padding:98px 30px 46px}
 #nav-dashboard svg{background:#e3f2f2;stroke:#128a8f}
 #nav-aria svg{background:#efe6fb;stroke:#7c3aed}
 #nav-journey svg{background:#e6f7f0;stroke:#128a8f}
+.hd-help{display:flex;align-items:flex-start;gap:10px;background:#eef6fb;border:1px solid #d4e6f3;border-radius:12px;padding:11px 14px;margin:0 0 16px;font:600 13px/1.5 Lato;color:#3a536b;max-width:960px}
+.hd-help .hh-i{flex:0 0 20px;width:20px;height:20px;border-radius:50%;background:#2f80d8;color:#fff;font:900 12px Georgia,serif;font-style:italic;display:grid;place-items:center;margin-top:1px}
+.hd-help b{color:#1f3b57}
 #nav-residents svg{background:#e9f2fc;stroke:#2f80d8}
 #nav-occupancy svg{background:#e6f6ee;stroke:#1aa260}
 #nav-demographics svg{background:#f4ecfa;stroke:#9b59b6}
@@ -971,6 +974,7 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="bk" onclick="goHome()">← Back to cards</button>
       <span class="sct" id="hd-sec-title"></span>
     </div>
+    <div class="hd-help hide" id="hd-help"><span class="hh-i">i</span><span id="hd-help-txt"></span></div>
 
     <!-- Guest Requests: log (left) · all requests (right) -->
     <div class="pane" id="pane-requests">
@@ -1832,12 +1836,34 @@ function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
 const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', aria:'✨ Ask ARIA', journey:'🧭 Resident Journey & Outcomes', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
 function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_HELP={
+  requests:'<b>Guest Requests</b> — log and track resident requests (repairs, housekeeping, welfare). Raise one on the left; the full list and status sit on the right.',
+  deliveries:'<b>Deliveries</b> — record parcels and deliveries arriving on site and mark them collected, so nothing goes missing.',
+  maintenance:'<b>Maintenance</b> — report and track repair jobs across the building, with status, priority and who\'s assigned.',
+  hub:'<b>BarnHUB — Compliance</b> — the live certificate register (gas, fire, electrical, legionella…) with issue and expiry dates and the actual documents.',
+  team:'<b>Resources</b> — temporary and agency staff on site, their roles and availability.',
+  clock:'<b>Staff on site</b> — time & attendance: who is clocked in, hours worked and shift history.',
+  stock:'<b>Stock</b> — consumables and supplies held on site, with levels and reorder points.',
+  plant:'<b>Plant & Equipment</b> — the asset register for on-site equipment, servicing and condition.',
+  contractors:'<b>Contractor Database</b> — approved contractors, trades, contact details and compliance status.',
+  hs:'<b>Health & Safety</b> — risk assessments, safety checks and the compliance matrix with viewable certificates.',
+  faq:'<b>FAQ & Training</b> — quick how-to guidance and training notes for the team.',
+  aria:'<b>Ask ARIA</b> — your data assistant for this property. Pick a question on the left and ARIA answers instantly from the live resident, occupancy and compliance data — no spreadsheets needed.',
+  journey:'<b>Resident Journey & Outcomes</b> — captures where each family came from, how long they stayed, the support they received, their feedback and where they moved on to — the evidence of savings and outcomes for the council. Catherine & Charlotte feed it with the form at the bottom.',
+  residents:'<b>Residents</b> — the household and resident roster for this property: who is in which unit, key worker, placement reference and support needs.',
+  occupancy:'<b>Occupancy</b> — current and historic occupancy, voids and room turnaround against the SLA.',
+  demographics:'<b>Demographics</b> — the make-up of residents: ethnicity, age, nationality, gender and household composition — the breakdowns councils ask for.',
+  council:'<b>Council Reports</b> — the co-branded reporting suite shared with the local authority. Open or print each report straight from here.',
+  signin:'<b>Site sign-in</b> — QR self-service sign-in for visitors and contractors, with a live log of who is on site.',
+  qr:'<b>QR Codes</b> — printable QR posters for resident, visitor and contractor self-service sign-in.'
+};
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
   ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
+  const hp=$('hd-help'), ht=$('hd-help-txt'); if(hp&&ht){ if(SEC_HELP[x]){ ht.innerHTML=SEC_HELP[x]; hp.classList.remove('hide'); } else { hp.classList.add('hide'); } }
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
   const dr=$('date-row'); if(dr) dr.style.display=['deliveries','maintenance','requests'].indexOf(x)>=0?'':'none';
   sbNav(x);
@@ -1847,6 +1873,7 @@ function goHome(){
   ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
+  const hp=$('hd-help'); if(hp) hp.classList.add('hide');
   const dr=$('date-row'); if(dr) dr.style.display='none';
   sbNav('dashboard');
   try{ renderDash(); }catch(e){}
@@ -2792,7 +2819,7 @@ function ariaBank(){ const all=crRes(),hh=crHH(),last=crLatestOcc()||{};
 function renderAria(){ const box=$('aria-body'); if(!box) return; const bank=ariaBank();
   const cats=[]; bank.forEach(x=>{ if(cats.indexOf(x.c)<0) cats.push(x.c); });
   let filtered=bank.map((x,i)=>({x:x,i:i})); if(ARIA_Q) filtered=filtered.filter(o=>o.x.q.toLowerCase().indexOf(ARIA_Q)>=0||o.x.c.toLowerCase().indexOf(ARIA_Q)>=0);
-  const header=`<div class="aria-head"><div class="aria-mark">✨</div><div><div class="aria-t">Ask <b>ARIA</b></div><div class="aria-d">Your data assistant for The Barn — pick a question on the left and ARIA answers from the live resident, occupancy and compliance data.</div></div></div>`;
+  const header='';
   const search=`<div class="rs-search aria-srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search questions…" value="${esc(ARIA_Q)}" oninput="ariaSearch(this.value)"></div>`;
   let sideQs='';
   cats.forEach(c=>{ const items=filtered.filter(o=>o.x.c===c); if(!items.length) return;
@@ -3323,7 +3350,6 @@ if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeo
     var allMove=JY_ADDED.concat(d.moveOns).slice(0,12);
     var rows=allMove.map(function(m){return '<tr><td><b>'+esc(m.name)+'</b></td><td>'+esc(m.from)+'</td><td>'+esc(m.to)+'</td><td>'+m.stay+' mo</td><td>'+m.sup+'</td><td><span class="jy-stars">'+stars(m.score)+'</span></td><td>'+(m.pos?'<span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Positive</span>':'<span class="rs-chip" style="background:#fdeceb;color:#c0392b">Negative</span>')+'</td><td>'+esc(m.exit)+'</td></tr>';}).join('');
     box.innerHTML=
-      '<div class="jy-head"><div class="jy-sub" style="margin-top:0">The data that proves the Barn model to any council — where every family came from, how long they stayed, the wraparound support they received, their feedback, and where they moved on to. Built for <b>Catherine</b> and <b>Charlotte</b> to feed into in minutes.</div></div>'+
       '<div class="jy-steps">'+steps+'</div>'+
       '<div class="ov-group">📊 Outcomes &amp; impact</div>'+
       '<div class="jy-impact">'+impact+'</div>'+
