@@ -239,7 +239,7 @@ body.console .wrap{max-width:1500px}
 #pane-team.on{grid-template-columns:1fr}
 #pane-mgmt.on{grid-template-columns:1fr}
 #pane-clock.on{grid-template-columns:1fr}
-#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-aria.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on,#pane-qr.on{grid-template-columns:1fr}
+#pane-stock.on,#pane-plant.on,#pane-contractors.on,#pane-hs.on,#pane-faq.on,#pane-aria.on,#pane-journey.on,#pane-residents.on,#pane-occupancy.on,#pane-demographics.on,#pane-council.on,#pane-signin.on,#pane-qr.on{grid-template-columns:1fr}
 .req.mj{cursor:pointer}
 .req.mj .chev{margin-left:auto;font-size:10px;color:var(--muted);padding-left:8px}
 .req.mj.open{background:#fff;box-shadow:0 6px 18px rgba(26,43,58,.08)}
@@ -447,6 +447,7 @@ body.console .wrap{max-width:none;margin:0 0 0 238px;padding:98px 30px 46px}
 /* coloured icon tabs */
 #nav-dashboard svg{background:#e3f2f2;stroke:#128a8f}
 #nav-aria svg{background:#efe6fb;stroke:#7c3aed}
+#nav-journey svg{background:#e6f7f0;stroke:#128a8f}
 #nav-residents svg{background:#e9f2fc;stroke:#2f80d8}
 #nav-occupancy svg{background:#e6f6ee;stroke:#1aa260}
 #nav-demographics svg{background:#f4ecfa;stroke:#9b59b6}
@@ -563,6 +564,43 @@ body.console .daterow{background:#fff;border:1px solid #e9edf3;border-radius:13p
 .aria-qbtn{text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:11px;padding:11px 13px;font:700 13px Lato;color:#2a3850;cursor:pointer;transition:.12s;width:100%}
 .aria-qbtn:hover{border-color:#7c3aed;color:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.1)}
 .aria-qbtn.on{background:#7c3aed;color:#fff;border-color:#7c3aed}
+/* Resident Journey & Outcomes */
+.jy-head{margin-bottom:6px}
+.jy-h1{font:900 24px Lato;color:#15233f}
+.jy-sub{font:600 13px Lato;color:#7e8aa0;margin-top:4px;max-width:860px;line-height:1.5}
+.jy-steps{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 22px}
+.jy-step{flex:1;min-width:150px;background:#fff;border:1px solid #e6ebf2;border-radius:12px;padding:12px 14px;position:relative}
+.jy-step .n{width:22px;height:22px;border-radius:50%;background:#128a8f;color:#fff;font:900 12px Lato;display:grid;place-items:center;margin-bottom:8px}
+.jy-step .t{font:900 13px Lato;color:#15233f}
+.jy-step .d{font:600 11.5px Lato;color:#8a94a0;margin-top:3px;line-height:1.4}
+.jy-impact{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:8px}
+.jy-ik{background:linear-gradient(135deg,#0f2f38,#15414b);border-radius:14px;padding:16px 18px;color:#fff}
+.jy-ik .v{font:900 30px Lato;line-height:1}
+.jy-ik .l{font:700 12px Lato;color:#bfe3e6;margin-top:5px}
+.jy-ik .s{font:600 11px Lato;color:#8fc4c9;margin-top:3px}
+.jy-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:900px){.jy-grid2{grid-template-columns:1fr}}
+.jy-quote{background:#f7fafc;border-left:3px solid #128a8f;border-radius:0 10px 10px 0;padding:11px 14px;margin-bottom:10px}
+.jy-quote .q{font:600 13px Lato;color:#334; font-style:italic;line-height:1.5}
+.jy-quote .m{font:800 11px Lato;color:#8a94a0;margin-top:6px}
+.jy-stars{color:#e0a33a;font-size:14px;letter-spacing:1px}
+.jy-form{background:#fff;border:1px solid #e6ebf2;border-radius:16px;padding:20px;margin-top:4px}
+.jy-fsec{border-top:1px solid #eef2f7;padding-top:16px;margin-top:16px}
+.jy-fsec:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.jy-fcap{font:900 12px Lato;color:#128a8f;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.jy-fcap .n{width:20px;height:20px;border-radius:50%;background:#e6f7f0;color:#128a8f;font:900 11px Lato;display:grid;place-items:center}
+.jy-fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.jy-f label{display:block;font:800 11px Lato;color:#6b7a90;margin-bottom:5px}
+.jy-f input,.jy-f select,.jy-f textarea{width:100%;padding:9px 11px;border:1.5px solid #e2e8f2;border-radius:9px;font:600 13px Lato;color:#15233f;background:#fff}
+.jy-f input:focus,.jy-f select:focus,.jy-f textarea:focus{outline:none;border-color:#128a8f}
+.jy-chks{display:flex;flex-wrap:wrap;gap:8px}
+.jy-chk{display:flex;align-items:center;gap:7px;background:#f4f8fa;border:1.5px solid #e2e8f2;border-radius:9px;padding:7px 11px;font:700 12px Lato;color:#334;cursor:pointer}
+.jy-chk input{width:auto}
+.jy-chk.on{background:#e6f7f0;border-color:#128a8f;color:#0e6e73}
+.jy-save{margin-top:16px;background:#128a8f;color:#fff;border:none;border-radius:10px;padding:12px 20px;font:900 14px Lato;cursor:pointer}
+.jy-save:hover{background:#0e6e73}
+.jy-note{font:600 12px Lato;color:#8a94a0;margin-top:10px}
+.jy-ok{background:#e6f7f0;border:1px solid #9ad9c4;color:#0e6e73;border-radius:10px;padding:12px 14px;font:700 13px Lato;margin-top:12px}
 .ov-group{font:900 12.5px Lato;color:#45526a;text-transform:uppercase;letter-spacing:.7px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
 .ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
 @media(max-width:1200px){.ov-grid{grid-template-columns:repeat(2,1fr)}}
@@ -799,6 +837,7 @@ body.role-ops .mgmt-only{display:none!important}
       <button class="sb-i active" id="nav-dashboard" onclick="goHome();sbClose()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Overview</button>
       <div class="sb-cap mgmt-only">Social Housing</div>
       <button class="sb-i mgmt-only" id="nav-aria" onclick="openAria();sbClose()"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 2 .2.0 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>Ask ARIA</button>
+      <button class="sb-i mgmt-only" id="nav-journey" onclick="openJourney();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>Journey &amp; Outcomes</button>
       <button class="sb-i mgmt-only" id="nav-residents" onclick="openResidents();sbClose()"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Residents<span class="cnt" id="bc-res-n">0</span></button>
       <button class="sb-i mgmt-only" id="nav-occupancy" onclick="openOccupancy();sbClose()"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg>Occupancy</button>
       <button class="sb-i mgmt-only" id="nav-demographics" onclick="openDemographics();sbClose()"><svg viewBox="0 0 24 24"><path d="M21 21H3V3"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>Demographics</button>
@@ -1067,6 +1106,7 @@ body.role-ops .mgmt-only{display:none!important}
     </div></div>
 
     <div class="pane" id="pane-aria"><div id="aria-body" style="width:100%"></div></div>
+    <div class="pane" id="pane-journey"><div id="journey-body" style="width:100%"></div></div>
     <div class="pane" id="pane-residents"><div id="res-body" style="width:100%"></div></div>
     <div class="pane" id="pane-occupancy"><div id="occ-body" style="width:100%"></div></div>
     <div class="pane" id="pane-demographics"><div id="dg-body" style="width:100%"></div></div>
@@ -1790,12 +1830,12 @@ function checkCode(){ const v=($('cg-in').value||'').trim(); if(v==='1357'){ MNT
 function openFire(){ $('ovl-fire').classList.add('on'); }
 function closeFire(){ $('ovl-fire').classList.remove('on'); }
 // Tap a big card → that section takes over the whole page. goHome() returns to the cards.
-const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', aria:'✨ Ask ARIA', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
-function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
+const SEC_TITLES={requests:'🧹 Guest Requests', deliveries:'📦 Deliveries', maintenance:'🔧 Maintenance', hub:'🗂️ BarnHUB — Compliance', team:'👷 Resources — Temporary staff', mgmt:'📊 Management — Jobs overview', clock:'🕑 Staff on site — Time & attendance', stock:'📦 Stock', plant:'⚙️ Plant & Equipment', contractors:'🏢 Contractor Database', hs:'🛡️ Health & Safety', faq:'❓ FAQ & Training', aria:'✨ Ask ARIA', journey:'🧭 Resident Journey & Outcomes', residents:'👥 Residents', occupancy:'📈 Occupancy', demographics:'📊 Demographics', council:'🏛️ Council Reports', signin:'🚪 Site sign-in — Visitors & Contractors', qr:'🔳 QR Codes'};
+function sbNav(active){ ['dashboard','deliveries','maintenance','team','hub','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(k=>{ const el=$('nav-'+k); if(el) el.classList.toggle('active', k===active); }); }
 function sbToggle(){ const s=$('sidebar'); if(s) s.classList.toggle('open'); }
 function sbClose(){ const s=$('sidebar'); if(s) s.classList.remove('open'); }
 function showSection(x){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.toggle('on', s===x); });
   const home=$('hd-home'); if(home) home.classList.add('hide');
   const t=$('hd-sec-title'); if(t) t.textContent=SEC_TITLES[x]||'';
   const bk=$('hd-back'); if(bk) bk.classList.remove('hide');
@@ -1804,7 +1844,7 @@ function showSection(x){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHome(){
-  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
+  ['requests','deliveries','maintenance','hub','team','mgmt','clock','stock','plant','contractors','hs','faq','aria','journey','residents','occupancy','demographics','council','signin','qr'].forEach(s=>{ const p=$('pane-'+s); if(p) p.classList.remove('on'); });
   const home=$('hd-home'); if(home) home.classList.remove('hide');
   const bk=$('hd-back'); if(bk) bk.classList.add('hide');
   const dr=$('date-row'); if(dr) dr.style.display='none';
@@ -3196,7 +3236,7 @@ if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeo
     box.innerHTML=head+tools+table;
   }
 
-  window.switchProperty=function(id){ var s=document.getElementById('loc-select'); if(s) s.value=id;
+  window.switchProperty=function(id){ var s=document.getElementById('loc-select'); if(s) s.value=id; window.CR_CURPROP=id;
     var d,title,sub,barn;
     if(id==='all'){ d=aggregate(); title='All Properties — C&R Portfolio'; sub='23 locations · Brent — Pinnacle Investments + Ealing — The Barn · whole-portfolio view'; barn=false; }
     else { var p=PROPS[id]; if(!p) return; d=p.data; title=p.hiName; sub=p.sub; barn=!!p.barn; }
@@ -3218,7 +3258,118 @@ if(loginOk()){ $('login').classList.add('hide'); startBoard(); } else { setTimeo
     try{ if(onPane('demographics')) renderDemographics(); }catch(e){}
     try{ if(onPane('council')) renderCouncil(); }catch(e){}
     try{ if(onPane('aria')) renderAria(); }catch(e){}
+    try{ if(onPane('journey')) renderJourney(); }catch(e){}
   }
+})();
+</script>
+
+<script>
+/* ===================== RESIDENT JOURNEY & OUTCOMES ===================== */
+(function(){
+  var J_ENTRY=['Rough sleeping / street','Sofa-surfing (friends/family)','Eviction — private rented','Fleeing domestic abuse','Asylum / Home Office move-on','Leaving care','Relationship breakdown','Prison release','Other temporary accommodation'];
+  var J_DEST=['Social housing tenancy','Private rented (with support)','Supported / move-on housing','Reunited with family','Returned to home area','Independent living & work','Still awaiting offer','Abandonment / eviction'];
+  var J_POS=['Social housing tenancy','Private rented (with support)','Supported / move-on housing','Reunited with family','Returned to home area','Independent living & work'];
+  var J_SUPPORT=['Benefits & welfare','Employment & training','ESOL / English classes','School & nursery places','Mental health & wellbeing','Immigration / legal advice','Budgeting & debt advice','GP & healthcare registration','Family & parenting support','Digital skills'];
+  var SURJ=['Okafor','Ahmed','Nguyen','Patel','Santos','Begum','Mensah','Ali','Haddad','Osei','Dube','Silva','Yusuf','Campbell','Hassan','Lopez','Farah','Mwangi','Darko','Rahman'];
+  var J_QUOTES=[
+    ['For the first time in two years my children have their own beds and a school place. The team sorted the paperwork I could never face alone.','Moved on to a council tenancy · 11 months'],
+    ['They helped me open a bank account, claim the right benefits and start English classes. I finally feel settled.','Current resident · 6 months'],
+    ['After leaving my partner I had nothing. The support worker came with me to every appointment. We are safe now.','Moved on to supported housing · 9 months'],
+    ['The budgeting sessions meant I cleared my debts before I moved out. I would not have managed that in a B&B.','Moved on to private rented · 14 months'],
+    ['My son got a nursery place within a fortnight. That one thing changed everything for our family.','Current resident · 4 months']
+  ];
+  var JY_ADDED=[];
+  function jyHash(s){ var h=7; s=String(s||'barn'); for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))%233280; } return h; }
+  function jyRnd(seed){ var x=seed%233280; return function(){ x=(x*9301+49297)%233280; return x/233280; }; }
+  function jyMonthsAgo(m){ var d=new Date(); d.setMonth(d.getMonth()-m); return d.toLocaleDateString('en-GB',{month:'short',year:'numeric'}); }
+  function stars(n){ var s=''; for(var i=0;i<5;i++) s+= i<n?'★':'☆'; return s; }
+
+  function genJourney(){ var pid=window.CR_CURPROP||'barn'; var hh=crHH().length||0; var r=jyRnd(jyHash(pid));
+    var moveN=Math.max(4, Math.round(hh*0.8));
+    var moveOns=[], entry={}, dest={}, support={}; var scoreSum=0, stepSum=0, pos=0, staySum=0;
+    for(var i=0;i<moveN;i++){
+      var from=J_ENTRY[Math.floor(r()*J_ENTRY.length)];
+      var to=(r()<0.76)? J_POS[Math.floor(r()*J_POS.length)] : J_DEST[Math.floor(r()*J_DEST.length)];
+      var stay=3+Math.floor(r()*22);
+      var sup=[],pool=J_SUPPORT.slice(),ns=1+Math.floor(r()*4);
+      for(var k=0;k<ns;k++){ var sc=pool.splice(Math.floor(r()*pool.length),1)[0]; if(sc){sup.push(sc); support[sc]=(support[sc]||0)+1;} }
+      var score=3+Math.floor(r()*3); var p=J_POS.indexOf(to)>=0;
+      scoreSum+=score; stepSum+=sup.length; staySum+=stay; if(p)pos++;
+      entry[from]=(entry[from]||0)+1; dest[to]=(dest[to]||0)+1;
+      moveOns.push({name:SURJ[Math.floor(r()*SURJ.length)]+' household',from:from,to:to,stay:stay,sup:sup.length,score:score,pos:p,exit:jyMonthsAgo(Math.floor(r()*30))});
+    }
+    crHH().forEach(function(){ var pool=J_SUPPORT.slice(),n=1+Math.floor(r()*4); for(var k=0;k<n;k++){ var sc=pool.splice(Math.floor(r()*pool.length),1)[0]; if(sc) support[sc]=(support[sc]||0)+1; } });
+    return {moveOns:moveOns,entry:entry,dest:dest,support:support,moveN:moveN,
+      posRate:moveN?Math.round(pos/moveN*100):0, avgScore:moveN?(scoreSum/moveN):0, avgStay:moveN?Math.round(staySum/moveN):0, supAvg:moveN?(stepSum/moveN).toFixed(1):'0', hh:hh };
+  }
+
+  var JY_BB=95, JY_BARN=48;
+  window.jyCalcSaving=function(){ var a=parseFloat((document.getElementById('jy-bb')||{}).value), b=parseFloat((document.getElementById('jy-barn')||{}).value);
+    if(!isNaN(a)) JY_BB=a; if(!isNaN(b)) JY_BARN=b; var el=document.getElementById('jy-savebig'); if(el){ var hh=crHH().length||0; el.textContent='£'+( hh*365*Math.max(0,JY_BB-JY_BARN) ).toLocaleString('en-GB'); } };
+
+  window.openJourney=function(){ renderJourney(); showSection('journey'); };
+  window.renderJourney=function(){ var box=document.getElementById('journey-body'); if(!box) return; var d=genJourney();
+    var hh=crHH().length||0; var saving=hh*365*Math.max(0,JY_BB-JY_BARN);
+    var steps=[['1','Where they came from','Entry route &amp; referral source captured on arrival'],['2','How long they stayed','Length of stay tracked automatically'],['3','Support received','Every wraparound intervention logged by the key worker'],['4','Feedback','Resident voice captured during the stay'],['5','Where they moved on to','Destination &amp; outcome recorded at move-on']]
+      .map(function(s){return '<div class="jy-step"><div class="n">'+s[0]+'</div><div class="t">'+s[1]+'</div><div class="d">'+s[2]+'</div></div>';}).join('');
+    var impact=[
+      ['v',d.posRate+'%','Positive move-on rate',d.moveN+' families tracked'],
+      ['',d.avgStay+' mo','Avg length of stay','before moving on'],
+      ['',d.avgScore.toFixed(1)+'/5','Resident satisfaction','from stay feedback'],
+      ['',d.supAvg,'Support interventions','per family, on average'],
+      ['','<span id="jy-savebig">£'+saving.toLocaleString('en-GB')+'</span>','Est. annual saving vs B&amp;B','see assumptions below']
+    ].map(function(k){return '<div class="jy-ik"><div class="v">'+k[1]+'</div><div class="l">'+k[2]+'</div><div class="s">'+k[3]+'</div></div>';}).join('');
+    var quotes=J_QUOTES.slice(0,4).map(function(q){return '<div class="jy-quote"><div class="q">“'+q[0]+'”</div><div class="m">'+esc(q[1])+'</div></div>';}).join('');
+    var allMove=JY_ADDED.concat(d.moveOns).slice(0,12);
+    var rows=allMove.map(function(m){return '<tr><td><b>'+esc(m.name)+'</b></td><td>'+esc(m.from)+'</td><td>'+esc(m.to)+'</td><td>'+m.stay+' mo</td><td>'+m.sup+'</td><td><span class="jy-stars">'+stars(m.score)+'</span></td><td>'+(m.pos?'<span class="rs-chip" style="background:#e6f6ee;color:#1aa260">Positive</span>':'<span class="rs-chip" style="background:#fdeceb;color:#c0392b">Negative</span>')+'</td><td>'+esc(m.exit)+'</td></tr>';}).join('');
+    box.innerHTML=
+      '<div class="jy-head"><div class="jy-sub" style="margin-top:0">The data that proves the Barn model to any council — where every family came from, how long they stayed, the wraparound support they received, their feedback, and where they moved on to. Built for <b>Catherine</b> and <b>Charlotte</b> to feed into in minutes.</div></div>'+
+      '<div class="jy-steps">'+steps+'</div>'+
+      '<div class="ov-group">📊 Outcomes &amp; impact</div>'+
+      '<div class="jy-impact">'+impact+'</div>'+
+      '<div class="jy-note" style="margin:8px 0 2px">Saving assumes nightly-paid B&amp;B at £<input id="jy-bb" value="'+JY_BB+'" oninput="jyCalcSaving()" style="width:52px;padding:3px 6px;border:1px solid #e2e8f2;border-radius:6px;font:700 12px Lato" inputmode="numeric"> vs the Barn model at £<input id="jy-barn" value="'+JY_BARN+'" oninput="jyCalcSaving()" style="width:52px;padding:3px 6px;border:1px solid #e2e8f2;border-radius:6px;font:700 12px Lato" inputmode="numeric"> per unit per night, across '+hh+' current households × 365 nights. Illustrative — adjust the rates to your contract.</div>'+
+      '<div class="jy-grid2"><div class="card2" style="padding:16px"><div class="ov-group" style="margin:0 0 10px">⬅️ Where families came from</div>'+bars(d.entry,'#2f80d8')+'</div>'+
+      '<div class="card2" style="padding:16px"><div class="ov-group" style="margin:0 0 10px">➡️ Where they moved on to</div>'+bars(d.dest,'#1aa260')+'</div></div>'+
+      '<div class="jy-grid2"><div class="card2" style="padding:16px"><div class="ov-group" style="margin:0 0 10px">🤝 Wraparound support provided</div>'+bars(d.support,'#128a8f')+'</div>'+
+      '<div class="card2" style="padding:16px"><div class="ov-group" style="margin:0 0 10px">💬 Resident feedback <span style="font:800 13px Lato;color:#e0a33a;margin-left:6px">'+stars(Math.round(d.avgScore))+' '+d.avgScore.toFixed(1)+'/5</span></div>'+quotes+'</div></div>'+
+      '<div class="ov-group" style="margin-top:22px">📋 Recent move-ons</div>'+
+      '<div class="card2" style="padding:4px 2px"><table class="rs-table"><thead><tr><th>Family</th><th>Came from</th><th>Moved on to</th><th>Stay</th><th>Support</th><th>Feedback</th><th>Outcome</th><th>Exit</th></tr></thead><tbody>'+(rows||'<tr><td colspan="8" style="color:#8a94a0;padding:14px">No move-ons recorded yet.</td></tr>')+'</tbody></table></div>'+
+      jyForm();
+  };
+
+  function jyForm(){
+    var opt=function(a){return a.map(function(x){return '<option>'+x+'</option>';}).join('');};
+    var chks=J_SUPPORT.map(function(s){return '<label class="jy-chk"><input type="checkbox" value="'+esc(s)+'" onchange="this.parentNode.classList.toggle(\'on\',this.checked)"> '+s+'</label>';}).join('');
+    return '<div class="ov-group" style="margin-top:26px">➕ Record / update a resident journey</div>'+
+    '<div class="jy-sub" style="margin:0 0 12px">A single form for the whole journey — Catherine or Charlotte can capture entry, support, feedback and move-on as it happens.</div>'+
+    '<div class="jy-form" id="jy-form">'+
+      '<div class="jy-fsec"><div class="jy-fcap"><span class="n">1</span>Entry — where did they come from?</div><div class="jy-fg">'+
+        '<div class="jy-f"><label>Family / household name</label><input id="jf-name" placeholder="e.g. Okafor household"></div>'+
+        '<div class="jy-f"><label>Entry route</label><select id="jf-from">'+opt(J_ENTRY)+'</select></div>'+
+        '<div class="jy-f"><label>Referral source</label><input id="jf-ref" placeholder="e.g. LB Ealing housing options"></div>'+
+        '<div class="jy-f"><label>Arrival date</label><input id="jf-arr" type="date"></div></div></div>'+
+      '<div class="jy-fsec"><div class="jy-fcap"><span class="n">2</span>Support — what have we provided?</div><div class="jy-chks">'+chks+'</div>'+
+        '<div class="jy-f" style="margin-top:12px"><label>Key worker</label><input id="jf-kw" placeholder="e.g. Charlotte (Support Officer)"></div></div>'+
+      '<div class="jy-fsec"><div class="jy-fcap"><span class="n">3</span>Feedback — resident voice</div><div class="jy-fg">'+
+        '<div class="jy-f"><label>Satisfaction (1–5)</label><select id="jf-score"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>'+
+        '<div class="jy-f" style="grid-column:1/-1"><label>Comment</label><textarea id="jf-note" rows="2" placeholder="In their own words…"></textarea></div></div></div>'+
+      '<div class="jy-fsec"><div class="jy-fcap"><span class="n">4</span>Move-on — where did they go?</div><div class="jy-fg">'+
+        '<div class="jy-f"><label>Destination</label><select id="jf-to">'+opt(J_DEST)+'</select></div>'+
+        '<div class="jy-f"><label>Move-on date</label><input id="jf-exit" type="date"></div>'+
+        '<div class="jy-f"><label>Length of stay (months)</label><input id="jf-stay" type="number" min="0" placeholder="e.g. 11"></div></div></div>'+
+      '<button class="jy-save" onclick="jySaveJourney()">Save resident journey</button>'+
+      '<div id="jy-ok"></div>'+
+      '<div class="jy-note">In the live system this saves to the resident’s record and feeds the outcomes dashboard and council reports automatically.</div>'+
+    '</div>';
+  }
+  window.jySaveJourney=function(){ var g=function(id){var e=document.getElementById(id);return e?e.value:'';};
+    var name=g('jf-name').trim(); if(!name){ var ok0=document.getElementById('jy-ok'); if(ok0){ok0.className='jy-ok';ok0.style.background='#fdeceb';ok0.style.borderColor='#eaa';ok0.style.color='#c0392b';ok0.textContent='Please enter a family / household name.';} return; }
+    var sup=[].slice.call(document.querySelectorAll('#jy-form .jy-chk input:checked')).map(function(c){return c.value;});
+    var to=g('jf-to'), score=parseInt(g('jf-score')||'5',10), stay=parseInt(g('jf-stay')||'0',10)||0;
+    JY_ADDED.unshift({name:name,from:g('jf-from'),to:to,stay:stay,sup:sup.length,score:score,pos:J_POS.indexOf(to)>=0,exit:(g('jf-exit')? new Date(g('jf-exit')).toLocaleDateString('en-GB',{month:'short',year:'numeric'}) : 'In residence')});
+    renderJourney();
+    var ok=document.getElementById('jy-ok'); if(ok){ ok.className='jy-ok'; ok.textContent='✓ Saved — '+name+' added to the outcomes record'+(sup.length?(' with '+sup.length+' support intervention'+(sup.length>1?'s':'')):'')+'.'; }
+  };
 })();
 </script>
 </body>
