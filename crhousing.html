@@ -815,7 +815,7 @@ body.role-ops .mgmt-only{display:none!important}
       <input id="lg-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()">
       <div class="lg-err" id="lg-err"></div>
       <button class="lgx-btn" onclick="checkLogin()">Sign in →</button>
-      <div class="lgx-hint">Management <b>2222</b> · Operations <b>3132</b></div>
+      <div class="lgx-hint">Management <b>2323</b> · Operations <b>3132</b></div>
     </div>
   </div>
 </div>
@@ -1762,7 +1762,7 @@ function renderTeam(){
 
 function bSetFilter(f){ B_FILTER=f; $('b-chips').innerHTML=B_FILTERS.map(([ff,l])=>`<button class="chip ${B_FILTER===ff?'on':''}" onclick="bSetFilter('${ff}')">${l}</button>`).join(''); bRender(); }
 /* ---- LOGIN — code required on every visit (remembered for this browser session only) ---- */
-const LOGIN_CODES={'3132':'ops','2222':'mgmt'};
+const LOGIN_CODES={'3132':'ops','2323':'mgmt'};
 let CR_ROLE='ops';
 function loginOk(){ try{ return !!sessionStorage.getItem('cr_role'); }catch(e){ return false; } }
 function applyRole(){ try{ CR_ROLE=sessionStorage.getItem('cr_role')||'ops'; }catch(e){ CR_ROLE='ops'; } document.body.classList.toggle('role-ops',CR_ROLE!=='mgmt'); document.body.classList.toggle('role-mgmt',CR_ROLE==='mgmt'); const rb=$('role-badge'); if(rb) rb.textContent=CR_ROLE==='mgmt'?'Management':'Operations'; }
